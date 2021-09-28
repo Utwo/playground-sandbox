@@ -142,11 +142,8 @@ export default {
     // window.addEventListener("resize", this.onWindowResize);
     this.fitAddon.fit();
 
-    this.socket.on("log:data", (data) => {
+    this.socket.on("sandbox:log:data", (data) => {
       this.term.write(data);
-    });
-    this.socket.emit("sandbox:logs", {
-      projectName: this.projectName,
     });
 
     // this.ws.onclose = () => {

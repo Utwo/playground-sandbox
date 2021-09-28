@@ -1,15 +1,25 @@
 import stream from "stream";
 import { config } from "../config.js";
+import { getAllFiles } from "../services/files.js";
 import { k8sAttach, k8sLog } from "../services/k8s.js";
 
 export default function (io) {
-  const logsFromSandbox = function (req) {
-    const { projectName } = req;
-    const socket = this;
+  const sendFilesFromSandbox = async function (socket) {
+    const projectName = socket.data.projectName;
+    const allFiles = await getAllFiles(`./src`, []);
+    console.log(allFiles);
+    io.to(projectName).emit("sandbox:files:tree", allFiles);
+  };
+
+  const sendLogsFromSandbox = function (socket) {
+    const projectName = socket.data.projectName;
+
     const logStream = new stream.PassThrough();
     logStream.setEncoding("utf-8");
-    logStream.on("data", (chunk) => socket.emit("log:data", chunk));
-    logStream.on("error", (chunk) => socket.emit("log:error", chunk));
+    logStream.on("data", (chunk) =>
+      io.to(projectName).emit("sandbox:log:data", chunk)
+    );
+    logStream.on("error", (chunk) => console.error(chunk));
 
     k8sLog
       .log(
@@ -32,7 +42,7 @@ export default function (io) {
       });
   };
 
-  const startCommand = function (req) {
+  const startNewTerminalCommand = function (req) {
     const { projectName } = req;
     const socket = this;
     const readLogStream = new stream.Readable({
@@ -79,8 +89,9 @@ export default function (io) {
   };
 
   return {
-    logsFromSandbox,
-    startCommand,
+    sendFilesFromSandbox,
+    sendLogsFromSandbox,
+    startNewTerminalCommand,
     execCommand,
     socketDisconnect,
   };

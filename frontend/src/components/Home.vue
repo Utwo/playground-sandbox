@@ -57,7 +57,10 @@ export default {
     };
   },
   created: function () {
-    this.socket = io("ws://localhost:8888", { transports: ["websocket"] });
+    this.socket = io("ws://localhost:8888", {
+      transports: ["websocket"],
+      query: { projectName: "pod-example" },
+    });
     this.socket.on("connect", () => {
       console.log("connected");
     });

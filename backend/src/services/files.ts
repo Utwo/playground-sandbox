@@ -1,4 +1,16 @@
-import { writeFile, rm } from "fs/promises";
+import { writeFile, rm, readdir, stat } from "fs/promises";
+import path from "node:path";
+
+type File = {
+  label: string;
+  path: string;
+};
+
+type Directory = {
+  label: string;
+  path: string;
+  files?: Array<File | Directory>;
+};
 
 export const addFiles = async (projectName, files: Record<string, string>) => {
   return Promise.all(
@@ -8,6 +20,7 @@ export const addFiles = async (projectName, files: Record<string, string>) => {
     })
   );
 };
+
 export const deleteFiles = async (
   projectName: string,
   files: Record<string, string>
@@ -17,4 +30,25 @@ export const deleteFiles = async (
       rm(`/tmp/k3dvol/${projectName}/${path}`)
     )
   );
+};
+
+export const getAllFiles = async (
+  dirPath,
+  arrayOfFiles: Array<Directory | File>
+) => {
+  const files = await readdir(dirPath);
+
+  arrayOfFiles = arrayOfFiles || [{ label: ".", path: "." }];
+
+  for (const file of files) {
+    const absolutePath = path.join(dirPath, "/", file);
+    if ((await stat(absolutePath)).isDirectory()) {
+      //@ts-ignore
+      arrayOfFiles.files = await getAllFiles(absolutePath, arrayOfFiles);
+    } else {
+      arrayOfFiles.push({ label: file, path: absolutePath });
+    }
+  }
+  console.log(arrayOfFiles);
+  return arrayOfFiles;
 };

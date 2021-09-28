@@ -1,4 +1,7 @@
 <template>
+  <div>
+    {{ allFiles }}
+  </div>
   <prism-editor
     class="my-editor"
     v-model="editorCode"
@@ -33,11 +36,15 @@ export default {
   },
   data() {
     return {
+      allFiles: [],
       editorCode: "",
     };
   },
   mounted() {
     this.editorCode = "//hello";
+    this.socket.on("sandbox:files:tree", (allFiles) => {
+      this.allFiles = allFiles;
+    });
   },
   methods: {
     highlighter(code) {

@@ -17,16 +17,30 @@ const io = new Server(server, { transports: ["websocket"] });
 app.use(cors());
 app.use(express.json());
 
-const { logsFromSandbox, startCommand, execCommand, socketDisconnect } =
-  wsController(io);
-const onConnection = (socket) => {
+const {
+  sendLogsFromSandbox,
+  sendFilesFromSandbox,
+  startNewTerminalCommand,
+  execCommand,
+  socketDisconnect,
+} = wsController(io);
+
+// get all pods from public namespace
+// call sendLogsFromSandbox for each pod
+
+io.on("connection", (socket) => {
   console.info("New client connected");
-  socket.on("sandbox:logs", logsFromSandbox);
-  socket.on("sandbox:terminal:start", startCommand);
+  const projectName = socket.handshake.query.projectName;
+
+  socket.data.projectName = projectName;
+  socket.join(projectName);
+  sendLogsFromSandbox(socket);
+  sendFilesFromSandbox(socket);
+
+  socket.on("sandbox:terminal:start", startNewTerminalCommand);
   socket.on("sandbox:terminal:exec", execCommand);
   socket.on("disconnect", socketDisconnect);
-};
-io.on("connection", onConnection);
+});
 
 app.post("/create-sandbox", createSandboxReq);
 app.delete("/stop-sandbox", stopSandboxReq);
