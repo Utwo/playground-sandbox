@@ -8,6 +8,7 @@ import {
   stopSandboxReq,
   addFilesReq,
   deleteFilesReq,
+  getFileContentReq,
 } from "./modules/container-controller.js";
 import wsController from "./modules/container-ws-controller.js";
 
@@ -46,6 +47,7 @@ app.post("/create-sandbox", createSandboxReq);
 app.delete("/stop-sandbox", stopSandboxReq);
 app.post("/add-files", addFilesReq);
 app.delete("/delete-files", deleteFilesReq);
+app.post("/get-file-content", getFileContentReq);
 app.get("/", (req, res) => res.send("ok"));
 
 server.listen(config.port, () => {

@@ -1,7 +1,4 @@
 <template>
-  <div>
-    {{ allFiles }}
-  </div>
   <prism-editor
     class="my-editor"
     v-model="editorCode"
@@ -17,7 +14,7 @@ import "vue-prism-editor/dist/prismeditor.min.css";
 import prism from "prismjs";
 import "prismjs/themes/prism-tomorrow.css";
 import { Socket } from "socket.io-client";
-import { addFiles } from "./../services/httpApi";
+import { addFiles, getFileContent } from "./../services/httpApi";
 
 export default {
   components: {
@@ -33,18 +30,25 @@ export default {
       type: Socket,
       required: true,
     },
+    filePath: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
-      allFiles: [],
       editorCode: "",
     };
   },
-  mounted() {
-    this.editorCode = "//hello";
-    this.socket.on("sandbox:files:tree", (allFiles) => {
-      this.allFiles = allFiles;
-    });
+  watch: {
+    filePath: function (newVal, oldVal) {
+      getFileContent({
+        projectName: this.projectName,
+        filePath: newVal,
+      }).then(async (res) => {
+        this.editorCode = await res.text();
+      });
+    },
   },
   methods: {
     highlighter(code) {
@@ -53,7 +57,7 @@ export default {
     save() {
       addFiles({
         projectName: this.projectName,
-        files: { "pages/home.js": this.editorCode },
+        files: { [this.filePath]: this.editorCode },
       });
     },
   },

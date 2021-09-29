@@ -7,11 +7,12 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "prismjs": "1.22.0",
     "bootstrap": "^5.1.1",
-    "vue-prism-editor": "^2.0.0-alpha.2",
+    "prismjs": "1.22.0",
     "socket.io-client": "^4.2.0",
     "vue": "^3.2.13",
+    "vue-prism-editor": "^2.0.0-alpha.2",
+    "vue-router": "4",
     "xterm": "^4.14.1",
     "xterm-addon-fit": "^0.5.0",
     "xterm-addon-search": "^0.8.1",

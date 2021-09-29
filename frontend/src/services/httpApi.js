@@ -20,6 +20,17 @@ export const stopSandbox = (data) => {
     body: JSON.stringify(data),
   });
 };
+
+export const getFileContent = (data) => {
+  return fetch(`${API_URL}/get-file-content`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+};
+
 export const addFiles = (data) => {
   return fetch(`${API_URL}/add-files`, {
     method: "POST",

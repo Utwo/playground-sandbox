@@ -1,5 +1,5 @@
 import { createSandbox, stopSandbox } from "../services/k8s.js";
-import { addFiles, deleteFiles } from "../services/files.js";
+import { addFiles, deleteFiles, getFileContent } from "../services/files.js";
 
 export const createSandboxReq = async (req, res) => {
   try {
@@ -18,6 +18,18 @@ export const stopSandboxReq = async (req, res) => {
   try {
     await stopSandbox(projectName, deleteFiles);
     return res.send("ok");
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ error: "Something went wrong" });
+  }
+};
+export const getFileContentReq = async (req, res) => {
+  const { projectName, filePath } = req.body;
+
+  try {
+    const content = await getFileContent(projectName, filePath);
+    res.set("Content-Type", "text/html");
+    return res.send(content);
   } catch (err) {
     console.error(err);
     return res.status(500).send({ error: "Something went wrong" });

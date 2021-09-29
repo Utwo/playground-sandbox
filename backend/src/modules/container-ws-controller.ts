@@ -6,8 +6,7 @@ import { k8sAttach, k8sLog } from "../services/k8s.js";
 export default function (io) {
   const sendFilesFromSandbox = async function (socket) {
     const projectName = socket.data.projectName;
-    const allFiles = await getAllFiles(`./src`, []);
-    console.log(allFiles);
+    const allFiles = await getAllFiles(`/tmp/k3dvol/${projectName}`, []);
     io.to(projectName).emit("sandbox:files:tree", allFiles);
   };
 

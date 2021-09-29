@@ -19,7 +19,7 @@ export default {
   },
   computed: {
     iframeSrc() {
-      return `http://${this.projectName}.playground-sandbox.com:8000/home`;
+      return `http://${this.projectName}.playground-sandbox.com:8000`;
     },
   },
 };
