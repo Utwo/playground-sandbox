@@ -2,10 +2,13 @@
 
 ## Todo
 
+- [ ] Change page iframe
+- [ ] Replace tree library in vue
+- [ ] Delete files
+- [ ] Create files
+- [ ] Loading state on create contaniner
 - [ ] Add terminal support
 - [ ] Add node_modules to archive
-- [ ] Delete container is hanging
-- [ ] Implement in socket.io
 - [ ] Test with gVizor
 
 ### 1. Create cluster with volume claim
@@ -35,6 +38,12 @@ $ kubectl exec -i -t dnsutils -- nslookup kubernetes.default
 
 ```
 $ nginx -s reload -c ./nginx.conf
+```
+
+### Change permission to volume if needed
+
+```
+$ sudo chown -R $USER /tmp/k3dvol
 ```
 
 ### Port forward nginx

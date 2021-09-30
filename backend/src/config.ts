@@ -14,6 +14,7 @@ export const config: {
   sandboxNamespace: string;
   sandboxContainerName: string;
   port: number;
+  volumeRoot: string;
 } = {
   appTemplates: {
     nextApp: {
@@ -36,4 +37,5 @@ export const config: {
   sandboxNamespace: "public",
   sandboxContainerName: "node-app",
   port: +process.env.PORT || 8888,
+  volumeRoot: "/tmp/k3dvol",
 };

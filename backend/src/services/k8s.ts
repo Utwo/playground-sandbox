@@ -1,5 +1,6 @@
 import k8s from "@kubernetes/client-node";
 import { rm, mkdir } from "fs/promises";
+import stream from "stream";
 import tar from "tar";
 import { config } from "../config.js";
 
@@ -7,12 +8,43 @@ const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
 export const k8sExec = new k8s.Exec(kc);
 export const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
-export const k8sLog = new k8s.Log(kc);
 export const k8sAttach = new k8s.Attach(kc);
+const k8sLog = new k8s.Log(kc);
+
+export const getPodStatus = async (projectName) => {
+  return k8sApi.readNamespacedPodStatus(projectName, config.sandboxNamespace);
+};
+
+export const sendLogsFromSandbox = async (
+  projectName: string,
+  io,
+  room: string,
+  follow: boolean
+) => {
+  const logStream = new stream.PassThrough();
+  logStream.setEncoding("utf-8");
+  logStream.on("data", (chunk) => {
+    io.to(room).emit("sandbox:log:data", chunk);
+  });
+  logStream.on("error", (chunk) => console.error(chunk));
+
+  return k8sLog.log(
+    config.sandboxNamespace,
+    projectName,
+    config.sandboxContainerName,
+    logStream,
+    {
+      follow,
+      tailLines: 50,
+      pretty: false,
+      timestamps: false,
+    }
+  );
+};
 
 export const createSandbox = async (projectName: string, template: string) => {
   const templateConfig = config.appTemplates[template];
-  const projectPath = `/tmp/k3dvol/${projectName}`;
+  const projectPath = `${config.volumeRoot}/${projectName}`;
 
   const projectDir = await mkdir(projectPath, { recursive: true });
   if (projectDir) {
@@ -102,9 +134,14 @@ export const stopSandbox = async (
 
   try {
     if (deleteFiles) {
-      await rm(`/tmp/k3dvol/${projectName}`, { recursive: true });
+      await rm(`${config.volumeRoot}/${projectName}`, { recursive: true });
     }
   } catch (err) {
     console.error(err);
   }
+};
+
+export const getAllPods = async () => {
+  const pods = await k8sApi.listNamespacedPod(config.sandboxNamespace);
+  return pods.body.items;
 };

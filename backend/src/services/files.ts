@@ -1,6 +1,7 @@
 import { statSync } from "fs";
 import { writeFile, rm, readdir, readFile } from "fs/promises";
 import path from "node:path";
+import { config } from "../config.js";
 
 type File = {
   name: string;
@@ -16,7 +17,7 @@ type Directory = {
 export const addFiles = async (projectName, files: Record<string, string>) => {
   return Promise.all(
     Object.entries(files).map(([path, value]) => {
-      const localPath = `/tmp/k3dvol/${projectName}/${path}`;
+      const localPath = `${config.volumeRoot}/${projectName}/${path}`;
       return writeFile(localPath, value as String);
     })
   );
@@ -28,13 +29,13 @@ export const deleteFiles = async (
 ) => {
   return Promise.all(
     Object.entries(files).map(([path]) =>
-      rm(`/tmp/k3dvol/${projectName}/${path}`)
+      rm(`${config.volumeRoot}/${projectName}/${path}`)
     )
   );
 };
 
 export const getFileContent = async (projectName: string, filePath: string) => {
-  const localPath = `/tmp/k3dvol/${projectName}/${filePath}`;
+  const localPath = `${config.volumeRoot}/${projectName}/${filePath}`;
   return readFile(localPath, "utf8");
 };
 

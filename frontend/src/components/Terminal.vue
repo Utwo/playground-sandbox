@@ -130,8 +130,6 @@ export default {
     this.term.prompt = () => {
       this.term.write("\r\n");
     };
-    this.term.writeln("Welcome to \x1B[1;3;31mxterm.js\x1B[0m");
-    this.term.writeln("Type some keys and commands to play around.");
     this.term.prompt();
 
     // this.term.onKey(function (key, ev) {

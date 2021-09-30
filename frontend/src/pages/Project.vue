@@ -52,10 +52,10 @@ export default {
     };
   },
   created: function () {
-    const { projectName } = this.$route.params;
+    const { projectName, template } = this.$route.params;
     this.socket = io("ws://localhost:8888", {
       transports: ["websocket"],
-      query: { projectName },
+      query: { projectName, template },
     });
     this.socket.on("connect", () => {
       console.log("connected");

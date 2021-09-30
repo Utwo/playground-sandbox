@@ -1,47 +1,48 @@
 import stream from "stream";
 import { config } from "../config.js";
 import { getAllFiles } from "../services/files.js";
-import { k8sAttach, k8sLog } from "../services/k8s.js";
+import {
+  createSandbox,
+  getPodStatus,
+  k8sAttach,
+  sendLogsFromSandbox,
+} from "../services/k8s.js";
 
 export default function (io) {
-  const sendFilesFromSandbox = async function (socket) {
-    const projectName = socket.data.projectName;
-    const allFiles = await getAllFiles(`/tmp/k3dvol/${projectName}`, []);
-    io.to(projectName).emit("sandbox:files:tree", allFiles);
+  const socketConnected = async function (socket) {
+    console.info("New client connected");
+    const { projectName, template } = socket.handshake.query;
+    socket.data.projectName = projectName;
+    socket.join(projectName);
+    init(projectName, template, socket);
   };
 
-  const sendLogsFromSandbox = function (socket) {
-    const projectName = socket.data.projectName;
+  const init = async (projectName, template, socket) => {
+    try {
+      await getPodStatus(projectName);
+      sendLogsFromSandbox(projectName as string, io, socket.id, false).catch(
+        console.error
+      );
+      sendFilesFromSandboxWs(socket).catch(console.error);
+    } catch (e) {
+      if (e.statusCode === 404) {
+        await createSandbox(projectName as string, template as string);
+        console.info("container created");
+        setTimeout(init, 5000, projectName, template, socket);
+      }
+    }
+  };
 
-    const logStream = new stream.PassThrough();
-    logStream.setEncoding("utf-8");
-    logStream.on("data", (chunk) =>
-      io.to(projectName).emit("sandbox:log:data", chunk)
+  const sendFilesFromSandboxWs = async function (socket) {
+    const projectName = socket.data.projectName;
+    const allFiles = await getAllFiles(
+      `${config.volumeRoot}/${projectName}`,
+      []
     );
-    logStream.on("error", (chunk) => console.error(chunk));
-
-    k8sLog
-      .log(
-        config.sandboxNamespace,
-        projectName,
-        config.sandboxContainerName,
-        logStream,
-        {
-          follow: true,
-          tailLines: 50,
-          pretty: false,
-          timestamps: false,
-        }
-      )
-      .catch((err) => {
-        console.error(err);
-      })
-      .then((req) => {
-        socket.data.k8sLogReq = req;
-      });
+    socket.emit("sandbox:files:tree", allFiles);
   };
 
-  const startNewTerminalCommand = function (req) {
+  const startNewTerminalCommandWs = function (req) {
     const { projectName } = req;
     const socket = this;
     const readLogStream = new stream.Readable({
@@ -71,27 +72,22 @@ export default function (io) {
     );
   };
 
-  const execCommand = function (req) {
+  const execCommandWs = function (req) {
     const { command } = req;
     const socket = this;
     const readLogStream = socket.data.readLogStream as stream.Readable;
     readLogStream.push(command);
   };
 
-  const socketDisconnect = function () {
-    const socket = this;
-    if (socket.data.k8sLogReq) {
-      socket.data.k8sLogReq.abort();
-    }
-
+  const socketDisconnectWs = function () {
     console.log("disconnect");
   };
 
   return {
-    sendFilesFromSandbox,
-    sendLogsFromSandbox,
-    startNewTerminalCommand,
-    execCommand,
-    socketDisconnect,
+    socketConnected,
+    sendFilesFromSandboxWs,
+    startNewTerminalCommandWs,
+    execCommandWs,
+    socketDisconnectWs,
   };
 }
