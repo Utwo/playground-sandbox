@@ -1,10 +1,21 @@
 <template>
-  <a :href="iframeSrc">{{ iframeSrc }}</a>
+  <div class="d-flex">
+    <input
+      type="text"
+      class="form-control"
+      v-model="path"
+      v-on:keyup.enter="changePath"
+    />
+    <button class="btn btn-small btn-secondary" @click="reloadIframe">
+      Reload
+    </button>
+  </div>
   <iframe
     :src="iframeSrc"
     crossorigin="anonymous"
     target="_parent"
-    allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+    ref="iframe"
+    allow=" camera; geolocation; microphone"
     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
   ></iframe>
 </template>
@@ -17,9 +28,18 @@ export default {
       required: true,
     },
   },
-  computed: {
-    iframeSrc() {
-      return `http://${this.projectName}.playground-sandbox.com:8000`;
+  data: function () {
+    return {
+      path: "/",
+      iframeSrc: `http://${this.projectName}.playground-sandbox.com:8000`,
+    };
+  },
+  methods: {
+    reloadIframe() {
+      this.$refs.iframe.src = this.iframeSrc;
+    },
+    changePath() {
+      this.iframeSrc = `http://${this.projectName}.playground-sandbox.com:8000${this.path}`;
     },
   },
 };
