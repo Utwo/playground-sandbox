@@ -2,11 +2,11 @@
 
 ## Todo
 
-- [ ] Change page iframe
 - [ ] Replace tree library in vue
-- [ ] Delete files
-- [ ] Create files
+  - [ ] Delete files
+  - [ ] Create files
 - [ ] Loading state on create contaniner
+- [ ] Add a proper readme
 - [ ] Add terminal support
 - [ ] Add node_modules to archive
 - [ ] Test with gVizor
@@ -56,6 +56,7 @@ $ kubectl port-forward services/nginx 8000:80 -n default
 ### Add entries to hosts
 
 ```
+# Any subdomains that you want to use localy
 $ echo "127.0.0.1   pod-example.playground-sandbox.com" >> /etc/hosts
 $ echo "127.0.0.1   abc.playground-sandbox.com" >> /etc/hosts
 ```
@@ -65,5 +66,4 @@ $ echo "127.0.0.1   abc.playground-sandbox.com" >> /etc/hosts
 ```
 $ cd backend
 $ npm run dev
-
 ```

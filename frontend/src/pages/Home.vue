@@ -26,12 +26,6 @@
             class="btn btn-primary btn-block"
             >Start project</router-link
           >
-          <button
-            v-on:click="onCreateSandbox"
-            class="btn btn-secondary btn-block"
-          >
-            Create container
-          </button>
         </div>
       </div>
     </div>
@@ -39,8 +33,6 @@
 </template>
 
 <script>
-import { createSandbox } from "../services/httpApi";
-
 export default {
   components: {},
   data() {
@@ -48,15 +40,6 @@ export default {
       projectName: "pod-example",
       template: "nextApp",
     };
-  },
-
-  methods: {
-    onCreateSandbox() {
-      createSandbox({
-        projectName: this.projectName,
-        template: this.template,
-      });
-    },
   },
 };
 </script>

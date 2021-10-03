@@ -4,8 +4,6 @@ import http from "http";
 import { Server } from "socket.io";
 import { config } from "./config.js";
 import {
-  createSandboxReq,
-  stopSandboxReq,
   addFilesReq,
   deleteFilesReq,
   getFileContentReq,
@@ -47,8 +45,6 @@ io.on("connection", async (socket) => {
   socket.on("disconnect", socketDisconnectWs);
 });
 
-app.post("/create-sandbox", createSandboxReq);
-app.delete("/stop-sandbox", stopSandboxReq);
 app.post("/add-files", addFilesReq);
 app.delete("/delete-files", deleteFilesReq);
 app.post("/get-file-content", getFileContentReq);
@@ -58,7 +54,6 @@ app.get("/", (req, res) => res.send("ok"));
 setInterval(async () => {
   const pods = await getAllPods();
   const activeRooms = getActiveRooms(io);
-
   pods
     .map((pod) => pod.metadata.name)
     .filter((podName) => !activeRooms.includes(podName))

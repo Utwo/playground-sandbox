@@ -1,38 +1,5 @@
-import {
-  createSandbox,
-  sendLogsFromSandbox,
-  stopSandbox,
-} from "../services/k8s.js";
 import { addFiles, deleteFiles, getFileContent } from "../services/files.js";
 
-export const createSandboxReq = async (req, res) => {
-  try {
-    const { projectName, template } = req.body;
-    const { pod, service } = await createSandbox(projectName, template);
-    sendLogsFromSandbox(
-      projectName,
-      req.app.locals.io,
-      projectName,
-      true
-    ).catch(console.error);
-    return res.send({ pod: pod.body, service: service.body });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send({ error: "Something went wrong" });
-  }
-};
-
-export const stopSandboxReq = async (req, res) => {
-  const { projectName, deleteFiles } = req.body;
-
-  try {
-    await stopSandbox(projectName, deleteFiles);
-    return res.send("ok");
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send({ error: "Something went wrong" });
-  }
-};
 export const getFileContentReq = async (req, res) => {
   const { projectName, filePath } = req.body;
 
