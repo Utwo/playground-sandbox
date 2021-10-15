@@ -1,7 +1,9 @@
 import { statSync } from "fs";
-import { writeFile, rm, readdir, readFile } from "fs/promises";
+import tar from "tar";
+import { execSync } from "child_process";
+import { writeFile, rm, readdir, readFile, mkdir } from "fs/promises";
 import path from "node:path";
-import { config } from "../config.js";
+import { config, GitClone } from "../config.js";
 
 type File = {
   name: string;
@@ -68,4 +70,31 @@ export const getAllFiles = async (
     arrayOfFiles.push(fileObject);
   }
   return arrayOfFiles;
+};
+
+export const initVolume = async (
+  projectName: string,
+  template?: string,
+  gitClone?: GitClone
+) => {
+  const projectPath = `${config.volumeRoot}/${projectName}`;
+  const projectDir = await mkdir(projectPath, { recursive: true });
+
+  if (!projectDir) {
+    return;
+  }
+
+  // created project directory, project is new and folder is empty
+  if (gitClone) {
+    execSync(`git clone -b ${gitClone.branch} ${gitClone.url}`, {
+      stdio: [0, 1, 2], // we need this so node will print the command output
+      cwd: projectPath,
+    });
+    return;
+  }
+
+  await tar.x({
+    file: `./app-templates/${config.appTemplates[template].archive}`,
+    C: projectPath,
+  });
 };

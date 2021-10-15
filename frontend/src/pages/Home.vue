@@ -20,6 +20,16 @@
             <option value="nodeApp">node</option>
           </select>
         </div>
+        <div class="mb-3">
+          <label for="gitURL" class="form-label">Git URL</label>
+          <input
+            type="text"
+            id="gitURL"
+            class="form-control"
+            v-model="gitURL"
+            placeholder="git@github.com:Utwo/playground-sandbox.git"
+          />
+        </div>
         <div class="d-grid gap-2">
           <router-link
             :to="{ name: 'Project', params: { projectName, template } }"

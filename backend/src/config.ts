@@ -1,16 +1,21 @@
 import { V1EnvVar } from "@kubernetes/client-node";
 
-type appTemplate = {
+export type GitClone = {
+  url: string;
+  branch: string;
+};
+
+export type AppTemplate = {
   image: string;
   command: string[];
   args: string[];
   port: number;
-  archive: string;
   env: V1EnvVar[];
+  archive?: string;
 };
 
 export const config: {
-  appTemplates: Record<string, appTemplate>;
+  appTemplates: Record<string, AppTemplate>;
   sandboxNamespace: string;
   sandboxContainerName: string;
   port: number;

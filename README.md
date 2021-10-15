@@ -6,6 +6,7 @@
   - [ ] Delete files
   - [ ] Create files
 - [ ] Loading state on create contaniner
+- [ ] Import project from git
 - [ ] Add a proper readme
 - [ ] Add terminal support
 - [ ] Add node_modules to archive

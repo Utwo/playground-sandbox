@@ -1,8 +1,7 @@
 import k8s from "@kubernetes/client-node";
-import { rm, mkdir } from "fs/promises";
+import { rm } from "fs/promises";
 import stream from "stream";
-import tar from "tar";
-import { config } from "../config.js";
+import { AppTemplate, config } from "../config.js";
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
@@ -42,18 +41,10 @@ export const sendLogsFromSandbox = async (
   );
 };
 
-export const createSandbox = async (projectName: string, template: string) => {
-  const templateConfig = config.appTemplates[template];
-  const projectPath = `${config.volumeRoot}/${projectName}`;
-
-  const projectDir = await mkdir(projectPath, { recursive: true });
-  if (projectDir) {
-    await tar.x({
-      file: `./app-templates/${templateConfig.archive}`,
-      C: projectPath,
-    });
-  }
-
+export const createSandbox = async (
+  projectName: string,
+  containerOptions: AppTemplate
+) => {
   const [pod, service] = await Promise.all([
     k8sApi.createNamespacedPod(config.sandboxNamespace, {
       kind: "Pod",
@@ -75,11 +66,11 @@ export const createSandbox = async (projectName: string, template: string) => {
         containers: [
           {
             name: config.sandboxContainerName,
-            image: templateConfig.image,
+            image: containerOptions.image,
             workingDir: "/app",
-            command: templateConfig.command,
-            args: templateConfig.args,
-            env: templateConfig.env,
+            command: containerOptions.command,
+            args: containerOptions.args,
+            env: containerOptions.env,
             volumeMounts: [
               {
                 name: "project-pv-storage",
@@ -89,7 +80,7 @@ export const createSandbox = async (projectName: string, template: string) => {
             ],
             ports: [
               {
-                containerPort: templateConfig.port,
+                containerPort: containerOptions.port,
               },
             ],
           },
@@ -109,7 +100,7 @@ export const createSandbox = async (projectName: string, template: string) => {
           {
             port: 80,
             // @ts-ignore
-            targetPort: templateConfig.port,
+            targetPort: containerOptions.port,
           },
         ],
       },

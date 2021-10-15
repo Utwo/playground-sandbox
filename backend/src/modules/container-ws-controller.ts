@@ -1,6 +1,6 @@
 import stream from "stream";
-import { config } from "../config.js";
-import { getAllFiles } from "../services/files.js";
+import { AppTemplate, config, GitClone } from "../config.js";
+import { getAllFiles, initVolume } from "../services/files.js";
 import {
   createSandbox,
   getPodStatus,
@@ -11,13 +11,39 @@ import {
 export default function (io) {
   const socketConnected = async function (socket) {
     console.info("New client connected");
-    const { projectName, template } = socket.handshake.query;
+    const {
+      projectName,
+      template,
+      gitUrl,
+      gitBranch,
+      command,
+      image,
+      args,
+      port,
+      env,
+    } = socket.handshake.query;
     socket.data.projectName = projectName;
     socket.join(projectName);
-    init(projectName, template, socket);
+    let containerOptions: AppTemplate = {
+      command,
+      image,
+      args,
+      port,
+      env,
+    };
+    if (template) {
+      containerOptions = config.appTemplates[template];
+    }
+    const gitClone: GitClone = { url: gitUrl, branch: gitBranch };
+    init(projectName, socket, containerOptions, gitClone);
   };
 
-  const init = async (projectName, template, socket) => {
+  const init = async (
+    projectName: string,
+    socket,
+    containerOptions: AppTemplate,
+    gitClone: GitClone
+  ) => {
     try {
       await getPodStatus(projectName);
       sendLogsFromSandbox(projectName as string, io, socket.id, false).catch(
@@ -26,9 +52,10 @@ export default function (io) {
       sendFilesFromSandboxWs(socket).catch(console.error);
     } catch (e) {
       if (e.statusCode === 404) {
-        await createSandbox(projectName as string, template as string);
+        await initVolume(projectName, template, gitClone);
+        await createSandbox(projectName, containerOptions);
         console.info("container created");
-        setTimeout(init, 5000, projectName, template, socket);
+        setTimeout(init, 5000, projectName, socket, containerOptions, gitClone);
       }
     }
   };
