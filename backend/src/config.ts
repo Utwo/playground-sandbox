@@ -11,11 +11,10 @@ export type AppTemplate = {
   args: string[];
   port: number;
   env: V1EnvVar[];
-  archive?: string;
 };
 
 export const config: {
-  appTemplates: Record<string, AppTemplate>;
+  appTemplates: Record<string, AppTemplate & { archive?: string }>;
   sandboxNamespace: string;
   sandboxContainerName: string;
   port: number;
@@ -24,19 +23,19 @@ export const config: {
   appTemplates: {
     nextApp: {
       image: "node:16-alpine",
-      command: ["sh", "-c", "npm ci && npm run dev"],
+      command: ["npm run dev"],
       args: [],
       port: 3000,
-      archive: "next-app.tar.gz",
       env: [],
+      archive: "next-app.tar.gz",
     },
     nodeApp: {
       image: "node:16-alpine",
       command: ["sleep"],
       args: ["infinity"],
       port: 3000,
-      archive: "node-app.tar.gz",
       env: [],
+      archive: "node-app.tar.gz",
     },
   },
   sandboxNamespace: "public",

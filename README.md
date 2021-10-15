@@ -6,10 +6,9 @@
   - [ ] Delete files
   - [ ] Create files
 - [ ] Loading state on create contaniner
-- [ ] Import project from git
-- [ ] Add a proper readme
 - [ ] Add terminal support
 - [ ] Add node_modules to archive
+- [ ] Add a proper readme
 - [ ] Test with gVizor
 
 ### 1. Create cluster with volume claim

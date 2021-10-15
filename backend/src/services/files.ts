@@ -1,9 +1,17 @@
-import { statSync } from "fs";
+import fs from "fs";
 import tar from "tar";
-import { execSync } from "child_process";
-import { writeFile, rm, readdir, readFile, mkdir } from "fs/promises";
+import {
+  writeFile,
+  rm,
+  readdir,
+  readFile,
+  mkdir,
+  access,
+  stat,
+} from "fs/promises";
 import path from "node:path";
 import { config, GitClone } from "../config.js";
+import { clone } from "./git.js";
 
 type File = {
   name: string;
@@ -41,22 +49,35 @@ export const getFileContent = async (projectName: string, filePath: string) => {
   return readFile(localPath, "utf8");
 };
 
+export const checkIfFileExist = async (
+  projectName: string,
+  filePath: string
+) => {
+  try {
+    const localPath = `${config.volumeRoot}/${projectName}/${filePath}`;
+    await access(localPath, fs.constants.F_OK);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
 export const getAllFiles = async (
   dirPath,
   arrayOfFiles: Array<Directory | File>
 ) => {
-  const files = (await readdir(dirPath))
-    .map((item) => {
-      const absolutePath = path.join(dirPath, "/", item);
-      const isDir = statSync(absolutePath).isDirectory();
+  const filesPromise = (await readdir(dirPath)).map(async (item) => {
+    const absolutePath = path.join(dirPath, "/", item);
+    const isDir = (await stat(absolutePath)).isDirectory();
+    return {
+      name: item,
+      absolutePath,
+      isDir,
+    };
+  });
 
-      return {
-        name: item,
-        absolutePath: absolutePath,
-        isDir: isDir,
-      };
-    })
-    .sort((a, b) => +b.isDir - +a.isDir);
+  const files = await Promise.all(filesPromise);
+  files.sort((a, b) => +b.isDir - +a.isDir);
 
   for (const file of files) {
     if ([".next", "dist", "node_modules"].includes(file.name)) {
@@ -85,14 +106,12 @@ export const initVolume = async (
   }
 
   // created project directory, project is new and folder is empty
-  if (gitClone) {
-    execSync(`git clone -b ${gitClone.branch} ${gitClone.url}`, {
-      stdio: [0, 1, 2], // we need this so node will print the command output
-      cwd: projectPath,
-    });
+  if (gitClone.url) {
+    await clone(projectPath, gitClone);
     return;
   }
 
+  console.log("Extracting archive for template");
   await tar.x({
     file: `./app-templates/${config.appTemplates[template].archive}`,
     C: projectPath,

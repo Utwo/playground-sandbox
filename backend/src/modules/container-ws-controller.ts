@@ -1,6 +1,10 @@
 import stream from "stream";
 import { AppTemplate, config, GitClone } from "../config.js";
-import { getAllFiles, initVolume } from "../services/files.js";
+import {
+  checkIfFileExist,
+  getAllFiles,
+  initVolume,
+} from "../services/files.js";
 import {
   createSandbox,
   getPodStatus,
@@ -24,39 +28,65 @@ export default function (io) {
     } = socket.handshake.query;
     socket.data.projectName = projectName;
     socket.join(projectName);
+    const gitClone: GitClone = { url: gitUrl, branch: gitBranch };
     let containerOptions: AppTemplate = {
       command,
       image,
       args,
-      port,
+      port: +port,
       env,
     };
-    if (template) {
+    if (config.appTemplates[template]) {
       containerOptions = config.appTemplates[template];
     }
-    const gitClone: GitClone = { url: gitUrl, branch: gitBranch };
-    init(projectName, socket, containerOptions, gitClone);
+    init(projectName, socket, containerOptions, true, gitClone, template);
   };
 
   const init = async (
     projectName: string,
     socket,
     containerOptions: AppTemplate,
-    gitClone: GitClone
+    firstTry: boolean,
+    gitClone?: GitClone,
+    template?: string
   ) => {
     try {
       await getPodStatus(projectName);
+      sendFilesFromSandboxWs(socket).catch(console.error);
       sendLogsFromSandbox(projectName as string, io, socket.id, false).catch(
         console.error
       );
-      sendFilesFromSandboxWs(socket).catch(console.error);
     } catch (e) {
-      if (e.statusCode === 404) {
-        await initVolume(projectName, template, gitClone);
-        await createSandbox(projectName, containerOptions);
-        console.info("container created");
-        setTimeout(init, 5000, projectName, socket, containerOptions, gitClone);
+      if (e.statusCode !== 404 || !firstTry) {
+        console.error(e.message);
+        return;
       }
+
+      // pod not found, lets create a new one
+      await initVolume(projectName, template, gitClone);
+      const isPackageLock = await checkIfFileExist(
+        projectName,
+        "package-lock.json"
+      );
+      containerOptions.command = isPackageLock
+        ? ["sh", "-c", `npm ci && ${containerOptions.command}`]
+        : ["sh", "-c", `yarn && ${containerOptions.command}`];
+      try {
+        await createSandbox(projectName, containerOptions);
+      } catch (e) {
+        console.log(e.message);
+      }
+      console.info("Container created");
+      setTimeout(
+        init,
+        5000,
+        projectName,
+        socket,
+        containerOptions,
+        false,
+        gitClone,
+        template
+      );
     }
   };
 
