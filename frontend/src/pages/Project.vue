@@ -2,10 +2,11 @@
   <div class="container-fluid">
     <div class="row g-0">
       <div class="col-3">
-        <FileTree
+        <TreeView
           :socket="socket"
           :project-name="$route.params.projectName"
           @file-selected="onFileSelect"
+          @file-deleted="onFileDelete"
         />
       </div>
       <div class="col-4">
@@ -36,14 +37,14 @@ import { createSandbox, stopSandbox } from "../services/httpApi";
 import Terminal from "../components/Terminal.vue";
 import Iframe from "../components/Iframe.vue";
 import CodeEditor from "../components/CodeEditor.vue";
-import FileTree from "../components/TreeView/FileTree.vue";
+import TreeView from "../components/TreeView.vue";
 
 export default {
   components: {
     Terminal,
     Iframe,
     CodeEditor,
-    FileTree,
+    TreeView,
   },
   data() {
     return {
@@ -82,6 +83,9 @@ export default {
     },
     onFileSelect(item) {
       this.filePath = item.path;
+    },
+    onFileDelete(item) {
+      this.socket.emit("files:delete", { files: { [item.path]: null } });
     },
   },
 };

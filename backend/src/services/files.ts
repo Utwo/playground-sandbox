@@ -64,7 +64,8 @@ export const checkIfFileExist = async (
 
 export const getAllFiles = async (
   dirPath,
-  arrayOfFiles: Array<Directory | File>
+  objectOfFiles: Record<string, (Directory | File) & { children?: string[] }>,
+  isFirstRun = true
 ) => {
   const filesPromise = (await readdir(dirPath)).map(async (item) => {
     const absolutePath = path.join(dirPath, "/", item);
@@ -84,13 +85,25 @@ export const getAllFiles = async (
       continue;
     }
     const filePath = file.absolutePath.split("/").slice(4).join("/");
-    const fileObject = { name: file.name, path: filePath };
-    if (file.isDir) {
-      fileObject["children"] = await getAllFiles(file.absolutePath, []);
+    objectOfFiles[filePath] = {
+      name: file.name,
+      path: filePath,
+      //@ts-ignore
+      text: file.name,
+    };
+
+    if (isFirstRun) {
+      //@ts-ignore
+      objectOfFiles[filePath].isRoot = true;
     }
-    arrayOfFiles.push(fileObject);
+
+    if (file.isDir) {
+      const children = await getAllFiles(file.absolutePath, {}, false);
+      objectOfFiles[filePath].children = Object.keys(children);
+      objectOfFiles = { ...objectOfFiles, ...children };
+    }
   }
-  return arrayOfFiles;
+  return objectOfFiles;
 };
 
 export const initVolume = async (

@@ -3,11 +3,7 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import { config } from "./config.js";
-import {
-  addFilesReq,
-  deleteFilesReq,
-  getFileContentReq,
-} from "./modules/container-controller.js";
+import { getFileContentReq } from "./modules/container-controller.js";
 import wsController from "./modules/container-ws-controller.js";
 import {
   getAllPods,
@@ -36,17 +32,19 @@ const {
   startNewTerminalCommandWs,
   execCommandWs,
   socketDisconnectWs,
+  addFilesWs,
+  deleteFilesWs,
 } = wsController(io);
 
 io.on("connection", async (socket) => {
   await socketConnected(socket);
   socket.on("sandbox:terminal:start", startNewTerminalCommandWs);
   socket.on("sandbox:terminal:exec", execCommandWs);
+  socket.on("files:add", addFilesWs);
+  socket.on("files:delete", deleteFilesWs);
   socket.on("disconnect", socketDisconnectWs);
 });
 
-app.post("/add-files", addFilesReq);
-app.delete("/delete-files", deleteFilesReq);
 app.post("/get-file-content", getFileContentReq);
 app.get("/", (req, res) => res.send("ok"));
 

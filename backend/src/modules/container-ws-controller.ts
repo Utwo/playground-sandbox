@@ -1,7 +1,9 @@
 import stream from "stream";
 import { AppTemplate, config, GitClone } from "../config.js";
 import {
+  addFiles,
   checkIfFileExist,
+  deleteFiles,
   getAllFiles,
   initVolume,
 } from "../services/files.js";
@@ -94,7 +96,7 @@ export default function (io) {
     const projectName = socket.data.projectName;
     const allFiles = await getAllFiles(
       `${config.volumeRoot}/${projectName}`,
-      []
+      {}
     );
     socket.emit("sandbox:files:tree", allFiles);
   };
@@ -136,6 +138,28 @@ export default function (io) {
     readLogStream.push(command);
   };
 
+  const addFilesWs = async function (req) {
+    try {
+      const socket = this;
+      const { files } = req;
+      await addFiles(socket.data.projectName, files);
+      socket.emit("files:add", files);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const deleteFilesWs = async function (req) {
+    try {
+      const socket = this;
+      const { files } = req;
+      await deleteFiles(socket.data.projectName, files);
+      socket.emit("files:deleted", { files });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const socketDisconnectWs = function () {
     console.log("disconnect");
   };
@@ -146,5 +170,7 @@ export default function (io) {
     startNewTerminalCommandWs,
     execCommandWs,
     socketDisconnectWs,
+    addFilesWs,
+    deleteFilesWs,
   };
 }

@@ -30,23 +30,3 @@ export const getFileContent = (data) => {
     body: JSON.stringify(data),
   });
 };
-
-export const addFiles = (data) => {
-  return fetch(`${API_URL}/add-files`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-};
-
-export const deleteFiles = (data) => {
-  return fetch(`${API_URL}/delete-files`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-};

@@ -2,9 +2,8 @@
 
 ## Todo
 
-- [ ] Replace tree library in vue
-  - [ ] Delete files
-  - [ ] Create files
+- [ ] Emit events to room instead of a single socket
+- [ ] Create files
 - [ ] Loading state on create contaniner
 - [ ] Add terminal support
 - [ ] Add node_modules to archive

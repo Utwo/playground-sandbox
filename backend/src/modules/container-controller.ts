@@ -1,4 +1,4 @@
-import { addFiles, deleteFiles, getFileContent } from "../services/files.js";
+import { getFileContent } from "../services/files.js";
 
 export const getFileContentReq = async (req, res) => {
   const { projectName, filePath } = req.body;
@@ -7,28 +7,6 @@ export const getFileContentReq = async (req, res) => {
     const content = await getFileContent(projectName, filePath);
     res.set("Content-Type", "text/html");
     return res.send(content);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send({ error: "Something went wrong" });
-  }
-};
-
-export const addFilesReq = async (req, res) => {
-  try {
-    const { projectName, files } = req.body;
-    await addFiles(projectName, files);
-    return res.send("ok");
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send({ error: "Something went wrong" });
-  }
-};
-
-export const deleteFilesReq = async (req, res) => {
-  try {
-    const { projectName, files } = req.body;
-    await deleteFiles(projectName, files);
-    return res.send("ok");
   } catch (err) {
     console.error(err);
     return res.status(500).send({ error: "Something went wrong" });
