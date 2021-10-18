@@ -104,7 +104,7 @@
               },
               query: routeQueryString,
             }"
-            class="btn btn-primary btn-block"
+            class="btn btn-primary"
             >Start project</router-link
           >
         </div>

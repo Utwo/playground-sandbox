@@ -1,5 +1,5 @@
 <template>
-  <div ref="terminal" class="terminal" />
+  <div ref="terminal" />
 </template>
 
 <script>

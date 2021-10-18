@@ -1,32 +1,26 @@
 <template>
-  <div class="container-fluid">
-    <div class="row g-0">
-      <div class="col-3">
-        <TreeView
-          :socket="socket"
-          :project-name="$route.params.projectName"
-          @file-selected="onFileSelect"
-          @file-deleted="onFileDelete"
-        />
-      </div>
-      <div class="col-4">
-        <CodeEditor
-          :socket="socket"
-          :project-name="$route.params.projectName"
-          :file-path="filePath"
-        />
-      </div>
-      <div class="col-5">
-        <div class="iframe">
-          <Iframe :project-name="$route.params.projectName" />
-        </div>
-        <div class="terminal-wrapper">
-          <Terminal
-            :socket="socket"
-            :project-name="$route.params.projectName"
-          />
-        </div>
-      </div>
+  <div class="main">
+    <div class="sidebar">
+      <TreeView
+        :socket="socket"
+        :project-name="$route.params.projectName"
+        @file-selected="onFileSelect"
+        @file-deleted="onFileDelete"
+        @file-add="onFileAdd"
+      />
+    </div>
+    <div class="code_editor">
+      <CodeEditor
+        :socket="socket"
+        :project-name="$route.params.projectName"
+        :file-path="filePath"
+      />
+    </div>
+    <div class="preview">
+      <Iframe :project-name="$route.params.projectName" />
+    </div>
+    <div class="terminal">
+      <Terminal :socket="socket" :project-name="$route.params.projectName" />
     </div>
   </div>
 </template>
@@ -87,17 +81,34 @@ export default {
     onFileDelete(item) {
       this.socket.emit("files:delete", { files: { [item.path]: null } });
     },
+    onFileAdd(path) {
+      this.socket.emit("files:add", { files: { [path]: "" } });
+    },
   },
 };
 </script>
 
 <style scoped>
-.iframe {
-  height: 80vh;
+.main {
+  display: grid;
+  grid-template-columns: 350px repeat(2, 1fr);
+  grid-template-rows: 40px repeat(4, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  height: 100vh;
 }
 
-.terminal-wrapper {
-  height: 20vh;
+.sidebar {
+  grid-area: 1 / 1 / 6 / 2;
+}
+.code_editor {
+  grid-area: 1 / 2 / 6 / 3;
+}
+.preview {
+  grid-area: 1 / 3 / 4 / 4;
+}
+.terminal {
+  grid-area: 4 / 3 / 6 / 4;
   overflow-y: scroll;
   overflow-x: hidden;
 }

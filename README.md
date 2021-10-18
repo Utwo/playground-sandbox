@@ -2,13 +2,12 @@
 
 ## Todo
 
-- [ ] Emit events to room instead of a single socket
 - [ ] Create files
-- [ ] Loading state on create contaniner
-- [ ] Add terminal support
 - [ ] Add node_modules to archive
-- [ ] Add a proper readme
+- [ ] Add terminal support
+- [ ] Loading state on create contaniner
 - [ ] Test with gVizor
+- [ ] Add a proper readme
 
 ### 1. Create cluster with volume claim
 

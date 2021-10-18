@@ -5,6 +5,23 @@
     @node-focus="onFileSelected"
     @node-blur="onFileDeselected"
   />
+  <div>
+    <form @submit.prevent="addNewFile" class="input-group mb-3">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="pages/index.js"
+        v-model="addFilePath"
+      />
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        @click="addNewFile"
+      >
+        Add file
+      </button>
+    </form>
+  </div>
 </template>
 
 <script>
@@ -31,6 +48,7 @@ export default defineComponent({
   },
   data: function () {
     return {
+      addFilePath: null,
       selectedFile: null,
       nodes: [],
       config: {
@@ -73,6 +91,25 @@ export default defineComponent({
     },
     onFileDeselected: function () {
       this.selectedFile = null;
+    },
+    addNewFile: function () {
+      if (!this.addFilePath) {
+        return;
+      }
+      const node = {
+        id: this.addFilePath,
+        name: this.addFilePath,
+        path: this.addFilePath,
+        text: this.addFilePath,
+        isRoot: false,
+      };
+      if (this.addFilePath.includes("/")) {
+        node.text = this.addFilePath.split("/").slice(0, -1).join("/");
+        node.isRoot = true;
+      }
+      this.nodes[this.addFilePath] = node;
+      this.$emit("file-add", this.addFilePath);
+      this.addFilePath = null;
     },
   },
 });

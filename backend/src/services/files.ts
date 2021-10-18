@@ -39,7 +39,7 @@ export const deleteFiles = async (
 ) => {
   return Promise.all(
     Object.entries(files).map(([path]) =>
-      rm(`${config.volumeRoot}/${projectName}/${path}`)
+      rm(`${config.volumeRoot}/${projectName}/${path}`, { recursive: true })
     )
   );
 };

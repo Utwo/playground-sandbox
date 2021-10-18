@@ -93,7 +93,7 @@ export default function (io) {
   };
 
   const sendFilesFromSandboxWs = async function (socket) {
-    const projectName = socket.data.projectName;
+    const { projectName } = socket.data;
     const allFiles = await getAllFiles(
       `${config.volumeRoot}/${projectName}`,
       {}
@@ -142,8 +142,9 @@ export default function (io) {
     try {
       const socket = this;
       const { files } = req;
-      await addFiles(socket.data.projectName, files);
-      socket.emit("files:add", files);
+      const { projectName } = socket.data;
+      await addFiles(projectName, files);
+      socket.to(projectName).emit("files:add", files);
     } catch (err) {
       console.error(err);
     }
@@ -153,8 +154,10 @@ export default function (io) {
     try {
       const socket = this;
       const { files } = req;
-      await deleteFiles(socket.data.projectName, files);
-      socket.emit("files:deleted", { files });
+      const { projectName } = socket.data;
+
+      await deleteFiles(projectName, files);
+      socket.to(projectName).emit("files:deleted", { files });
     } catch (err) {
       console.error(err);
     }
@@ -166,11 +169,11 @@ export default function (io) {
 
   return {
     socketConnected,
-    sendFilesFromSandboxWs,
+
     startNewTerminalCommandWs,
     execCommandWs,
-    socketDisconnectWs,
     addFilesWs,
     deleteFilesWs,
+    socketDisconnectWs,
   };
 }
