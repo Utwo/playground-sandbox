@@ -124,9 +124,10 @@ export const initVolume = async (
     return;
   }
 
-  console.log("Extracting archive for template");
+  console.log(`Extracting archive for template ${template}`);
   await tar.x({
     file: `./app-templates/${config.appTemplates[template].archive}`,
     C: projectPath,
+    stripComponents: 1,
   });
 };

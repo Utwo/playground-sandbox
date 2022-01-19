@@ -7,6 +7,7 @@
 - [ ] Add terminal support
 - [ ] Loading state on create contaniner
 - [ ] Test with gVizor
+- [ ] Try with a tool that provides local development for k8s like Okteto or Werf
 - [ ] Add a proper readme
 
 ### 1. Create cluster with volume claim
@@ -64,4 +65,10 @@ $ echo "127.0.0.1   abc.playground-sandbox.com" >> /etc/hosts
 ```
 $ cd backend
 $ npm run dev
+```
+
+### Compress an archive for templates
+
+```
+$ tar -cf playground-sandbox.tar.xz ./playground-sandbox
 ```

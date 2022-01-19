@@ -21,16 +21,24 @@ export const config: {
   volumeRoot: string;
 } = {
   appTemplates: {
-    nextApp: {
-      image: "node:16-alpine",
+    vueApp: {
+      image: "node:17-alpine",
       command: ["npm run dev"],
       args: [],
       port: 3000,
       env: [],
-      archive: "next-app.tar.gz",
+      archive: "vueApp.tar.gz",
+    },
+    nextApp: {
+      image: "node:17-alpine",
+      command: ["npm run dev"],
+      args: [],
+      port: 3000,
+      env: [],
+      archive: "nextApp.tar.gz",
     },
     nodeApp: {
-      image: "node:16-alpine",
+      image: "node:17-alpine",
       command: ["sleep"],
       args: ["infinity"],
       port: 3000,
