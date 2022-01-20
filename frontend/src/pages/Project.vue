@@ -48,11 +48,17 @@ export default {
   },
   created: function () {
     const { projectName } = this.$route.params;
-    const { template, gitUrl, gitBranch, image, command, port } =
+    const { gitUrl, gitBranch, gitPath, image, command, port } =
       this.$route.query;
-    const query = template
-      ? { projectName, template }
-      : { projectName, gitUrl, gitBranch, image, command, port };
+    const query = {
+      projectName,
+      gitUrl,
+      gitBranch,
+      gitPath,
+      image,
+      command,
+      port,
+    };
 
     this.socket = io("ws://localhost:8888", {
       transports: ["websocket"],

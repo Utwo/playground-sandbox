@@ -64,7 +64,7 @@ setInterval(async () => {
           console.error(err);
         });
     });
-}, 60 * 10000);
+}, 60 * 1000);
 
 server.listen(config.port, () => {
   console.info(`> Ready on http://localhost:${config.port}`);

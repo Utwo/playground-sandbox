@@ -2,13 +2,18 @@
 
 ## Todo
 
+- [x] For templates, clone directly from github
+- [ ] Update to vue 3 reactive model
 - [ ] Create files
-- [ ] Add node_modules to archive
+- [ ] Have a small node server on every pod or a single server on core backend?
+  - Single server on the backend means that we should have a shared volume for all pods in order to comunicate with the pod. Not good if many containers will write to the same volume I guess.
+  - Small server on every pod means that we will instantiate a new server that will comunicate with our backend for CRUD file operations. We can also expose logs and start new terminals. Don't know if I need to expose this API and if yes how to handle auth and authz?
 - [ ] Add terminal support
 - [ ] Loading state on create contaniner
 - [ ] Test with gVizor
 - [ ] Try with a tool that provides local development for k8s like Okteto or Werf
 - [ ] Add a proper readme
+- [ ] Deploy to cloud
 
 ### 1. Create cluster with volume claim
 
@@ -36,6 +41,8 @@ $ kubectl exec -i -t dnsutils -- nslookup kubernetes.default
 ### Restart nginx
 
 ```
+Take nginx.conf from ./k8s folder and update nginx.conf from nginx k8s pod
+Reload nginx
 $ nginx -s reload -c ./nginx.conf
 ```
 

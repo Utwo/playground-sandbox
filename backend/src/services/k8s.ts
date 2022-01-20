@@ -1,7 +1,7 @@
 import k8s from "@kubernetes/client-node";
 import { rm } from "fs/promises";
 import stream from "stream";
-import { AppTemplate, config } from "../config.js";
+import { ContainerConfig, config } from "../config.js";
 
 const kc = new k8s.KubeConfig();
 kc.loadFromDefault();
@@ -43,7 +43,7 @@ export const sendLogsFromSandbox = async (
 
 export const createSandbox = async (
   projectName: string,
-  containerOptions: AppTemplate
+  containerOptions: ContainerConfig
 ) => {
   const [pod, service] = await Promise.all([
     k8sApi.createNamespacedPod(config.sandboxNamespace, {

@@ -1,5 +1,7 @@
-import fs from "fs";
 import tar from "tar";
+import fs from "node:fs";
+import { pipeline } from "node:stream";
+import { promisify } from "node:util";
 import {
   writeFile,
   rm,
@@ -10,8 +12,12 @@ import {
   stat,
 } from "fs/promises";
 import path from "node:path";
+import fetch from "node-fetch";
 import { config, GitClone } from "../config.js";
-import { clone } from "./git.js";
+import { URL } from "url";
+import { getRepoInfo } from "./git.js";
+
+const streamPipeline = promisify(pipeline);
 
 type File = {
   name: string;
@@ -81,7 +87,7 @@ export const getAllFiles = async (
   files.sort((a, b) => +b.isDir - +a.isDir);
 
   for (const file of files) {
-    if ([".next", "dist", "node_modules"].includes(file.name)) {
+    if ([".next", "dist", "node_modules", ".git"].includes(file.name)) {
       continue;
     }
     const filePath = file.absolutePath.split("/").slice(4).join("/");
@@ -106,11 +112,7 @@ export const getAllFiles = async (
   return objectOfFiles;
 };
 
-export const initVolume = async (
-  projectName: string,
-  template?: string,
-  gitClone?: GitClone
-) => {
+export const initVolume = async (projectName: string, gitClone?: GitClone) => {
   const projectPath = `${config.volumeRoot}/${projectName}`;
   const projectDir = await mkdir(projectPath, { recursive: true });
 
@@ -118,16 +120,32 @@ export const initVolume = async (
     return;
   }
 
-  // created project directory, project is new and folder is empty
-  if (gitClone.url) {
-    await clone(projectPath, gitClone);
-    return;
-  }
+  console.log(`Cloning repo for ${projectName}`);
 
-  console.log(`Extracting archive for template ${template}`);
-  await tar.x({
-    file: `./app-templates/${config.appTemplates[template].archive}`,
-    C: projectPath,
-    stripComponents: 1,
-  });
+  const repoUrl = new URL(`${gitClone.url}/tree/${gitClone.branch}`);
+  const repoInfo = await getRepoInfo(repoUrl, gitClone.path);
+
+  console.log(repoInfo);
+
+  const response = await fetch(
+    `https://codeload.github.com/${repoInfo.username}/${repoInfo.name}/tar.gz/${repoInfo.branch}`
+  );
+
+  if (!response.ok)
+    throw new Error(`unexpected response ${response.statusText}`);
+
+  await streamPipeline(
+    response.body,
+    tar.extract(
+      {
+        cwd: projectPath,
+        strip: repoInfo.filePath ? repoInfo.filePath.split("/").length + 1 : 1,
+      },
+      [
+        `${repoInfo.name}-${repoInfo.branch}${
+          repoInfo.filePath ? `/${repoInfo.filePath}` : ""
+        }`,
+      ]
+    )
+  );
 };

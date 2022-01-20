@@ -1,5 +1,5 @@
 import stream from "stream";
-import { AppTemplate, config, GitClone } from "../config.js";
+import { config, ContainerConfig, GitClone } from "../config.js";
 import {
   addFiles,
   checkIfFileExist,
@@ -19,9 +19,9 @@ export default function (io) {
     console.info("New client connected");
     const {
       projectName,
-      template,
       gitUrl,
       gitBranch,
+      gitPath,
       command,
       image,
       args,
@@ -30,27 +30,28 @@ export default function (io) {
     } = socket.handshake.query;
     socket.data.projectName = projectName;
     socket.join(projectName);
-    const gitClone: GitClone = { url: gitUrl, branch: gitBranch };
-    let containerOptions: AppTemplate = {
+    const gitClone: GitClone = {
+      url: gitUrl,
+      branch: gitBranch,
+      path: gitPath,
+    };
+
+    let containerOptions: ContainerConfig = {
       command,
       image,
       args,
       port: +port,
       env,
     };
-    if (config.appTemplates[template]) {
-      containerOptions = config.appTemplates[template];
-    }
-    init(projectName, socket, containerOptions, true, gitClone, template);
+    init(projectName, socket, containerOptions, true, gitClone);
   };
 
   const init = async (
     projectName: string,
     socket,
-    containerOptions: AppTemplate,
+    containerOptions: ContainerConfig,
     firstTry: boolean,
-    gitClone?: GitClone,
-    template?: string
+    gitClone?: GitClone
   ) => {
     try {
       await getPodStatus(projectName);
@@ -65,7 +66,7 @@ export default function (io) {
       }
 
       // pod not found, lets create a new one
-      await initVolume(projectName, template, gitClone);
+      await initVolume(projectName, gitClone);
       const isPackageLock = await checkIfFileExist(
         projectName,
         "package-lock.json"
@@ -86,8 +87,7 @@ export default function (io) {
         socket,
         containerOptions,
         false,
-        gitClone,
-        template
+        gitClone
       );
     }
   };

@@ -66,6 +66,16 @@
             />
           </div>
           <div class="mb-3">
+            <label for="gitPath" class="form-label">Git Path</label>
+            <input
+              type="text"
+              id="gitPath"
+              class="form-control"
+              v-model="gitPath"
+              placeholder="/"
+            />
+          </div>
+          <div class="mb-3">
             <label for="image" class="form-label">Image URL</label>
             <input
               type="text"
@@ -115,6 +125,25 @@
 </template>
 
 <script>
+const templateConfig = {
+  nextApp: {
+    gitUrl: "https://github.com/vercel/next.js",
+    gitBranch: "canary",
+    gitPath: "/examples/hello-world",
+    image: "node:17",
+    command: "npm run dev",
+    port: 3000,
+  },
+  vueApp: {
+    gitUrl: "https://github.com/vitejs/vite",
+    gitBranch: "main",
+    gitPath: "/packages/create-vite/template-vue",
+    image: "node:17",
+    command: "npm run dev",
+    port: 3000,
+  },
+};
+
 export default {
   data() {
     return {
@@ -123,7 +152,8 @@ export default {
       template: "nextApp",
       gitUrl: "",
       gitBranch: "main",
-      image: "node:16-alpine",
+      gitPath: "/",
+      image: "node:17",
       command: "npm run dev",
       port: 3000,
     };
@@ -131,7 +161,7 @@ export default {
   computed: {
     routeQueryString() {
       if (this.isTemplate) {
-        return { template: this.template };
+        return templateConfig[this.template];
       }
 
       return {
