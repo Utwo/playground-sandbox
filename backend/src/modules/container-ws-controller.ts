@@ -55,9 +55,11 @@ export default function (io) {
   ) => {
     try {
       await getPodStatus(projectName);
-      sendFilesFromSandboxWs(socket).catch(console.error);
+      sendFilesFromSandboxWs(socket).catch((error) =>
+        console.error(error.message)
+      );
       sendLogsFromSandbox(projectName as string, io, socket.id, false).catch(
-        console.error
+        (error) => console.error(error.message)
       );
     } catch (e) {
       if (e.statusCode !== 404 || !firstTry) {
@@ -77,7 +79,7 @@ export default function (io) {
       try {
         await createSandbox(projectName, containerOptions);
       } catch (e) {
-        console.log(e.message);
+        console.error(e.message);
       }
       console.info("Container created");
       setTimeout(

@@ -9,7 +9,7 @@
   - Single server on the backend means that we should have a shared volume for all pods in order to comunicate with the pod. Not good if many containers will write to the same volume I guess.
   - Small server on every pod means that we will instantiate a new server that will comunicate with our backend for CRUD file operations. We can also expose logs and start new terminals. Don't know if I need to expose this API and if yes how to handle auth and authz?
 - [ ] Add terminal support
-- [ ] Loading state on create contaniner
+- [x] Loading state on create contaniner
 - [ ] Test with gVizor
 - [ ] Try with a tool that provides local development for k8s like Okteto or Werf
 - [ ] Add a proper readme

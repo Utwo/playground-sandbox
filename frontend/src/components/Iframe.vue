@@ -10,8 +10,10 @@
       Reload
     </button>
   </div>
+  <div v-if="loading">Loading...</div>
   <iframe
     :src="iframeSrc"
+    v-if="!loading"
     crossorigin="anonymous"
     target="_parent"
     ref="iframe"
@@ -32,7 +34,24 @@ export default {
     return {
       path: "/",
       iframeSrc: `http://${this.projectName}.playground-sandbox.com:8000`,
+      loading: true,
+      interval: null,
     };
+  },
+  mounted() {
+    this.interval = setInterval(() => {
+      fetch(this.iframeSrc)
+        .then(() => {
+          this.loading = false;
+          clearInterval(this.interval);
+        })
+        .catch(() => {
+          this.loading = true;
+        });
+    }, 1000);
+  },
+  unmounted() {
+    clearInterval(this.interval);
   },
   methods: {
     reloadIframe() {

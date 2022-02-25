@@ -68,6 +68,9 @@ export default {
       console.log("connected");
     });
   },
+  unmounted() {
+    this.socket.close();
+  },
   methods: {
     onCreateSandbox() {
       createSandbox({
