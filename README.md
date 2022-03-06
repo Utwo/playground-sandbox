@@ -10,6 +10,7 @@
   - Small server on every pod means that we will instantiate a new server that will comunicate with our backend for CRUD file operations. We can also expose logs and start new terminals. Don't know if I need to expose this API and if yes how to handle auth and authz?
 - [ ] Add terminal support
 - [x] Loading state on create contaniner
+- [ ] We can use watch and then push a message to the fr that the container is ready
 - [ ] Test with gVizor
 - [ ] Try with a tool that provides local development for k8s like Okteto or Werf
 - [ ] Add a proper readme

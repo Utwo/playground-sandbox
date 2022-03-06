@@ -1,18 +1,16 @@
-FROM node:16-alpine AS build
+FROM node:17-alpine AS build
 
 WORKDIR /app
 
 # Install app dependencies
-COPY package.json package-lock.json ./
+COPY package.json yarn.lock ./
 
-RUN npm ci
+RUN yarn install
 
 # Bundle app source
 COPY . .
 
-# Remove packages specified in your devDependencies
-RUN npm prune --production
-
 # USER node
 
-CMD ["npm", "start"]
+EXPOSE 8888
+CMD ["npm", "run", "dev"]

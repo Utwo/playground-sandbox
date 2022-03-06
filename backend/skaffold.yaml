@@ -1,0 +1,34 @@
+apiVersion: skaffold/v2beta22
+kind: Config
+profiles:
+  - name: dev
+    activation:
+      - command: dev
+    build:
+      artifacts:
+        - image: node-app
+          context: .
+          sync:
+            manual:
+              - src: "src/**/*.ts"
+                dest: .
+deploy:
+  kubectl:
+    manifests:
+      - k8s/service.yaml
+      - k8s/deployment.yaml
+      - k8s/role.yaml
+      - k8s/role-binding.yaml
+      - k8s/service-account.yaml
+      - k8s/volume.yaml
+      - k8s/nginx-rc.yaml
+      - k8s/nginx-service.yaml
+portForward:
+  - resourceType: service
+    resourceName: app-svc
+    port: 8888
+    localPort: 8888
+  - resourceType: service
+    resourceName: nginx
+    port: 80
+    localPort: 80

@@ -133,6 +133,10 @@ export const stopSandbox = async (
 };
 
 export const getAllPods = async () => {
-  const pods = await k8sApi.listNamespacedPod(config.sandboxNamespace);
-  return pods.body.items;
+  try {
+    const pods = await k8sApi.listNamespacedPod(config.sandboxNamespace);
+    return pods.body.items;
+  } catch (err) {
+    console.error(err.message);
+  }
 };
