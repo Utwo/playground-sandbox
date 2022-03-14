@@ -61,11 +61,9 @@ export default defineComponent({
   mounted() {
     this.socket.on("sandbox:files:tree", (nodes) => {
       this.nodes = nodes;
-      this.config.roots = Object.keys(nodes).map((nodeId) => {
-        if (nodes[nodeId].isRoot) {
-          return nodeId;
-        }
-      });
+      this.config.roots = Object.keys(nodes).filter(
+        (nodeId) => nodes[nodeId].isRoot
+      );
     });
     this.socket.on("files:deleted", ({ files }) => {
       Object.keys(files).forEach((fileId) => {

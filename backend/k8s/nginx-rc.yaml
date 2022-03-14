@@ -13,5 +13,5 @@ spec:
         app: nginx
     spec:
       containers:
-        - image: quay.io/robszumski/k8s-service-proxy
+        - image: utwo/nginx-proxy:v1
           name: nginx

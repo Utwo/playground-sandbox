@@ -33,7 +33,7 @@ export default {
   data: function () {
     return {
       path: "/",
-      iframeSrc: `http://${this.projectName}.playground-sandbox.com:8000`,
+      iframeSrc: `http://${this.projectName}.playground-sandbox.com:8088`,
       loading: true,
       interval: null,
     };

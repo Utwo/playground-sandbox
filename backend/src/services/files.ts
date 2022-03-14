@@ -85,12 +85,12 @@ export const getAllFiles = async (
 
   const files = await Promise.all(filesPromise);
   files.sort((a, b) => +b.isDir - +a.isDir);
-
   for (const file of files) {
     if ([".next", "dist", "node_modules", ".git"].includes(file.name)) {
       continue;
     }
-    const filePath = file.absolutePath.split("/").slice(4).join("/");
+    const sliceLength = config.volumeRoot.split("/").length + 1;
+    const filePath = file.absolutePath.split("/").slice(sliceLength).join("/");
     objectOfFiles[filePath] = {
       name: file.name,
       path: filePath,
@@ -104,11 +104,14 @@ export const getAllFiles = async (
     }
 
     if (file.isDir) {
-      const children = await getAllFiles(file.absolutePath, {}, false);
-      objectOfFiles[filePath].children = Object.keys(children);
-      objectOfFiles = { ...objectOfFiles, ...children };
+      const childrens = await getAllFiles(file.absolutePath, {}, false);
+      objectOfFiles[filePath].children = Object.keys(childrens).filter(
+        (children) => path.relative(children, filePath) === ".."
+      );
+      objectOfFiles = { ...objectOfFiles, ...childrens };
     }
   }
+
   return objectOfFiles;
 };
 

@@ -26,9 +26,11 @@ deploy:
 portForward:
   - resourceType: service
     resourceName: app-svc
+    namespace: default
     port: 8888
     localPort: 8888
   - resourceType: service
     resourceName: nginx
+    namespace: default
     port: 80
-    localPort: 80
+    localPort: 8088
