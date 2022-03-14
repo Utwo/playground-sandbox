@@ -23,5 +23,5 @@ export const config: {
   sandboxNamespace: "public",
   sandboxContainerName: "node-app",
   port: +process.env.PORT || 8888,
-  volumeRoot: "/tmp/k3dvol",
+  volumeRoot: "projects",
 };

@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   name: modify-pods
+  namespace: public
 rules:
-  - apiGroups: [""]
+  - apiGroups:
+      - "*"
     resources:
-      - pods
+      - "*"
     verbs:
-      - get
-      - list
-      - delete
+      - "*"

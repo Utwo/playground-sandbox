@@ -7,6 +7,7 @@ metadata:
     app: app
 spec:
   replicas: 1
+
   selector:
     matchLabels:
       app: app
@@ -16,9 +17,17 @@ spec:
         app: app
     spec:
       serviceAccountName: internal-kubectl
+      volumes:
+        - name: project-pv-storage
+          persistentVolumeClaim:
+            claimName: projects-pv-claim-default
       containers:
         - name: app
           image: node-app
+          workingDir: /app
+          volumeMounts:
+            - mountPath: /app/projects
+              name: project-pv-storage
           resources:
             limits:
               memory: 512Mi
