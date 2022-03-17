@@ -1,4 +1,8 @@
 <template>
+  <div class="exec">
+    <Terminal :socket="socket" :project-name="$route.params.projectName" />
+    <button @click="attachSSH" class="btn btn-primary">Execute</button>
+  </div>
   <div class="main">
     <div class="sidebar">
       <TreeView
@@ -20,7 +24,7 @@
       <Iframe :project-name="$route.params.projectName" />
     </div>
     <div class="terminal">
-      <Terminal :socket="socket" :project-name="$route.params.projectName" />
+      <Log :socket="socket" :project-name="$route.params.projectName" />
     </div>
   </div>
 </template>
@@ -28,17 +32,19 @@
 <script>
 import { io } from "socket.io-client";
 import { createSandbox, stopSandbox } from "../services/httpApi";
-import Terminal from "../components/Terminal.vue";
+import Log from "../components/Log.vue";
 import Iframe from "../components/Iframe.vue";
 import CodeEditor from "../components/CodeEditor.vue";
 import TreeView from "../components/TreeView.vue";
+import Terminal from "../components/Terminal.vue";
 
 export default {
   components: {
-    Terminal,
+    Log,
     Iframe,
     CodeEditor,
     TreeView,
+    Terminal,
   },
   data() {
     return {
@@ -92,6 +98,9 @@ export default {
     },
     onFileAdd(path) {
       this.socket.emit("files:add", { files: { [path]: "" } });
+    },
+    attachSSH() {
+      this.socket.emit("sandbox:terminal:start");
     },
   },
 };

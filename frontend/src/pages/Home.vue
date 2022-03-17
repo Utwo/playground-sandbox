@@ -125,24 +125,7 @@
 </template>
 
 <script>
-const templateConfig = {
-  nextApp: {
-    gitUrl: "https://github.com/vercel/next.js",
-    gitBranch: "canary",
-    gitPath: "/examples/hello-world",
-    image: "node:17",
-    command: "npm run dev",
-    port: 3000,
-  },
-  vueApp: {
-    gitUrl: "https://github.com/vitejs/vite",
-    gitBranch: "main",
-    gitPath: "/packages/create-vite/template-vue",
-    image: "node:17",
-    command: "npm run dev",
-    port: 3000,
-  },
-};
+import { templateConfig } from "../config";
 
 export default {
   data() {

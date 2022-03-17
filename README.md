@@ -3,9 +3,9 @@
 ## Todo
 
 - [x] For templates, clone directly from github
+- [ ] Add terminal support
 - [ ] Update to vue 3 reactive model
 - [ ] Create files
-- [ ] Add terminal support
 - [ ] We can use watch and then push a message to the fr that the container is ready
 - [ ] Test with gVizor
 - [ ] Add a proper readme

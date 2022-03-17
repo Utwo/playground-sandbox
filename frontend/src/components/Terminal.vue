@@ -7,6 +7,7 @@ import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { WebLinksAddon } from "xterm-addon-web-links";
 import { SearchAddon } from "xterm-addon-search";
+import { AttachAddon } from "xterm-addon-attach";
 
 import "xterm/css/xterm.css";
 import { Socket } from "socket.io-client";
@@ -33,60 +34,7 @@ const defaultTheme = {
   white: "#e5e5e5",
   brightWhite: "#ffffff",
 };
-const bindTerminalResize = (term, websocket) => {
-  const onTermResize = (size) => {
-    // websocket.send(
-    //   JSON.stringify({
-    //     type: 'resize',
-    //     rows: size.rows,
-    //     cols: size.cols
-    //   })
-    // )
-    // websocket.send("2" + Base64.encode(size.rows + ":" + size.cols));
-  };
-  // register resize event.
-  term.onTermResize("resize", onTermResize);
-  // unregister resize event when WebSocket closed.
-  websocket.addEventListener("close", function () {
-    term.off("resize", onTermResize);
-  });
-};
 
-const bindTerminal = (term, websocket, bidirectional, bufferedTime) => {
-  term.socket = websocket;
-  let messageBuffer = null;
-  const handleWebSocketMessage = function (ev) {
-    if (bufferedTime && bufferedTime > 0) {
-      if (messageBuffer) {
-        messageBuffer += ev.data;
-      } else {
-        messageBuffer = ev.data;
-        setTimeout(function () {
-          term.write(messageBuffer);
-        }, bufferedTime);
-      }
-    } else {
-      term.write(ev.data);
-    }
-  };
-
-  const handleTerminalData = function (data) {
-    websocket.send("0" + Base64.encode(data));
-    // term.write(data)
-  };
-
-  websocket.onmessage = handleWebSocketMessage;
-  if (bidirectional) {
-    term.on("data", handleTerminalData);
-  }
-
-  websocket.addEventListener("close", function () {
-    websocket.removeEventListener("message", handleWebSocketMessage);
-    term.off("data", handleTerminalData);
-    delete term.socket;
-    clearInterval(heartBeatTimer);
-  });
-};
 export default {
   props: {
     socket: {
@@ -114,9 +62,7 @@ export default {
       rendererType: "canvas",
       rows: this.rows,
       cols: this.cols,
-      convertEol: true,
       scrollback: 10,
-      disableStdin: false,
       fontSize: 18,
       cursorBlink: true,
       cursorStyle: "bar",
@@ -126,30 +72,34 @@ export default {
     this.term.loadAddon(this.fitAddon);
     this.term.loadAddon(new WebLinksAddon());
     this.term.loadAddon(new SearchAddon());
+    this.term.loadAddon(new AttachAddon(this.socket));
 
-    this.term.prompt = () => {
-      this.term.write("\r\n");
-    };
-    this.term.prompt();
-
-    // this.term.onKey(function (key, ev) {
-    //   console.log(key, ev);
-    // });
     this.term.open(this.$refs.terminal);
-    // this.term.onResize("resize", this.onWindowResize);
-    // window.addEventListener("resize", this.onWindowResize);
     this.fitAddon.fit();
+    this.term.focus();
+    this.term.writeln(
+      "Terminal (" + this.term.cols + "x" + this.term.rows + ")\n\r"
+    );
 
-    this.socket.on("sandbox:log:data", (data) => {
-      this.term.write(data);
+    this.term.onKey((e) => {
+      const ev = e.domEvent;
+      const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
+      if (ev.keyCode === 13) {
+        this.term.write("\r\n");
+      } else if (ev.keyCode === 8) {
+        // Do not delete the prompt
+        if (term._core.buffer.x > 2) {
+          this.term.write("\b \b");
+        }
+      } else if (printable) {
+        this.term.write(e.key);
+      }
+      this.socket.emit("sandbox:attach:data", e.key);
     });
 
-    // this.ws.onclose = () => {
-    //   this.term.setOption("cursorBlink", false);
-    //   this.$message("console.web_socket_disconnect");
-    // };
-    // bindTerminal(this.term, this.ws, true, -1);
-    // bindTerminalResize(this.term, this.ws);
+    this.socket.on("sandbox:attach:data", (data) => {
+      this.term.write(data);
+    });
   },
 
   methods: {

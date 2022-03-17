@@ -103,34 +103,69 @@ export default function (io) {
     socket.emit("sandbox:files:tree", allFiles);
   };
 
-  const startNewTerminalCommandWs = function (req) {
-    const { projectName } = req;
+  const startNewTerminalCommandWs = async function (req) {
     const socket = this;
+    const { projectName } = socket.data;
+
+    // const writeLogStream = new stream.Writable();
+    // readLogStream.on("data", (chunk) => {
+    //   console.log("yyyyayyyy");
+    //   socket.emit("terminal:data", chunk.toString());
+    // });
+    // writeLogStream.on("data", (chunk) => {
+    //   console.log("yyyyayyyy");
+    //   socket.emit("terminal:data", chunk.toString());
+    // });
+    // writeLogStream.on("error", (chunk) => {
+    //   console.error("ooooooops");
+    //   socket.emit("terminal:error", chunk.toString());
+    // });
+    // writeLogStream.on("end", () => {
+    //   console.info("End log stream");
+    // });
+
     const readLogStream = new stream.Readable({
-      read() {},
-    });
-    const writeLogStream = new stream.Writable();
-    socket.data.readLogStream = readLogStream;
-
-    writeLogStream.on("data", (chunk) =>
-      socket.emit("terminal:data", chunk.toString())
-    );
-    writeLogStream.on("error", (chunk) =>
-      socket.emit("terminal:error", chunk.toString())
-    );
-    writeLogStream.on("end", () => {
-      console.info("End log stream");
+      read(size) {
+        return;
+      },
     });
 
-    k8sAttach.attach(
+    socket.emit("sandbox:attach:data", "test");
+    socket.on("sandbox:attach:data", async (command) => {
+      console.log("command", command);
+      readLogStream.push("ls -a");
+    });
+
+    const logStream = new stream.PassThrough();
+    logStream.setEncoding("utf-8");
+    logStream.on("data", (chunk) => {
+      console.log("merge", chunk);
+    });
+    logStream.on("error", (chunk) => console.error(chunk));
+
+    const sock = await k8sAttach.attach(
       config.sandboxNamespace,
       projectName,
       config.sandboxContainerName,
-      writeLogStream,
-      writeLogStream,
+      logStream,
+      logStream,
       readLogStream,
       false
     );
+
+    sock.emit("message", "ls -a");
+    sock.emit("data", "ls -a");
+    sock.on("onMessage", (chunk) => {
+      console.log("merge1", chunk);
+    });
+    sock.on("onError", (chunk) => {
+      console.log("merge2", chunk);
+    });
+    sock.on("onOpen", (chunk) => {
+      console.log("merge3", chunk);
+    });
+    console.log(123);
+    readLogStream.push("ls -a");
   };
 
   const execCommandWs = function (req) {
@@ -171,7 +206,6 @@ export default function (io) {
 
   return {
     socketConnected,
-
     startNewTerminalCommandWs,
     execCommandWs,
     addFilesWs,
