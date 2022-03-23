@@ -21,7 +21,7 @@
       />
     </div>
     <div class="preview">
-      <Iframe :project-name="$route.params.projectName" />
+      <Iframe :socket="socket" :project-name="$route.params.projectName" />
     </div>
     <div class="terminal">
       <Log :socket="socket" :project-name="$route.params.projectName" />
@@ -49,6 +49,7 @@ export default {
   data() {
     return {
       socket: null,
+      terminalWs: null,
       filePath: "",
     };
   },
@@ -73,9 +74,22 @@ export default {
     this.socket.on("connect", () => {
       console.log("connected");
     });
+    // this.terminalWs = io(`ws://localhost:8888/${projectName}`, {
+    //   transports: ["websocket"],
+    //   forceNew: true,
+    //   query,
+    // });
+    // this.terminalWs.on("connect", () => {
+    //   console.log("connected");
+    //   setTimeout(() => {
+    //     this.terminalWs.emit("exec", "ls -l");
+    //   }, 2000);
+    //   this.terminalWs.emit("exec", "ls -l");
+    // });
   },
   unmounted() {
     this.socket.close();
+    // this.terminalWs.close();
   },
   methods: {
     onCreateSandbox() {

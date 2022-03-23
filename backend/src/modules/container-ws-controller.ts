@@ -1,4 +1,6 @@
 import stream from "stream";
+import WebSocket from "isomorphic-ws";
+import fs from "fs";
 import { config, ContainerConfig, GitClone } from "../config.js";
 import {
   addFiles,
@@ -10,7 +12,8 @@ import {
 import {
   createSandbox,
   getPodStatus,
-  k8sAttach,
+  k8sApi,
+  k8sExec,
   sendLogsFromSandbox,
 } from "../services/k8s.js";
 
@@ -55,6 +58,7 @@ export default function (io) {
   ) => {
     try {
       await getPodStatus(projectName);
+
       sendFilesFromSandboxWs(socket).catch((error) =>
         console.error(error.message)
       );
@@ -103,69 +107,175 @@ export default function (io) {
     socket.emit("sandbox:files:tree", allFiles);
   };
 
+  const startNewTerminalCommandWs1 = async function (podName) {
+    const k8sApiResp = await k8sApi.getAPIResources();
+    console.log(process.env.KUBERNETES_SERVICE_HOST);
+    // console.log(JSON.stringify(k8sApi, null, 2));
+    // console.log(JSON.stringify(k8sAttach, null, 2));
+    const podUrl = `wss://10.43.0.1/api/v1/namespaces/${config.sandboxNamespace}/pods/${podName}/exec?command=echo&command=foo&stderr=true&stdout=true`;
+    return new WebSocket(
+      podUrl,
+      [
+        "v4.channel.k8s.io",
+        "v3.channel.k8s.io",
+        "v2.channel.k8s.io",
+        "channel.k8s.io",
+      ],
+      {
+        ca: fs.readFileSync(
+          "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        ),
+        cert: fs.readFileSync(
+          "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        ),
+        key: fs.readFileSync(
+          "/var/run/secrets/kubernetes.io/serviceaccount/token"
+        ),
+        headers: {
+          // @ts-ignore
+          Authorization: k8sApiResp.response.request.headers["Authorization"],
+        },
+      }
+    );
+  };
+
   const startNewTerminalCommandWs = async function (req) {
     const socket = this;
     const { projectName } = socket.data;
 
-    // const writeLogStream = new stream.Writable();
-    // readLogStream.on("data", (chunk) => {
-    //   console.log("yyyyayyyy");
-    //   socket.emit("terminal:data", chunk.toString());
-    // });
-    // writeLogStream.on("data", (chunk) => {
-    //   console.log("yyyyayyyy");
-    //   socket.emit("terminal:data", chunk.toString());
-    // });
-    // writeLogStream.on("error", (chunk) => {
-    //   console.error("ooooooops");
-    //   socket.emit("terminal:error", chunk.toString());
-    // });
-    // writeLogStream.on("end", () => {
-    //   console.info("End log stream");
-    // });
-
-    const readLogStream = new stream.Readable({
-      read(size) {
-        return;
+    const writeLogStream = new stream.Writable({
+      write(chunk, encoding, next) {
+        console.log(chunk.toString());
+        socket.emit("sandbox:attach:data", chunk.toString());
+        next();
       },
     });
 
-    socket.emit("sandbox:attach:data", "test");
+    writeLogStream.on("data", (chunk) => {
+      console.log("writeLogStream");
+      socket.emit("terminal:data", chunk.toString());
+    });
+    writeLogStream.on("error", (chunk) => {
+      console.error("ooooooops");
+      socket.emit("terminal:error", chunk.toString());
+    });
+    writeLogStream.on("end", () => {
+      console.info("End log stream");
+    });
+
+    const readLogStream = new stream.Readable({
+      read(size) {
+        // console.log("read");
+      },
+    });
+
     socket.on("sandbox:attach:data", async (command) => {
       console.log("command", command);
-      readLogStream.push("ls -a");
+      readLogStream.push(command);
     });
 
-    const logStream = new stream.PassThrough();
-    logStream.setEncoding("utf-8");
-    logStream.on("data", (chunk) => {
-      console.log("merge", chunk);
-    });
-    logStream.on("error", (chunk) => console.error(chunk));
+    // const osStream = new WritableStreamBuffer();
+    // const errStream = new WritableStreamBuffer();
+    // const isStream = new ReadableStreamBuffer();
+    // const logStream = new stream.PassThrough();
 
-    const sock = await k8sAttach.attach(
-      config.sandboxNamespace,
-      projectName,
-      config.sandboxContainerName,
-      logStream,
-      logStream,
-      readLogStream,
-      false
-    );
+    k8sExec
+      .exec(
+        config.sandboxNamespace,
+        projectName,
+        config.sandboxContainerName,
+        ["bash"],
+        writeLogStream,
+        writeLogStream,
+        // process.stdin as stream.Readable,
+        readLogStream,
+        true /* tty */,
+        (status) => {
+          // tslint:disable-next-line:no-console
+          console.log("Exited with status:");
+          // tslint:disable-next-line:no-console
+          console.log(JSON.stringify(status, null, 2));
+        }
+      )
+      .then((sock) => {
+        console.log("then");
+        // sock.on("message", (data: Buffer) => {
+        //   console.log("message 1234", data.toString("utf8"));
+        // });
+        // readLogStream.push("ls -a \n");
+        // readLogStream.push("touch /opt/test.txt\n");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    readLogStream.push("ls -a \n");
+    //@ts-ignore
+    // let buff = logStream.getContents() as Buffer;
+    // for (let i = 0; i < 1024; i++) {
+    //   expect(buff[i]).to.equal(10);
+    // }
 
-    sock.emit("message", "ls -a");
-    sock.emit("data", "ls -a");
-    sock.on("onMessage", (chunk) => {
-      console.log("merge1", chunk);
-    });
-    sock.on("onError", (chunk) => {
-      console.log("merge2", chunk);
-    });
-    sock.on("onOpen", (chunk) => {
-      console.log("merge3", chunk);
-    });
-    console.log(123);
-    readLogStream.push("ls -a");
+    // sock.send("ls -a", (err) => {
+    //   if (err) {
+    //     console.error(err);
+    //   }
+    // });
+
+    // sock.on("open", (data) => {
+    //   console.log("open");
+    //   sock.on("message", (data) => {
+    //     console.log("message", data);
+    //     socket.emit(data.toString());
+    //   });
+
+    //   socket.on("exec", (message) => {
+    //     console.log("send message", message);
+    //     sock.send(stdin(message));
+    //   });
+    // });
+
+    // sock.on("message", (data: Buffer) => {
+    //   console.log("message 1234", data.toString("utf8"));
+    //   socket.emit(data.toString("utf8"));
+    // });
+
+    // sock.on("error", (error) => {
+    //   console.log(error);
+    //   socket.emit(error.toString());
+    // });
+
+    // sock.on("close", () => {
+    //   console.log("[!]123 k8s socket closed");
+    //   socket.disconnect();
+    // });
+
+    // socket.on("disconnect", () => {
+    //   const closeShell = () => {
+    //     const state = sock.readyState;
+    //     if (state === 0) {
+    //       return setTimeout(closeShell, 1000);
+    //     }
+    //     if (state === 2 || state === 3) {
+    //       return;
+    //     }
+    //     // Exists current shell to prevent zombie processes
+    //     sock.send(stdin("exit\n"));
+    //     sock.close();
+    //   };
+
+    //   closeShell();
+    //   console.log("[!]123 client connection closed");
+    // });
+
+    // sock.addEventListener("message", function (event) {
+    //   console.log("123456 Message from server ", event.data.toString());
+    // });
+    // sock.send("ls -a");
+    // sock.send("ls -a");
+
+    // console.log(123);
+    // readLogStream.push("ls -a");
+    // readLogStream.push(null);
   };
 
   const execCommandWs = function (req) {
@@ -207,6 +317,7 @@ export default function (io) {
   return {
     socketConnected,
     startNewTerminalCommandWs,
+    startNewTerminalCommandWs1,
     execCommandWs,
     addFilesWs,
     deleteFilesWs,

@@ -16,3 +16,5 @@ export const templateConfig = {
     port: 3000,
   },
 };
+
+export const nginxDomain = "playground-sandbox.com:8088";

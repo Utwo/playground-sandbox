@@ -19,9 +19,11 @@ export const config: {
   sandboxContainerName: string;
   port: number;
   volumeRoot: string;
+  removeInactiveSandboxAfter: number;
 } = {
   sandboxNamespace: "public",
   sandboxContainerName: "node-app",
   port: +process.env.PORT || 8888,
   volumeRoot: "projects",
+  removeInactiveSandboxAfter: 60 * 1000,
 };

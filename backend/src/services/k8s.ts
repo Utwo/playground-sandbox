@@ -9,10 +9,55 @@ export const k8sExec = new k8s.Exec(kc);
 export const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
 export const k8sAttach = new k8s.Attach(kc);
 
+// get current user from k8s
+// const cs = await kc.exportConfig();
+// console.log(cs);
+// const cs1 = await kc.getCurrentCluster();
+// console.log(cs1.caFile);
+// const user = await kc.getUser("inClusterUser");
+// console.log(user.token);
+// console.log(user.certData);
+// console.log(user.certFile);
+
+// console.log(user.keyData);
+// console.log(user.keyFile);
+
 const k8sLog = new k8s.Log(kc);
 
+export const initInformer = (io) => {
+  const listFn = () => k8sApi.listNamespacedEvent(config.sandboxNamespace);
+
+  const informer = k8s.makeInformer(
+    kc,
+    `/api/v1/namespaces/${config.sandboxNamespace}/pods`,
+    listFn
+  );
+
+  informer.on("add", (obj: k8s.V1Pod) => {
+    io.to(obj.metadata.name).emit("sandbox:event", obj.status?.phase);
+  });
+
+  informer.on("update", (obj: k8s.V1Pod) => {
+    io.to(obj.metadata.name).emit("sandbox:event", obj.status?.phase);
+  });
+
+  informer.on("error", (err: k8s.CoreV1Event) => {
+    console.error(err);
+    // Restart informer after 5sec
+    setTimeout(() => {
+      informer.start();
+    }, 5000);
+  });
+
+  informer.start();
+};
+
 export const getPodStatus = async (projectName) => {
-  return k8sApi.readNamespacedPodStatus(projectName, config.sandboxNamespace);
+  const resp = await k8sApi.readNamespacedPodStatus(
+    projectName,
+    config.sandboxNamespace
+  );
+  return resp.body;
 };
 
 export const sendLogsFromSandbox = async (

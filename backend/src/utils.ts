@@ -7,3 +7,7 @@ export const getActiveRooms = (io) => {
   // Return only the room name:
   return filtered.map((i) => i[0]);
 };
+
+export const stdin = (characters) => {
+  return Buffer.from(`\x00${characters}`, "utf8");
+};

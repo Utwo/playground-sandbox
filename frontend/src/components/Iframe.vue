@@ -10,7 +10,12 @@
       Reload
     </button>
   </div>
-  <div v-if="loading">Loading...</div>
+  <div v-if="loading">
+    <h2>Loading...</h2>
+    <ul>
+      <li v-for="event in events">{{ event }}</li>
+    </ul>
+  </div>
   <iframe
     :src="iframeSrc"
     v-if="!loading"
@@ -23,8 +28,15 @@
 </template>
 
 <script>
+import { Socket } from "socket.io-client";
+import { nginxDomain } from "../config";
+
 export default {
   props: {
+    socket: {
+      type: Socket,
+      required: true,
+    },
     projectName: {
       type: String,
       required: true,
@@ -33,9 +45,10 @@ export default {
   data: function () {
     return {
       path: "/",
-      iframeSrc: `http://${this.projectName}.playground-sandbox.com:8088`,
+      iframeSrc: `http://${this.projectName}.${nginxDomain}`,
       loading: true,
       interval: null,
+      events: [],
     };
   },
   mounted() {
@@ -49,6 +62,10 @@ export default {
           this.loading = true;
         });
     }, 1000);
+
+    this.socket.on("sandbox:event", (data) => {
+      this.events.push(data);
+    });
   },
   unmounted() {
     clearInterval(this.interval);
@@ -58,7 +75,7 @@ export default {
       this.$refs.iframe.src = this.iframeSrc;
     },
     changePath() {
-      this.iframeSrc = `http://${this.projectName}.playground-sandbox.com:8000${this.path}`;
+      this.iframeSrc = `http://${this.projectName}.${nginxDomain}${this.path}`;
     },
   },
 };
