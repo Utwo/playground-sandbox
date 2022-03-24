@@ -33,60 +33,7 @@ const defaultTheme = {
   white: "#e5e5e5",
   brightWhite: "#ffffff",
 };
-const bindTerminalResize = (term, websocket) => {
-  const onTermResize = (size) => {
-    // websocket.send(
-    //   JSON.stringify({
-    //     type: 'resize',
-    //     rows: size.rows,
-    //     cols: size.cols
-    //   })
-    // )
-    // websocket.send("2" + Base64.encode(size.rows + ":" + size.cols));
-  };
-  // register resize event.
-  term.onTermResize("resize", onTermResize);
-  // unregister resize event when WebSocket closed.
-  websocket.addEventListener("close", function () {
-    term.off("resize", onTermResize);
-  });
-};
 
-const bindTerminal = (term, websocket, bidirectional, bufferedTime) => {
-  term.socket = websocket;
-  let messageBuffer = null;
-  const handleWebSocketMessage = function (ev) {
-    if (bufferedTime && bufferedTime > 0) {
-      if (messageBuffer) {
-        messageBuffer += ev.data;
-      } else {
-        messageBuffer = ev.data;
-        setTimeout(function () {
-          term.write(messageBuffer);
-        }, bufferedTime);
-      }
-    } else {
-      term.write(ev.data);
-    }
-  };
-
-  const handleTerminalData = function (data) {
-    websocket.send("0" + Base64.encode(data));
-    // term.write(data)
-  };
-
-  websocket.onmessage = handleWebSocketMessage;
-  if (bidirectional) {
-    term.on("data", handleTerminalData);
-  }
-
-  websocket.addEventListener("close", function () {
-    websocket.removeEventListener("message", handleWebSocketMessage);
-    term.off("data", handleTerminalData);
-    delete term.socket;
-    clearInterval(heartBeatTimer);
-  });
-};
 export default {
   props: {
     socket: {
@@ -103,7 +50,6 @@ export default {
     return {
       fitAddon: new FitAddon(),
       searchKey: "",
-      ws: null,
       term: null,
       rows: 35,
       cols: 100,
@@ -127,24 +73,16 @@ export default {
     this.term.loadAddon(new WebLinksAddon());
     this.term.loadAddon(new SearchAddon());
 
-    // this.term.onKey(function (key, ev) {
-    //   console.log(key, ev);
-    // });
     this.term.open(this.$refs.terminal);
-    // this.term.onResize("resize", this.onWindowResize);
-    // window.addEventListener("resize", this.onWindowResize);
     this.fitAddon.fit();
 
     this.socket.on("sandbox:log:data", (data) => {
       this.term.write(data);
     });
-
-    // this.ws.onclose = () => {
-    //   this.term.setOption("cursorBlink", false);
-    //   this.$message("console.web_socket_disconnect");
-    // };
-    // bindTerminal(this.term, this.ws, true, -1);
-    // bindTerminalResize(this.term, this.ws);
+    this.socket.on("disconnect", () => {
+      this.term.cursorBlink = false;
+      this.term.write("\r\n*** Socket closed ***\r\n");
+    });
   },
 
   methods: {

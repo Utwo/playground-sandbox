@@ -1,8 +1,9 @@
 // make a post request using fetch
-const API_URL = "http://localhost:8888";
+
+import { apiURL } from "../config";
 
 export const createSandbox = (data) => {
-  return fetch(`${API_URL}/create-sandbox`, {
+  return fetch(`${apiURL}/create-sandbox`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -12,7 +13,7 @@ export const createSandbox = (data) => {
 };
 
 export const stopSandbox = (data) => {
-  return fetch(`${API_URL}/stop-sandbox`, {
+  return fetch(`${apiURL}/stop-sandbox`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -22,7 +23,7 @@ export const stopSandbox = (data) => {
 };
 
 export const getFileContent = (data) => {
-  return fetch(`${API_URL}/get-file-content`, {
+  return fetch(`${apiURL}/get-file-content`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -1,8 +1,4 @@
 <template>
-  <div class="exec">
-    <Terminal :socket="socket" :project-name="$route.params.projectName" />
-    <button @click="attachSSH" class="btn btn-primary">Execute</button>
-  </div>
   <div class="main">
     <div class="sidebar">
       <TreeView
@@ -24,19 +20,39 @@
       <Iframe :socket="socket" :project-name="$route.params.projectName" />
     </div>
     <div class="terminal">
-      <Log :socket="socket" :project-name="$route.params.projectName" />
+      <tabs v-model="selectedTab" @update:modelValue="onUpdateTab">
+        <tab
+          v-for="(tab, i) in tabs"
+          :key="`t${i}`"
+          :val="tab"
+          :label="tab"
+          :indicator="true"
+        />
+      </tabs>
+      <tab-panels v-model="selectedTab">
+        <tab-panel v-for="(tab, i) in tabs" :key="`tp${i}`" :val="tab">
+          <div v-if="tab === 'Terminal'">
+            <Terminal :project-name="$route.params.projectName" />
+          </div>
+          <div v-if="tab === 'Logs'">
+            <Log :socket="socket" :project-name="$route.params.projectName" />
+          </div>
+        </tab-panel>
+      </tab-panels>
     </div>
   </div>
 </template>
 
 <script>
 import { io } from "socket.io-client";
+import { Tabs, Tab, TabPanels, TabPanel } from "vue3-tabs";
 import { createSandbox, stopSandbox } from "../services/httpApi";
 import Log from "../components/Log.vue";
 import Iframe from "../components/Iframe.vue";
 import CodeEditor from "../components/CodeEditor.vue";
 import TreeView from "../components/TreeView.vue";
 import Terminal from "../components/Terminal.vue";
+import { wsURL } from "../config";
 
 export default {
   components: {
@@ -45,12 +61,17 @@ export default {
     CodeEditor,
     TreeView,
     Terminal,
+    Tabs,
+    Tab,
+    TabPanels,
+    TabPanel,
   },
   data() {
     return {
       socket: null,
-      terminalWs: null,
       filePath: "",
+      tabs: ["Logs", "Terminal", "+"],
+      selectedTab: "Logs",
     };
   },
   created: function () {
@@ -67,31 +88,25 @@ export default {
       port,
     };
 
-    this.socket = io("ws://localhost:8888", {
+    this.socket = io(wsURL, {
       transports: ["websocket"],
       query,
     });
-    this.socket.on("connect", () => {
-      console.log("connected");
-    });
-    // this.terminalWs = io(`ws://localhost:8888/${projectName}`, {
-    //   transports: ["websocket"],
-    //   forceNew: true,
-    //   query,
-    // });
-    // this.terminalWs.on("connect", () => {
-    //   console.log("connected");
-    //   setTimeout(() => {
-    //     this.terminalWs.emit("exec", "ls -l");
-    //   }, 2000);
-    //   this.terminalWs.emit("exec", "ls -l");
-    // });
   },
   unmounted() {
     this.socket.close();
-    // this.terminalWs.close();
   },
   methods: {
+    onUpdateTab(tab) {
+      if (tab === "+") {
+        this.tabs.splice(
+          this.tabs.length - 1,
+          0,
+          `Terminal ${this.tabs.length - 1}`
+        );
+        this.selectedTab = this.tabs.at[-1];
+      }
+    },
     onCreateSandbox() {
       createSandbox({
         projectName: this.$route.params.projectName,
@@ -112,9 +127,6 @@ export default {
     },
     onFileAdd(path) {
       this.socket.emit("files:add", { files: { [path]: "" } });
-    },
-    attachSSH() {
-      this.socket.emit("sandbox:terminal:start");
     },
   },
 };
@@ -138,10 +150,15 @@ export default {
 }
 .preview {
   grid-area: 1 / 3 / 4 / 4;
+  display: flex;
+  flex-direction: column;
 }
 .terminal {
   grid-area: 4 / 3 / 6 / 4;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+.tabs {
+  background: #fff;
 }
 </style>

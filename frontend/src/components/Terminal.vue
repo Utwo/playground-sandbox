@@ -3,14 +3,15 @@
 </template>
 
 <script>
+import { io } from "socket.io-client";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { WebLinksAddon } from "xterm-addon-web-links";
 import { SearchAddon } from "xterm-addon-search";
-import { AttachAddon } from "xterm-addon-attach";
+// import { AttachAddon } from "xterm-addon-attach";
+import { wsURL } from "../config";
 
 import "xterm/css/xterm.css";
-import { Socket } from "socket.io-client";
 
 const defaultTheme = {
   foreground: "#ffffff",
@@ -37,10 +38,6 @@ const defaultTheme = {
 
 export default {
   props: {
-    socket: {
-      type: Socket,
-      required: true,
-    },
     projectName: {
       type: String,
       required: true,
@@ -51,7 +48,7 @@ export default {
     return {
       fitAddon: new FitAddon(),
       searchKey: "",
-      ws: null,
+      terminalWs: null,
       term: null,
       rows: 35,
       cols: 100,
@@ -69,51 +66,53 @@ export default {
       bellStyle: "sound",
       theme: defaultTheme,
     });
+
+    this.terminalWs = io(`${wsURL}/${this.projectName}/terminal`, {
+      transports: ["websocket"],
+      forceNew: true,
+    });
+
+    this.terminalWs.on("connect", () => {
+      this.term.write("\r\n*** Connected to backend***\r\n");
+      // this.term.loadAddon(new AttachAddon(ws));
+      this.term.focus();
+    });
+
     this.term.loadAddon(this.fitAddon);
     this.term.loadAddon(new WebLinksAddon());
     this.term.loadAddon(new SearchAddon());
-    this.term.loadAddon(new AttachAddon(this.socket));
 
     this.term.open(this.$refs.terminal);
     this.fitAddon.fit();
-    this.term.focus();
     this.term.writeln(
       "Terminal (" + this.term.cols + "x" + this.term.rows + ")\n\r"
     );
 
     this.term.onKey((e) => {
       const ev = e.domEvent;
-      const printable = !ev.altKey && !ev.ctrlKey && !ev.metaKey;
-      if (ev.keyCode === 13) {
-        this.term.write("\r\n");
-      } else if (ev.keyCode === 8) {
+      if (ev.keyCode === 8 && term._core.buffer.x > 2) {
         // Do not delete the prompt
-        if (term._core.buffer.x > 2) {
-          this.term.write("\b \b");
-        }
-      } else if (printable) {
-        this.term.write(e.key);
+        this.term.write("\b \b");
       }
-      this.socket.emit("sandbox:attach:data", e.key);
+      this.terminalWs.emit("sandbox:exec", e.key);
     });
 
-    this.socket.on("sandbox:attach:data", (data) => {
+    this.terminalWs.on("sandbox:exec", (data) => {
       this.term.write(data);
     });
-  },
 
+    this.terminalWs.on("disconnect", () => {
+      this.term.write(
+        "\r\n\nconnection has been terminated from the server-side\n"
+      );
+    });
+  },
+  unmounted() {
+    this.terminalWs.close();
+  },
   methods: {
     onWindowResize() {
       this.fitAddon.fit();
-    },
-    doClose() {
-      window.removeEventListener("resize", this.onWindowResize);
-      if (this.ws) {
-        this.ws.close();
-      }
-      if (this.term) {
-        this.term.dispose();
-      }
     },
   },
 };
