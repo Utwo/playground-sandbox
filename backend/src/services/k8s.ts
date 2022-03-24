@@ -111,7 +111,35 @@ export const createSandbox = async (
             ],
             ports: [
               {
+                name: "sandbox-port",
                 containerPort: containerOptions.port,
+              },
+            ],
+          },
+          {
+            name: config.vscodeContainerName,
+            image: "gitpod/openvscode-server:latest",
+            args: ["--port", "$(PORT)"],
+            env: [
+              {
+                name: "PORT",
+                value: config.vscodeContainerPort.toString(),
+              },
+            ],
+            securityContext: {
+              runAsUser: 0,
+            },
+            volumeMounts: [
+              {
+                name: "project-pv-storage",
+                mountPath: "/home/workspace",
+                subPath: projectName,
+              },
+            ],
+            ports: [
+              {
+                name: "vscode-port",
+                containerPort: config.vscodeContainerPort,
               },
             ],
           },
@@ -129,9 +157,14 @@ export const createSandbox = async (
         },
         ports: [
           {
+            name: "sandbox-port",
             port: 80,
-            // @ts-ignore
-            targetPort: containerOptions.port,
+            targetPort: "sandbox-port",
+          },
+          {
+            name: "vscode-port",
+            port: 81,
+            targetPort: "vscode-port",
           },
         ],
       },

@@ -12,6 +12,9 @@ profiles:
             manual:
               - src: "src/**/*.ts"
                 dest: .
+        - image: nginx-proxy
+          context: ./k8s/nginx
+
 deploy:
   kubectl:
     manifests:
@@ -34,3 +37,8 @@ portForward:
     namespace: default
     port: 80
     localPort: 8088
+  - resourceType: service
+    resourceName: nginx
+    namespace: default
+    port: 81
+    localPort: 8089

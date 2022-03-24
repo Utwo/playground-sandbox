@@ -8,6 +8,9 @@
         @file-deleted="onFileDelete"
         @file-add="onFileAdd"
       />
+      <a :href="vsCodeHost" class="btn btn-primary w-100" target="_blanck"
+        >Open in VSCode</a
+      >
     </div>
     <div class="code_editor">
       <CodeEditor
@@ -52,7 +55,7 @@ import Iframe from "../components/Iframe.vue";
 import CodeEditor from "../components/CodeEditor.vue";
 import TreeView from "../components/TreeView.vue";
 import Terminal from "../components/Terminal.vue";
-import { wsURL } from "../config";
+import { wsURL, vsCodeHost } from "../config";
 
 export default {
   components: {
@@ -95,6 +98,12 @@ export default {
   },
   unmounted() {
     this.socket.close();
+  },
+  computed: {
+    vsCodeHost() {
+      const { projectName } = this.$route.params;
+      return `http://${projectName}.${vsCodeHost}/?folder=/home/workspace`;
+    },
   },
   methods: {
     onUpdateTab(tab) {

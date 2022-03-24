@@ -17,6 +17,7 @@ export const templateConfig = {
   },
 };
 
-export const nginxDomain = "playground-sandbox.com:8088";
+export const sandboxHost = "playground-sandbox.com:8088";
+export const vsCodeHost = "playground-sandbox.com:8089";
 export const apiURL = "http://localhost:8888";
 export const wsURL = "ws://localhost:8888";

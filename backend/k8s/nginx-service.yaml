@@ -5,10 +5,14 @@ metadata:
   namespace: default
 spec:
   ports:
-  - nodePort: 32100
-    port: 80
-    protocol: TCP
-    targetPort: 80
+    - name: nginx-sandbox-port
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    - name: nginx-vscode-port
+      port: 81
+      protocol: TCP
+      targetPort: 81
   selector:
     app: nginx
   sessionAffinity: None

@@ -29,7 +29,7 @@
 
 <script>
 import { Socket } from "socket.io-client";
-import { nginxDomain } from "../config";
+import { sandboxHost } from "../config";
 
 export default {
   props: {
@@ -45,7 +45,7 @@ export default {
   data: function () {
     return {
       path: "/",
-      iframeSrc: `http://${this.projectName}.${nginxDomain}`,
+      iframeSrc: `http://${this.projectName}.${sandboxHost}`,
       loading: true,
       interval: null,
       events: [],
@@ -75,7 +75,7 @@ export default {
       this.$refs.iframe.src = this.iframeSrc;
     },
     changePath() {
-      this.iframeSrc = `http://${this.projectName}.${nginxDomain}${this.path}`;
+      this.iframeSrc = `http://${this.projectName}.${sandboxHost}${this.path}`;
     },
   },
 };
