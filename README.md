@@ -2,9 +2,7 @@
 
 ## Todo
 
-- [x] For templates, clone directly from github
-
-- [x] Try vscode in the browser https://github.com/gitpod-io/openvscode-server/
+- [ ] Fix terminal
 - [ ] Create files
 - [ ] Test with gVizor
 - [ ] Deploy to cloud
@@ -14,16 +12,20 @@
 - [ ] Have a small node server on every pod or a single server on core backend?
   - Single server on the backend means that we should have a shared volume for all pods in order to comunicate with the pod. Not good if many containers will write to the same volume I guess.
   - Small server on every pod means that we will instantiate a new server that will comunicate with our backend for CRUD file operations. We can also expose logs and start new terminals. Don't know if I need to expose this API and if yes how to handle auth and authz?
-- [x] We can use watch and then push a message to the fr that the container is ready
-- [x] Add terminal support
-- [x] Try with a tool that provides local development for k8s like Skaffold, Okteto or Werf
-- [x] Loading state on create contaniner
+
+### Features
+
+- [x] Clone any public projects directly from Github
+- [x] Open the project directly in the browser in VSCode (openvscode)
+- [x] Terminal support. Run commands in the container.
+- [x] Get live container events
+- [x] Local development with Skaffold
 
 ### Create cluster with volume claim
 
 ```
 $ k3d cluster create playground-sandbox --volume /tmp/k3dvol:/tmp/k3dvol
-$ skaffold dev
+$ cd backend && skaffold dev
 ```
 
 ```
@@ -33,8 +35,8 @@ $ cd frontend && npm run dev
 ### Add entries to hosts
 
 ```
-# Any subdomains that you want to use localy
-$ echo "127.0.0.1   pod-example.playground-sandbox.com" >> /etc/hosts
+# Any subdomains(projects) that you want to use localy
+$ echo "127.0.0.1   project-example.playground-sandbox.com" >> /etc/hosts
 $ echo "127.0.0.1   abc.playground-sandbox.com" >> /etc/hosts
 ```
 
@@ -54,10 +56,4 @@ Or just ssh into the pod, copy the config reload nginx:
 ```
 Reload nginx
 $ nginx -s reload -c ./nginx.conf
-```
-
-### Compress an archive for templates
-
-```
-$ tar -cf playground-sandbox.tar.xz ./playground-sandbox
 ```

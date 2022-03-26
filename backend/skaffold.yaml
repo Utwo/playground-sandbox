@@ -18,14 +18,7 @@ profiles:
 deploy:
   kubectl:
     manifests:
-      - k8s/service.yaml
-      - k8s/deployment.yaml
-      - k8s/role.yaml
-      - k8s/role-binding.yaml
-      - k8s/service-account.yaml
-      - k8s/volume.yaml
-      - k8s/nginx-rc.yaml
-      - k8s/nginx-service.yaml
+      - k8s/*.yaml
 portForward:
   - resourceType: service
     resourceName: app-svc

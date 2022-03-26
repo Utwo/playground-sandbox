@@ -6,7 +6,7 @@
         :project-name="$route.params.projectName"
         @file-selected="onFileSelect"
         @file-deleted="onFileDelete"
-        @file-add="onFileAdd"
+        @file-added="onFileAdd"
       />
       <a :href="vsCodeHost" class="btn btn-primary w-100" target="_blanck"
         >Open in VSCode</a
@@ -73,7 +73,7 @@ export default {
     return {
       socket: null,
       filePath: "",
-      tabs: ["Logs", "Terminal", "+"],
+      tabs: ["Logs", "+"],
       selectedTab: "Logs",
     };
   },
