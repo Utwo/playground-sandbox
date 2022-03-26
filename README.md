@@ -3,7 +3,6 @@
 ## Todo
 
 - [ ] Fix terminal
-- [ ] Create files
 - [ ] Test with gVizor
 - [ ] Deploy to cloud
 - [ ] Add a proper readme
@@ -15,7 +14,7 @@
 
 ### Features
 
-- [x] Clone any public projects directly from Github
+- [x] Clone any public projects from Github
 - [x] Open the project directly in the browser in VSCode (openvscode)
 - [x] Terminal support. Run commands in the container.
 - [x] Get live container events

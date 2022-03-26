@@ -1,5 +1,6 @@
 import tar from "tar";
 import fs from "node:fs";
+import path from "node:path";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
 import {
@@ -11,7 +12,6 @@ import {
   access,
   stat,
 } from "fs/promises";
-import path from "node:path";
 import fetch from "node-fetch";
 import { config, GitClone } from "../config.js";
 import { URL } from "url";
@@ -32,8 +32,9 @@ type Directory = {
 
 export const addFiles = async (projectName, files: Record<string, string>) => {
   return Promise.all(
-    Object.entries(files).map(([path, value]) => {
-      const localPath = `${config.volumeRoot}/${projectName}/${path}`;
+    Object.entries(files).map(async ([filePath, value]) => {
+      const localPath = `${config.volumeRoot}/${projectName}/${filePath}`;
+      await mkdir(path.dirname(localPath), { recursive: true });
       return writeFile(localPath, value as String);
     })
   );
