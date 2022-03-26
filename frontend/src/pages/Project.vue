@@ -34,8 +34,11 @@
       </tabs>
       <tab-panels v-model="selectedTab">
         <tab-panel v-for="(tab, i) in tabs" :key="`tp${i}`" :val="tab">
-          <div v-if="tab === 'Terminal'">
-            <Terminal :project-name="$route.params.projectName" />
+          <div v-if="tab.includes('Terminal')">
+            <Terminal
+              :socket="socket"
+              :project-name="$route.params.projectName"
+            />
           </div>
           <div v-if="tab === 'Logs'">
             <Log :socket="socket" :project-name="$route.params.projectName" />
@@ -113,7 +116,7 @@ export default {
           0,
           `Terminal ${this.tabs.length - 1}`
         );
-        this.selectedTab = this.tabs.at[-1];
+        this.selectedTab = this.tabs.at(-2);
       }
     },
     onCreateSandbox() {

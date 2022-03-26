@@ -109,7 +109,6 @@ export default function (io) {
 
     const writeLogStream = new stream.Writable({
       write(chunk, encoding, next) {
-        // console.log(chunk.toString());
         socket.emit("sandbox:exec", chunk.toString());
         next();
       },
@@ -121,7 +120,6 @@ export default function (io) {
 
     socket.data.readLogStream = readLogStream;
     socket.on("sandbox:exec", async (command) => {
-      // console.log("command", command);
       readLogStream.push(command);
     });
 
