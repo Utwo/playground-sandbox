@@ -80,20 +80,63 @@ const addNewFile = () => {
   if (!addFilePath.value) {
     return;
   }
+
+  addFilePath.value =
+    addFilePath.value[0] === "/"
+      ? addFilePath.value.substring(1)
+      : addFilePath.value;
+
   const node = {
     id: addFilePath.value,
     name: addFilePath.value,
     path: addFilePath.value,
+    parent: null,
     text: addFilePath.value,
-    isRoot: false,
   };
+
   if (addFilePath.value.includes("/")) {
-    node.text = addFilePath.value.split("/").slice(0, -1).join("/");
-    node.isRoot = true;
-    console.log(node);
+    // the node is not added in the root
+    const pathArray = addFilePath.value.split("/");
+    const parrentArray = pathArray.slice(0, -1);
+    node.text = pathArray.at(-1);
+    node.name = pathArray.at(-1);
+    node.parent = parrentArray.join("/");
+    addFolder(parrentArray);
+    nodes.value[node.parent].children.push(addFilePath.value);
+  } else {
+    config.value.roots.push(node.id);
   }
   nodes.value[addFilePath.value] = node;
   emit("file-added", addFilePath.value);
   addFilePath.value = null;
+};
+
+const addFolder = (folderArray) => {
+  let folderPath = "";
+  for (const [i, folder] of folderArray.entries()) {
+    folderPath += folderPath === "" ? folder : `/${folder}`;
+
+    if (!nodes.value[folderPath]) {
+      const children =
+        i !== folderArray.length - 1
+          ? [folderArray.slice(i, i + 2).join("/")]
+          : [];
+
+      const node = {
+        id: folderPath,
+        name: folder,
+        path: folderPath,
+        text: folder,
+        children,
+      };
+
+      if (i === 0) {
+        config.value.roots.push(folder);
+        node.parent = null;
+      }
+
+      nodes.value[folderPath] = node;
+    }
+  }
 };
 </script>
