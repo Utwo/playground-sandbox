@@ -28,8 +28,20 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import Tree from "vue3-treeview";
 import "vue3-treeview/dist/style.css";
+import { Socket } from "socket.io-client";
 
-const props = defineProps(["projectName", "socket"]);
+const props = defineProps({
+  projectName: {
+    type: String,
+    required: true,
+    default: "",
+  },
+  socket: {
+    type: Socket,
+    required: true,
+  },
+});
+
 const emit = defineEmits(["file-deleted", "file-selected", "file-added"]);
 
 const addFilePath = ref(null);

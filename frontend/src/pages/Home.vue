@@ -124,37 +124,34 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from "vue";
+import { computed } from "@vue/reactivity";
 import { templateConfig } from "../config";
 
-export default {
-  data() {
+const isTemplate = ref(true);
+const projectName = ref("pod-example");
+const template = ref("nextApp");
+const gitUrl = ref("");
+const gitBranch = ref("main");
+const gitPath = ref("/");
+const image = ref("node:17");
+const command = ref("npm run dev");
+const port = ref(3000);
+
+const routeQueryString = computed({
+  get() {
+    if (isTemplate.value) {
+      return templateConfig[template.value];
+    }
+
     return {
-      isTemplate: true,
-      projectName: "pod-example",
-      template: "nextApp",
-      gitUrl: "",
-      gitBranch: "main",
-      gitPath: "/",
-      image: "node:17",
-      command: "npm run dev",
-      port: 3000,
+      gitUrl,
+      gitBranch,
+      image,
+      command,
+      port,
     };
   },
-  computed: {
-    routeQueryString() {
-      if (this.isTemplate) {
-        return templateConfig[this.template];
-      }
-
-      return {
-        gitUrl: this.gitUrl,
-        gitBranch: this.gitBranch,
-        image: this.image,
-        command: this.command,
-        port: this.port,
-      };
-    },
-  },
-};
+});
 </script>

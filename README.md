@@ -2,11 +2,9 @@
 
 ## Todo
 
-- [ ] Fix terminal
 - [ ] Test with gVizor
 - [ ] Deploy to cloud
 - [ ] Add a proper readme
-- [ ] Update to vue 3 reactive model
 
 - [ ] Have a small node server on every pod or a single server on core backend?
   - Single server on the backend means that we should have a shared volume for all pods in order to comunicate with the pod. Not good if many containers will write to the same volume I guess.

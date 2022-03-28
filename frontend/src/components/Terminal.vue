@@ -1,8 +1,9 @@
 <template>
-  <div ref="terminal" />
+  <div ref="terminalRef" />
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, onUnmounted } from "vue";
 import { io } from "socket.io-client";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
@@ -36,84 +37,76 @@ const defaultTheme = {
   brightWhite: "#ffffff",
 };
 
-export default {
-  props: {
-    projectName: {
-      type: String,
-      required: true,
-      default: "",
-    },
+const props = defineProps({
+  projectName: {
+    type: String,
+    required: true,
+    default: "",
   },
-  data() {
-    return {
-      fitAddon: new FitAddon(),
-      searchKey: "",
-      terminalWs: null,
-      term: null,
-      rows: 35,
-      cols: 100,
-    };
-  },
-  mounted: function () {
-    this.term = new Terminal({
-      rendererType: "canvas",
-      rows: this.rows,
-      cols: this.cols,
-      scrollback: 10,
-      fontSize: 18,
-      cursorBlink: true,
-      cursorStyle: "bar",
-      bellStyle: "sound",
-      theme: defaultTheme,
-    });
+});
 
-    this.terminalWs = io(`${wsURL}/${this.projectName}/terminal`, {
-      transports: ["websocket"],
-      forceNew: true,
-    });
+const terminalRef = ref(null);
+const fitAddon = ref(new FitAddon());
+const terminalWs = ref(null);
+const term = ref(null);
+const rows = ref(35);
+const cols = ref(100);
 
-    this.terminalWs.on("connect", () => {
-      this.term.write("\r\n*** Connected to backend***\r\n");
-      // this.term.loadAddon(new AttachAddon(ws));
-      this.term.focus();
-    });
+term.value = new Terminal({
+  rendererType: "canvas",
+  rows: rows.value,
+  cols: cols.value,
+  scrollback: 10,
+  fontSize: 18,
+  cursorBlink: true,
+  cursorStyle: "bar",
+  bellStyle: "sound",
+  theme: defaultTheme,
+});
 
-    this.term.loadAddon(this.fitAddon);
-    this.term.loadAddon(new WebLinksAddon());
-    this.term.loadAddon(new SearchAddon());
+terminalWs.value = io(`${wsURL}/${props.projectName}/terminal`, {
+  transports: ["websocket"],
+  forceNew: true,
+});
 
-    this.term.open(this.$refs.terminal);
-    this.fitAddon.fit();
-    this.term.writeln(
-      "Terminal (" + this.term.cols + "x" + this.term.rows + ")\n\r"
-    );
+terminalWs.value.on("connect", () => {
+  term.value.write("\r\n*** Connected to backend***\r\n");
+  // term.value.loadAddon(new AttachAddon(ws));
+  term.value.focus();
+});
 
-    this.term.onKey((e) => {
-      const ev = e.domEvent;
-      if (ev.keyCode === 8 && term._core.buffer.x > 2) {
-        // Do not delete the prompt
-        this.term.write("\b \b");
-      }
-      this.terminalWs.emit("sandbox:exec", e.key);
-    });
+term.value.loadAddon(fitAddon.value);
+term.value.loadAddon(new WebLinksAddon());
+term.value.loadAddon(new SearchAddon());
+onMounted(() => {
+  term.value.open(terminalRef.value);
+  fitAddon.value.fit();
+});
 
-    this.terminalWs.on("sandbox:exec", (data) => {
-      this.term.write(data);
-    });
+term.value.writeln(
+  "Terminal (" + term.value.cols + "x" + term.value.rows + ")\n\r"
+);
 
-    this.terminalWs.on("disconnect", () => {
-      this.term.write(
-        "\r\n\nconnection has been terminated from the server-side\n"
-      );
-    });
-  },
-  unmounted() {
-    this.terminalWs.close();
-  },
-  methods: {
-    onWindowResize() {
-      this.fitAddon.fit();
-    },
-  },
-};
+term.value.onKey((e) => {
+  const ev = e.domEvent;
+  if (ev.keyCode === 8 && term.value._core.buffer.x > 2) {
+    // Do not delete the prompt
+    term.value.write("\b \b");
+  }
+  terminalWs.value.emit("sandbox:exec", e.key);
+});
+
+terminalWs.value.on("sandbox:exec", (data) => {
+  term.value.write(data);
+});
+
+terminalWs.value.on("disconnect", () => {
+  term.value.write(
+    "\r\n\nconnection has been terminated from the server-side\n"
+  );
+});
+
+onUnmounted(() => {
+  terminalWs.value.close();
+});
 </script>

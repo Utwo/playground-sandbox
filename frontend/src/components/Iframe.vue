@@ -21,64 +21,63 @@
     v-if="!loading"
     crossorigin="anonymous"
     target="_parent"
-    ref="iframe"
+    ref="iframeRef"
     allow=" camera; geolocation; microphone"
     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
   ></iframe>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, onUnmounted } from "vue";
 import { Socket } from "socket.io-client";
 import { sandboxHost } from "../config";
 
-export default {
-  props: {
-    socket: {
-      type: Socket,
-      required: true,
-    },
-    projectName: {
-      type: String,
-      required: true,
-    },
+const props = defineProps({
+  projectName: {
+    type: String,
+    default: "",
+    required: true,
   },
-  data: function () {
-    return {
-      path: "/",
-      iframeSrc: `http://${this.projectName}.${sandboxHost}`,
-      loading: true,
-      interval: null,
-      events: [],
-    };
+  socket: {
+    type: Socket,
+    required: true,
   },
-  mounted() {
-    this.interval = setInterval(() => {
-      fetch(this.iframeSrc)
-        .then(() => {
-          this.loading = false;
-          clearInterval(this.interval);
-        })
-        .catch(() => {
-          this.loading = true;
-        });
-    }, 1000);
+});
 
-    this.socket.on("sandbox:event", (data) => {
-      this.events.push(data);
-    });
-  },
-  unmounted() {
-    clearInterval(this.interval);
-  },
-  methods: {
-    reloadIframe() {
-      this.$refs.iframe.src = this.iframeSrc;
-    },
-    changePath() {
-      this.iframeSrc = `http://${this.projectName}.${sandboxHost}${this.path}`;
-    },
-  },
+const iframeRef = ref(null);
+const path = ref("/");
+const iframeSrc = ref(`http://${props.projectName}.${sandboxHost}`);
+const loading = ref(true);
+const interval = ref(null);
+const events = ref([]);
+
+const reloadIframe = () => {
+  iframeRef.value.src = iframeSrc.value;
 };
+const changePath = () => {
+  iframeSrc.value = `http://${props.projectName}.${sandboxHost}${path.value}`;
+};
+
+onMounted(() => {
+  interval.value = setInterval(() => {
+    fetch(iframeSrc.value)
+      .then(() => {
+        loading.value = false;
+        clearInterval(interval.value);
+      })
+      .catch(() => {
+        loading.value = true;
+      });
+  }, 1000);
+
+  props.socket.on("sandbox:event", (data) => {
+    events.value.push(data);
+  });
+});
+
+onUnmounted(() => {
+  clearInterval(interval.value);
+});
 </script>
 
 <style scoped>

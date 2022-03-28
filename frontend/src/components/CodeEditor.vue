@@ -14,7 +14,8 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { watch, ref } from "vue";
 import { PrismEditor } from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css";
 import prism from "prismjs";
@@ -22,50 +23,44 @@ import "prismjs/themes/prism-tomorrow.css";
 import { Socket } from "socket.io-client";
 import { getFileContent } from "./../services/httpApi";
 
-export default {
-  components: {
-    PrismEditor,
+const props = defineProps({
+  projectName: {
+    type: String,
+    default: "",
+    required: true,
   },
-  props: {
-    projectName: {
-      type: String,
-      default: "",
-      required: true,
-    },
-    socket: {
-      type: Socket,
-      required: true,
-    },
-    filePath: {
-      type: String,
-      required: true,
-    },
+  socket: {
+    type: Socket,
+    required: true,
   },
-  data() {
-    return {
-      editorCode: "",
-    };
+  filePath: {
+    type: String,
+    required: true,
   },
-  watch: {
-    filePath: function (newVal, oldVal) {
-      getFileContent({
-        projectName: this.projectName,
-        filePath: newVal,
-      }).then(async (res) => {
-        this.editorCode = await res.text();
-      });
-    },
-  },
-  methods: {
-    highlighter(code) {
-      return prism.highlight(code, prism.languages.js);
-    },
-    save() {
-      this.socket.emit("files:add", {
-        files: { [this.filePath]: this.editorCode },
-      });
-    },
-  },
+});
+
+const editorCode = ref("");
+
+watch(
+  () => props.filePath,
+  (newVal, oldVal) => {
+    getFileContent({
+      projectName: props.projectName,
+      filePath: newVal,
+    }).then(async (res) => {
+      editorCode.value = await res.text();
+    });
+  }
+);
+
+const highlighter = (code) => {
+  return prism.highlight(code, prism.languages.js);
+};
+
+const save = () => {
+  props.socket.emit("files:add", {
+    files: { [props.filePath]: editorCode.value },
+  });
 };
 </script>
 

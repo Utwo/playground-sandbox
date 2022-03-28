@@ -3,144 +3,117 @@
     <div class="sidebar">
       <TreeView
         :socket="socket"
-        :project-name="$route.params.projectName"
+        :project-name="route.params.projectName"
         @file-selected="onFileSelect"
         @file-deleted="onFileDelete"
         @file-added="onFileAdd"
       />
-      <a :href="vsCodeHost" class="btn btn-primary w-100" target="_blanck"
+      <a :href="vsCodeURL" class="btn btn-primary w-100" target="_blanck"
         >Open in VSCode</a
       >
     </div>
     <div class="code_editor">
       <CodeEditor
         :socket="socket"
-        :project-name="$route.params.projectName"
+        :project-name="route.params.projectName"
         :file-path="filePath"
       />
     </div>
     <div class="preview">
-      <Iframe :socket="socket" :project-name="$route.params.projectName" />
+      <Iframe :socket="socket" :project-name="route.params.projectName" />
     </div>
     <div class="terminal">
-      <tabs v-model="selectedTab" @update:modelValue="onUpdateTab">
-        <tab
-          v-for="(tab, i) in tabs"
-          :key="`t${i}`"
-          :val="tab"
-          :label="tab"
-          :indicator="true"
-        />
-      </tabs>
-      <tab-panels v-model="selectedTab">
-        <tab-panel v-for="(tab, i) in tabs" :key="`tp${i}`" :val="tab">
-          <div v-if="tab.includes('Terminal')">
-            <Terminal
-              :socket="socket"
-              :project-name="$route.params.projectName"
-            />
-          </div>
-          <div v-if="tab === 'Logs'">
-            <Log :socket="socket" :project-name="$route.params.projectName" />
-          </div>
-        </tab-panel>
-      </tab-panels>
+      <ul class="nav nav-tabs">
+        <li v-for="(tab, i) in tabs" :key="`tab-${i}`" class="nav-item">
+          <button
+            :class="['nav-link', { active: currentTab.label === tab.label }]"
+            @click="updateTab"
+          >
+            {{ tab.label }}
+          </button>
+        </li>
+      </ul>
+      <KeepAlive>
+        <component
+          :is="currentTab.value"
+          :socket="socket"
+          :project-name="$route.params.projectName"
+          :key="currentTab.label"
+        ></component>
+      </KeepAlive>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onUnmounted, computed, shallowRef } from "vue";
 import { io } from "socket.io-client";
-import { Tabs, Tab, TabPanels, TabPanel } from "vue3-tabs";
-import { createSandbox, stopSandbox } from "../services/httpApi";
 import Log from "../components/Log.vue";
 import Iframe from "../components/Iframe.vue";
 import CodeEditor from "../components/CodeEditor.vue";
 import TreeView from "../components/TreeView.vue";
 import Terminal from "../components/Terminal.vue";
 import { wsURL, vsCodeHost } from "../config";
+import { useRoute } from "vue-router";
 
-export default {
-  components: {
-    Log,
-    Iframe,
-    CodeEditor,
-    TreeView,
-    Terminal,
-    Tabs,
-    Tab,
-    TabPanels,
-    TabPanel,
-  },
-  data() {
-    return {
-      socket: null,
-      filePath: "",
-      tabs: ["Logs", "+"],
-      selectedTab: "Logs",
-    };
-  },
-  created: function () {
-    const { projectName } = this.$route.params;
-    const { gitUrl, gitBranch, gitPath, image, command, port } =
-      this.$route.query;
-    const query = {
-      projectName,
-      gitUrl,
-      gitBranch,
-      gitPath,
-      image,
-      command,
-      port,
-    };
+const route = useRoute();
+const { projectName } = route.params;
+const { gitUrl, gitBranch, gitPath, image, command, port } = route.query;
 
-    this.socket = io(wsURL, {
-      transports: ["websocket"],
-      query,
+const query = {
+  projectName,
+  gitUrl,
+  gitBranch,
+  gitPath,
+  image,
+  command,
+  port,
+};
+
+const socket = ref(
+  io(wsURL, {
+    transports: ["websocket"],
+    query,
+  })
+);
+const filePath = ref("");
+const tabs = shallowRef([
+  { label: "Logs", value: Log },
+  { label: "+", value: null },
+]);
+const currentTab = ref({ label: "Logs", value: Log });
+
+const vsCodeURL = computed(() => {
+  const { projectName } = route.params;
+  return `http://${projectName}.${vsCodeHost}/?folder=/home/workspace`;
+});
+
+onUnmounted(() => {
+  socket.value.close();
+});
+
+const updateTab = (event) => {
+  if (event.target.textContent === "+") {
+    tabs.value.splice(tabs.value.length - 1, 0, {
+      label: `Terminal ${tabs.value.length - 1}`,
+      value: Terminal,
     });
-  },
-  unmounted() {
-    this.socket.close();
-  },
-  computed: {
-    vsCodeHost() {
-      const { projectName } = this.$route.params;
-      return `http://${projectName}.${vsCodeHost}/?folder=/home/workspace`;
-    },
-  },
-  methods: {
-    onUpdateTab(tab) {
-      if (tab === "+") {
-        this.tabs.splice(
-          this.tabs.length - 1,
-          0,
-          `Terminal ${this.tabs.length - 1}`
-        );
-        this.selectedTab = this.tabs.at(-2);
-      }
-    },
-    onCreateSandbox() {
-      createSandbox({
-        projectName: this.$route.params.projectName,
-        template: this.$route.params.template,
-      });
-    },
-    onStopSandbox() {
-      stopSandbox({
-        projectName: this.$route.params.projectName,
-        deleteFiles: true,
-      });
-    },
-    onFileSelect(item) {
-      this.filePath = item.path;
-    },
-    onFileDelete(item) {
-      this.socket.emit("files:delete", { files: { [item.path]: null } });
-    },
-    onFileAdd(path) {
-      this.socket.emit("files:add", { files: { [path]: "" } });
-    },
-  },
+    currentTab.value = tabs.value.at(-2);
+  } else {
+    currentTab.value = tabs.value.find(
+      (tab) => tab.label === event.target.textContent
+    );
+  }
+};
+
+const onFileSelect = (item) => {
+  filePath.value = item.path;
+};
+const onFileDelete = (item) => {
+  socket.value.emit("files:delete", { files: { [item.path]: null } });
+};
+const onFileAdd = (path) => {
+  socket.value.emit("files:add", { files: { [path]: "" } });
 };
 </script>
 

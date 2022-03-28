@@ -1,13 +1,13 @@
 <template>
-  <div ref="terminal" />
+  <div ref="logsRef" />
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, onUnmounted } from "vue";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { WebLinksAddon } from "xterm-addon-web-links";
 import { SearchAddon } from "xterm-addon-search";
-
 import "xterm/css/xterm.css";
 import { Socket } from "socket.io-client";
 
@@ -34,70 +34,47 @@ const defaultTheme = {
   brightWhite: "#ffffff",
 };
 
-export default {
-  props: {
-    socket: {
-      type: Socket,
-      required: true,
-    },
-    projectName: {
-      type: String,
-      required: true,
-      default: "",
-    },
+const props = defineProps({
+  socket: {
+    type: Socket,
+    required: true,
   },
-  data() {
-    return {
-      fitAddon: new FitAddon(),
-      searchKey: "",
-      term: null,
-      rows: 35,
-      cols: 100,
-    };
-  },
-  mounted: function () {
-    this.term = new Terminal({
-      rendererType: "canvas",
-      rows: this.rows,
-      cols: this.cols,
-      convertEol: true,
-      scrollback: 10,
-      disableStdin: true,
-      fontSize: 18,
-      cursorBlink: true,
-      cursorStyle: "bar",
-      bellStyle: "sound",
-      theme: defaultTheme,
-    });
-    this.term.loadAddon(this.fitAddon);
-    this.term.loadAddon(new WebLinksAddon());
-    this.term.loadAddon(new SearchAddon());
+});
 
-    this.term.open(this.$refs.terminal);
-    this.fitAddon.fit();
+const logsRef = ref(null);
+const fitAddon = ref(new FitAddon());
+const rows = ref(35);
+const cols = ref(100);
+const term = ref(
+  new Terminal({
+    rendererType: "canvas",
+    rows: rows.value,
+    cols: cols.value,
+    convertEol: true,
+    scrollback: 10,
+    disableStdin: true,
+    fontSize: 18,
+    cursorBlink: true,
+    cursorStyle: "bar",
+    bellStyle: "sound",
+    theme: defaultTheme,
+  })
+);
 
-    this.socket.on("sandbox:log:data", (data) => {
-      this.term.write(data);
-    });
-    this.socket.on("disconnect", () => {
-      this.term.cursorBlink = false;
-      this.term.write("\r\n*** Socket closed ***\r\n");
-    });
-  },
+term.value.loadAddon(fitAddon.value);
+term.value.loadAddon(new WebLinksAddon());
+term.value.loadAddon(new SearchAddon());
 
-  methods: {
-    onWindowResize() {
-      this.fitAddon.fit();
-    },
-    doClose() {
-      window.removeEventListener("resize", this.onWindowResize);
-      if (this.ws) {
-        this.ws.close();
-      }
-      if (this.term) {
-        this.term.dispose();
-      }
-    },
-  },
-};
+props.socket.on("sandbox:log:data", (data) => {
+  term.value.write(data);
+});
+props.socket.on("disconnect", () => {
+  term.value.cursorBlink = false;
+  term.value.write("\r\n*** Socket closed ***\r\n");
+});
+
+onMounted(() => {
+  term.value.open(logsRef.value);
+  fitAddon.value.fit();
+});
 </script>

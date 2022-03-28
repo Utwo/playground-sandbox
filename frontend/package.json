@@ -13,7 +13,6 @@
     "vue": "^3.2.13",
     "vue-prism-editor": "^2.0.0-alpha.2",
     "vue-router": "4",
-    "vue3-tabs": "^0.1.12",
     "vue3-treeview": "^0.3.5",
     "xterm": "^4.16.0",
     "xterm-addon-attach": "^0.6.0",
