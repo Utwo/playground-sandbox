@@ -146,11 +146,11 @@ const routeQueryString = computed({
     }
 
     return {
-      gitUrl,
-      gitBranch,
-      image,
-      command,
-      port,
+      gitUrl: gitUrl.value,
+      gitBranch: gitBranch.value,
+      image: image.value,
+      command: command.value,
+      port: port.value,
     };
   },
 });

@@ -1,8 +1,6 @@
-import tar from "tar";
 import fs from "node:fs";
 import path from "node:path";
-import { pipeline } from "node:stream";
-import { promisify } from "node:util";
+
 import {
   writeFile,
   rm,
@@ -12,12 +10,8 @@ import {
   access,
   stat,
 } from "fs/promises";
-import fetch from "node-fetch";
 import { config, GitClone } from "../config.js";
-import { URL } from "url";
-import { getRepoInfo } from "./git.js";
-
-const streamPipeline = promisify(pipeline);
+import { cloneFromGithub, cloneFromGitlab } from "./git.js";
 
 type File = {
   name: string;
@@ -126,30 +120,13 @@ export const initVolume = async (projectName: string, gitClone?: GitClone) => {
 
   console.log(`Cloning repo for ${projectName}`);
 
-  const repoUrl = new URL(`${gitClone.url}/tree/${gitClone.branch}`);
-  const repoInfo = await getRepoInfo(repoUrl, gitClone.path);
+  if (gitClone.url.includes("github.com")) {
+    await cloneFromGithub(projectPath, gitClone);
+    return;
+  }
 
-  console.log(repoInfo);
-
-  const response = await fetch(
-    `https://codeload.github.com/${repoInfo.username}/${repoInfo.name}/tar.gz/${repoInfo.branch}`
-  );
-
-  if (!response.ok)
-    throw new Error(`unexpected response ${response.statusText}`);
-
-  await streamPipeline(
-    response.body,
-    tar.extract(
-      {
-        cwd: projectPath,
-        strip: repoInfo.filePath ? repoInfo.filePath.split("/").length + 1 : 1,
-      },
-      [
-        `${repoInfo.name}-${repoInfo.branch}${
-          repoInfo.filePath ? `/${repoInfo.filePath}` : ""
-        }`,
-      ]
-    )
-  );
+  if (gitClone.url.includes("gitlab.com")) {
+    await cloneFromGitlab(projectPath, gitClone);
+    return;
+  }
 };
