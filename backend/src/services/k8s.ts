@@ -48,13 +48,12 @@ export const getPodStatus = async (projectName) => {
 export const sendLogsFromSandbox = async (
   projectName: string,
   io,
-  room: string,
   follow: boolean
 ) => {
   const logStream = new stream.PassThrough();
   logStream.setEncoding("utf-8");
   logStream.on("data", (chunk) => {
-    io.to(room).emit("sandbox:log:data", chunk);
+    io.to(projectName).emit("sandbox:log:data", chunk);
   });
   logStream.on("error", (chunk) => console.error(chunk));
 

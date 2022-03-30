@@ -5,12 +5,7 @@ import { Server } from "socket.io";
 import { config } from "./config.js";
 import { getFileContentReq } from "./modules/container-controller.js";
 import wsController from "./modules/container-ws-controller.js";
-import {
-  getAllPods,
-  initInformer,
-  sendLogsFromSandbox,
-  stopSandbox,
-} from "./services/k8s.js";
+import { getAllPods, initInformer, stopSandbox } from "./services/k8s.js";
 import { getActiveRooms } from "./utils.js";
 
 const app = express();
@@ -22,13 +17,6 @@ app.use(cors());
 app.use(express.json());
 
 initInformer(io);
-
-const pods = await getAllPods();
-pods.forEach((pod) =>
-  sendLogsFromSandbox(pod.metadata.name, io, pod.metadata.name, true).catch(
-    console.error
-  )
-);
 
 const {
   socketConnected,

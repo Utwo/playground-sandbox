@@ -17,11 +17,10 @@
     </ul>
   </div>
   <iframe
-    :src="iframeSrc"
     v-if="!loading"
     crossorigin="anonymous"
     target="_parent"
-    ref="iframeRef"
+    :src="iframeSrc"
     allow=" camera; geolocation; microphone"
     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
   ></iframe>
@@ -44,7 +43,6 @@ const props = defineProps({
   },
 });
 
-const iframeRef = ref(null);
 const path = ref("/");
 const iframeSrc = ref(`http://${props.projectName}.${sandboxHost}`);
 const loading = ref(true);
@@ -52,7 +50,7 @@ const interval = ref(null);
 const events = ref([]);
 
 const reloadIframe = () => {
-  iframeRef.value.src = iframeSrc.value;
+  iframeSrc.value += "/";
 };
 const changePath = () => {
   iframeSrc.value = `http://${props.projectName}.${sandboxHost}${path.value}`;
@@ -60,14 +58,13 @@ const changePath = () => {
 
 onMounted(() => {
   interval.value = setInterval(() => {
-    fetch(iframeSrc.value)
-      .then(() => {
-        loading.value = false;
-        clearInterval(interval.value);
-      })
-      .catch(() => {
-        loading.value = true;
-      });
+    fetch(iframeSrc.value).then((res) => {
+      if (res.status !== 200) {
+        return;
+      }
+      loading.value = false;
+      clearInterval(interval.value);
+    });
   }, 1000);
 
   props.socket.on("sandbox:event", (data) => {

@@ -59,8 +59,9 @@ export default function (io) {
       sendFilesFromSandboxWs(socket).catch((error) =>
         console.error(error.message)
       );
-      sendLogsFromSandbox(projectName as string, io, socket.id, false).catch(
-        (error) => console.error(error.message)
+
+      sendLogsFromSandbox(projectName as string, io, true).catch((error) =>
+        console.error(error.message)
       );
     } catch (e) {
       if (e.statusCode !== 404 || !firstTry) {
