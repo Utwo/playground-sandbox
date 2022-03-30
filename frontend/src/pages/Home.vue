@@ -39,8 +39,8 @@
             <label for="templateType" class="form-label">Template</label>
             <select v-model="template" class="form-select" id="templateType">
               <option value="nextApp" selected>nextjs</option>
+              <option value="nuxtApp" selected>nuxtjs</option>
               <option value="vueApp" selected>vue</option>
-              <option value="nodeApp">node</option>
             </select>
           </div>
         </div>

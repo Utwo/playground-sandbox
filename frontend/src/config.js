@@ -7,6 +7,14 @@ export const templateConfig = {
     command: "npm run dev",
     port: 3000,
   },
+  nuxtApp: {
+    gitUrl: "https://github.com/Utwo/nuxt-sandbox",
+    gitBranch: "main",
+    gitPath: "/",
+    image: "node:17",
+    command: "npm run dev",
+    port: 3000,
+  },
   vueApp: {
     gitUrl: "https://github.com/vitejs/vite",
     gitBranch: "main",
