@@ -25,7 +25,7 @@ export const templateConfig = {
   },
 };
 
-export const sandboxHost = "playground-sandbox.com:8088";
-export const vsCodeHost = "playground-sandbox.com:8089";
-export const apiURL = "http://localhost:8888";
-export const wsURL = "ws://localhost:8888";
+export const sandboxHost = "project.127.0.0.1.nip.io:8888";
+export const vsCodeHost = "vscode.127.0.0.1.nip.io:8888";
+export const apiURL = "http://api.127.0.0.1.nip.io:8888";
+export const wsURL = "ws://api.127.0.0.1.nip.io:8888";

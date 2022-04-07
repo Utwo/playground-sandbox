@@ -24,7 +24,7 @@ Have a small node server on every sandboxed pod or a single server on core backe
 ### Create a cluster with volume claim
 
 ```
-$ k3d cluster create playground-sandbox --volume /tmp/k3dvol:/tmp/k3dvol
+$ k3d cluster create playground-sandbox --volume /tmp/k3dvol:/tmp/k3dvol -p "8888:80@loadbalancer"
 ```
 
 ### Run the backend and the frontend
@@ -32,15 +32,6 @@ $ k3d cluster create playground-sandbox --volume /tmp/k3dvol:/tmp/k3dvol
 ```
 $ cd backend && skaffold dev
 $ cd frontend && npm run dev
-```
-
-### Add entries to hosts
-
-Any subdomains(projects) that you want to use localy
-
-```
-$ echo "127.0.0.1   project-example.playground-sandbox.com" >> /etc/hosts
-$ echo "127.0.0.1   abc.playground-sandbox.com" >> /etc/hosts
 ```
 
 ### Others
@@ -53,10 +44,4 @@ $ kubectl apply -f https://k8s.io/examples/admin/dns/dnsutils.yaml
 $ kubectl exec -i -t dnsutils -- nslookup kubernetes.default
 ```
 
-Update nginx-k8s/nginx.conf with the new ip and deploy the image;
-Or just ssh into the pod, copy the config reload nginx:
-
-```
-Reload nginx
-$ nginx -s reload -c ./nginx.conf
-```
+Update nginx-cm.yaml with the new ip;

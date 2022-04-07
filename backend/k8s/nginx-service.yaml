@@ -5,15 +5,15 @@ metadata:
   namespace: default
 spec:
   ports:
-    - name: nginx-sandbox-port
+    - name: ng-sandbox-port
       port: 80
       protocol: TCP
       targetPort: 80
-    - name: nginx-vscode-port
+    - name: ng-vscode-port
       port: 81
       protocol: TCP
       targetPort: 81
   selector:
     app: nginx
   sessionAffinity: None
-  type: NodePort
+  type: ClusterIP
