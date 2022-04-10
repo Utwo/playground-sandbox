@@ -36,6 +36,12 @@ $ cd frontend && npm run dev
 
 ### Others
 
+For opening traefik web UI in the browser:
+
+```
+kubectl port-forward -n kube-system "$(kubectl get pods -n kube-system| grep '^traefik-' | awk '{print $1}')" 9000:9000
+```
+
 If you run this on something else than k3d, then maybe you need to change the k8s internal ip in nginx.
 First get the ip:
 
