@@ -152,21 +152,22 @@ export const createSandbox = async (
         name: projectName,
       },
       spec: {
+        clusterIP: "None",
         selector: {
           app: projectName,
         },
-        ports: [
-          {
-            name: "sandbox-port",
-            port: 80,
-            targetPort: "sandbox-port",
-          },
-          {
-            name: "vscode-port",
-            port: 81,
-            targetPort: "vscode-port",
-          },
-        ],
+        // ports: [
+        //   {
+        //     name: "sandbox-port",
+        //     port: 80,
+        //     targetPort: "sandbox-port",
+        //   },
+        //   {
+        //     name: "vscode-port",
+        //     port: 81,
+        //     targetPort: "vscode-port",
+        //   },
+        // ],
       },
     }),
   ]);
