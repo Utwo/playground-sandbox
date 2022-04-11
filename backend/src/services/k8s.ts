@@ -85,6 +85,7 @@ export const createSandbox = async (
         },
       },
       spec: {
+        restartPolicy: "Never",
         volumes: [
           {
             name: "project-pv-storage",

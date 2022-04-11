@@ -27,7 +27,7 @@ data:
         server {
             listen 80;
             listen 81;
-            server_name v;
+            server_name ~^(?<subdomain>.+?)\.(?<namespace>.*)\.(?<domain>.+)\.(?<tld>.*)$;
 
             location /health {
               access_log off;
