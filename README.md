@@ -9,6 +9,7 @@ https://user-images.githubusercontent.com/282668/160847863-2051d3ee-0d04-4960-91
 🚀 Clone any public projects from Github  
 🤘 Open the project directly in the browser in VSCode (openvscode)  
 🚢 Terminal support. Run commands in the container  
+👐 Run containers on any port  
 🎶 Get live container events  
 ✨ Local development with Skaffold
 
