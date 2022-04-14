@@ -37,6 +37,11 @@ const props = defineProps({
     default: "",
     required: true,
   },
+  port: {
+    type: Number,
+    default: 3000,
+    required: false,
+  },
   socket: {
     type: Socket,
     required: true,
@@ -44,7 +49,9 @@ const props = defineProps({
 });
 
 const path = ref("/");
-const iframeSrc = ref(`http://${props.projectName}.${sandboxHost}`);
+const iframeSrc = ref(
+  `http://${props.projectName}-${props.port}.${sandboxHost}`
+);
 const loading = ref(true);
 const interval = ref(null);
 const events = ref([]);
@@ -53,7 +60,7 @@ const reloadIframe = () => {
   iframeSrc.value += "/";
 };
 const changePath = () => {
-  iframeSrc.value = `http://${props.projectName}.${sandboxHost}${path.value}`;
+  iframeSrc.value = `http://${props.projectName}-${props.port}.${sandboxHost}${path.value}`;
 };
 
 onMounted(() => {

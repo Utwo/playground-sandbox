@@ -27,7 +27,7 @@ data:
         server {
             listen 3000;
             listen 3773;
-            server_name ~^(?<subdomain>.+?)\.(?<namespace>.*)\.(?<domain>.+)\.(?<tld>.*)$;
+            server_name ~^(?<subdomain>.*)-(?<port>.+?)\.(?<namespace>.*)\.(?<domain>.+)\.(?<tld>.*)$;
 
             location /health {
               access_log off;
@@ -37,7 +37,7 @@ data:
 
             location / {
               resolver        10.43.0.10;
-              proxy_pass      http://$subdomain.public.svc.cluster.local:$server_port;
+              proxy_pass      http://$subdomain.public.svc.cluster.local:$port;
               proxy_redirect off;
               proxy_set_header        Host    $subdomain.$domain.$tld;
               proxy_set_header        X-Real-IP $remote_addr;

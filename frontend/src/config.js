@@ -20,8 +20,8 @@ export const templateConfig = {
     gitBranch: "main",
     gitPath: "/packages/create-vite/template-vue",
     image: "node:17",
-    command: "npm run dev -- --host",
-    port: 3000,
+    command: "npm run dev -- --host --port 4000",
+    port: 4000, // just to demonstrate that is working on different port
   },
 };
 

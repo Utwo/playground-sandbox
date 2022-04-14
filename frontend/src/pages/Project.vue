@@ -20,7 +20,11 @@
       />
     </div>
     <div class="preview">
-      <Iframe :socket="socket" :project-name="route.params.projectName" />
+      <Iframe
+        :socket="socket"
+        :port="route.query.port"
+        :project-name="route.params.projectName"
+      />
     </div>
     <div class="terminal">
       <ul class="nav nav-tabs">
