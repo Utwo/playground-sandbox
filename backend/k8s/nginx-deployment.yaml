@@ -22,6 +22,8 @@ spec:
             - mountPath: /etc/nginx # mount nginx-conf volumn to /etc/nginx
               readOnly: true
               name: nginx-conf
+      nodeSelector:
+        node: default
       volumes:
         - name: nginx-conf
           configMap:

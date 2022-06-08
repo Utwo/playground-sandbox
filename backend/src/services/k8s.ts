@@ -144,6 +144,10 @@ export const createSandbox = async (
             ],
           },
         ],
+        nodeSelector: { node: "sandbox" },
+        tolerations: [
+          { key: "node-taint", value: "sandbox", effect: "NoSchedule" },
+        ],
       },
     }),
     k8sApi.createNamespacedService(config.sandboxNamespace, {
