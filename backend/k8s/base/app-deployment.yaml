@@ -4,17 +4,16 @@ metadata:
   name: app
   namespace: default
   labels:
-    app: app
+    app: playground-sandbox
 spec:
   replicas: 1
-
   selector:
     matchLabels:
-      app: app
+      app: playground-sandbox
   template:
     metadata:
       labels:
-        app: app
+        app: playground-sandbox
     spec:
       serviceAccountName: internal-kubectl
       volumes:
@@ -23,14 +22,21 @@ spec:
             claimName: projects-pv-claim-default
       containers:
         - name: app
-          image: node-app
+          image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox
           workingDir: /app
           volumeMounts:
             - mountPath: /app/projects
               name: project-pv-storage
           resources:
             limits:
-              memory: 512Mi
-              cpu: "1"
+              memory: 1000Mi
+              cpu: "1000m"
           ports:
             - containerPort: 8888
+          env:
+            - name: NODE_ENV
+              value: development
+            - name: APP_ENV
+              value: development
+      nodeSelector:
+        node: default

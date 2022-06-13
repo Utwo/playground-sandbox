@@ -5,3 +5,4 @@ node_modules
 dist
 Dockerfile
 skaffold.yaml
+k8s

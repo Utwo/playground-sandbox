@@ -6,6 +6,7 @@ metadata:
     name: app-ingress
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
+    kubernetes.io/ingress.global-static-ip-name: playgrund-sandbox
 spec:
   rules:
     - host: api.127.0.0.1.nip.io

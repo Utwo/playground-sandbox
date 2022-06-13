@@ -66,3 +66,26 @@ setInterval(async () => {
 server.listen(config.port, () => {
   console.info(`> Ready on http://localhost:${config.port}`);
 });
+
+// quit properly on docker stop
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
+
+function shutdown() {
+  server.close((err) => {
+    if (err) {
+      console.error(err);
+      process.exitCode = 1;
+    }
+    process.exit();
+  });
+
+  setTimeout(() => {
+    console.error(
+      "Could not close connections in time, forcefully shutting down"
+    );
+    process.exit(1);
+  }, 10000);
+
+  io.disconnectSockets();
+}

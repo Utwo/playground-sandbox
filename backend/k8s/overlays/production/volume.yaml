@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: fileserver
+spec:
+  capacity:
+    storage: 1T
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    path: /sandbox
+    server: 10.115.17.18
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: fileserver-public
+spec:
+  capacity:
+    storage: 1T
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    path: /sandbox
+    server: 10.115.17.18

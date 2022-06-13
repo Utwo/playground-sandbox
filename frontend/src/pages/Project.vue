@@ -57,7 +57,7 @@ import Iframe from "../components/Iframe.vue";
 import CodeEditor from "../components/CodeEditor.vue";
 import TreeView from "../components/TreeView.vue";
 import Terminal from "../components/Terminal.vue";
-import { wsURL, vsCodeHost } from "../config";
+import { wsURL, vsCodeHost, vsCodePort } from "../config";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -89,7 +89,7 @@ const currentTab = ref({ label: "Logs", value: Log });
 
 const vsCodeURL = computed(() => {
   const { projectName } = route.params;
-  return `http://${projectName}.${vsCodeHost}/?folder=/home/workspace`;
+  return `http://${projectName}-${vsCodePort}.${vsCodeHost}/?folder=/home/workspace`;
 });
 
 onUnmounted(() => {

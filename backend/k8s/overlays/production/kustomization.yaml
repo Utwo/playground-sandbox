@@ -1,0 +1,11 @@
+commonLabels:
+  variant: production
+resources:
+  - ../../base
+  - volume.yaml
+
+patchesStrategicMerge:
+  - app-deployment.yaml
+  - ingress.yaml
+  - nginx-cm.yaml
+  - volume-claims.yaml

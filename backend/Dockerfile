@@ -6,13 +6,20 @@ WORKDIR /app
 
 # Install app dependencies
 COPY package.json yarn.lock ./
-
 RUN yarn install
 
-# Bundle app source
-COPY . .
+EXPOSE 8888
+COPY --chown=node . .
+
+FROM build AS development
+
+CMD ["npm", "run", "dev"]
+
+
+FROM build AS production
+
+RUN yarn build
 
 # USER node
 
-EXPOSE 8888
-CMD ["npm", "run", "dev"]
+CMD ["node", "."]

@@ -22,6 +22,12 @@ spec:
             - mountPath: /etc/nginx # mount nginx-conf volumn to /etc/nginx
               readOnly: true
               name: nginx-conf
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+      nodeSelector:
+        node: default
       volumes:
         - name: nginx-conf
           configMap:
