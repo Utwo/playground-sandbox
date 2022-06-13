@@ -15,7 +15,6 @@ export type ContainerConfig = {
 };
 
 export const config: {
-
   appEnv: string;
   sandboxNamespace: string;
   sandboxContainerName: string;

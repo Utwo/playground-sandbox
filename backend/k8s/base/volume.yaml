@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: projects-volume-default
+  name: fileserver-default
   namespace: default
   labels:
     type: local
@@ -17,7 +17,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: projects-volume-public
+  name: fileserver-public
   namespace: public
   labels:
     type: local

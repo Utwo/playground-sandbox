@@ -46,7 +46,7 @@ Then create a new filestore instance and copy the newly created IP. Replace the 
 For deploing the backend manifests, run:
 
 ```
-$ skaffold deploy
+$ skaffold run
 ```
 
 ### Others

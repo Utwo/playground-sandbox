@@ -29,8 +29,8 @@ spec:
               name: project-pv-storage
           resources:
             limits:
-              memory: 512Mi
-              cpu: "300m"
+              memory: 1000Mi
+              cpu: "1000m"
           ports:
             - containerPort: 8888
           env:

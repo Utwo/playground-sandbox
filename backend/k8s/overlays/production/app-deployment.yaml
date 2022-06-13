@@ -7,6 +7,10 @@ spec:
     spec:
       containers:
         - name: app
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "300m"
           env:
             - name: NODE_ENV
               value: production
