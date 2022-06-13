@@ -25,7 +25,7 @@ Have a small node server on every sandboxed pod or a single server on core backe
 ### Create a cluster with volume claim
 
 ```
-$ k3d cluster create playground-sandbox --volume /tmp/k3dvol:/tmp/k3dvol -p "8888:80@loadbalancer"
+$ k3d cluster create playground-sandbox --volume /tmp/k3dvol:/tmp/k3dvol -p "8888:80@loadbalancer" --k3s-node-label "node=default@server:0"
 ```
 
 ### Run the backend and the frontend
@@ -33,6 +33,20 @@ $ k3d cluster create playground-sandbox --volume /tmp/k3dvol:/tmp/k3dvol -p "888
 ```
 $ cd backend && skaffold dev
 $ cd frontend && npm run dev
+```
+
+### Deploy
+
+This will deploy just the backend. For the frontend, just connect it to a Vercel or a Netlify project.
+
+Make a new K8s cluster on GCP with 2 node-pools. The first one, with label `node:default` will be used to run the backend of the application. For the second one, enable sandbox mode and set the label `node:sandbox`. The taint `NoSchedule: sandbox.gke.io/runtime=gvisor` should be automatically activated. The second node-pool will be used to run user containers.
+
+Then create a new filestore instance and copy the newly created IP. Replace the IP in the k8s/overlays/production/volume.yaml ->nfs->server
+
+For deploing the backend manifests, run:
+
+```
+$ skaffold deploy
 ```
 
 ### Others

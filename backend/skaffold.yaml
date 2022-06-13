@@ -1,4 +1,4 @@
-apiVersion: skaffold/v2beta22
+apiVersion: skaffold/v2beta28
 kind: Config
 profiles:
   - name: dev
@@ -6,15 +6,23 @@ profiles:
       - command: dev
     build:
       artifacts:
-        - image: node-app
-          context: .
+        - image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox
+          docker:
+            target: development
           sync:
             manual:
-              - src: "src/**/*.ts"
+              - src: '"src/**/*.ts"'
                 dest: .
+    deploy:
+      kustomize:
+        paths: ["./k8s/base"]
+
+build:
+  artifacts:
+    - image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox
+      docker:
+        target: production
 
 deploy:
-  kubectl:
-    manifests:
-      - k8s/public-ns.yaml
-      - k8s/*.yaml
+  kustomize:
+    paths: ["./k8s/overlays/production"]

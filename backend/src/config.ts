@@ -15,6 +15,8 @@ export type ContainerConfig = {
 };
 
 export const config: {
+
+  appEnv: string;
   sandboxNamespace: string;
   sandboxContainerName: string;
   vscodeContainerName: string;
@@ -23,6 +25,7 @@ export const config: {
   volumeRoot: string;
   removeInactiveSandboxAfter: number;
 } = {
+  appEnv: process.env.APP_ENV,
   sandboxNamespace: "public",
   sandboxContainerName: "node-app",
   vscodeContainerName: "vscode-app",

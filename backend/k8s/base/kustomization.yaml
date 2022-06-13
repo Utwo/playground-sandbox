@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: playground-sandbox
+
+commonLabels:
+  variant: base
+
+resources:
+  - public-ns.yaml
+  - app-deployment.yaml
+  - app-service.yaml
+  - nginx-deployment.yaml
+  - nginx-service.yaml
+  - role-binding.yaml
+  - role.yaml
+  - service-account.yaml
+  - volume.yaml
+  - ingress.yaml
+  - nginx-cm.yaml

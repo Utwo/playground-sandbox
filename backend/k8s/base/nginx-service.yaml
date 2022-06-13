@@ -16,4 +16,3 @@ spec:
   selector:
     app: nginx
   sessionAffinity: None
-  type: ClusterIP
