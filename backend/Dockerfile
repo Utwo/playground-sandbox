@@ -9,7 +9,7 @@ COPY package.json yarn.lock ./
 RUN yarn install
 
 EXPOSE 8888
-COPY . .
+COPY --chown=node . .
 
 FROM build AS development
 
@@ -20,6 +20,6 @@ FROM build AS production
 
 RUN yarn build
 
-USER node
+# USER node
 
 CMD ["node", "."]

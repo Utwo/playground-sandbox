@@ -15,7 +15,7 @@ profiles:
                 dest: .
     deploy:
       kustomize:
-        paths: ["./k8s/base"]
+        paths: ["./k8s/overlays/local"]
 
 build:
   artifacts:

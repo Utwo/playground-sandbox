@@ -25,6 +25,7 @@ Have a small node server on every sandboxed pod or a single server on core backe
 ### Create a cluster with volume claim
 
 ```
+$ mkdir -p /tmp/k3dvol
 $ k3d cluster create playground-sandbox --volume /tmp/k3dvol:/tmp/k3dvol -p "8888:80@loadbalancer" --k3s-node-label "node=default@server:0"
 ```
 

@@ -1,0 +1,5 @@
+commonLabels:
+  variant: production
+resources:
+  - ../../base
+  - volume.yaml

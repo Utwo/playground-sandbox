@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: fileserver-default
+  name: fileserver
 spec:
   capacity:
     storage: 1T
@@ -23,31 +23,3 @@ spec:
   nfs:
     path: /sandbox
     server: 10.115.17.18
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: projects-pv-claim-default
-  namespace: default
-spec:
-  storageClassName: ""
-  accessModes:
-    - ReadWriteMany
-  volumeName: fileserver-default
-  resources:
-    requests:
-      storage: 1T
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: projects-pv-claim-public
-  namespace: public
-spec:
-  storageClassName: ""
-  accessModes:
-    - ReadWriteMany
-  volumeName: fileserver-public
-  resources:
-    requests:
-      storage: 1T

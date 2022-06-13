@@ -3,9 +3,6 @@ kind: Kustomization
 metadata:
   name: playground-sandbox
 
-commonLabels:
-  variant: base
-
 resources:
   - public-ns.yaml
   - app-deployment.yaml
@@ -15,6 +12,6 @@ resources:
   - role-binding.yaml
   - role.yaml
   - service-account.yaml
-  - volume.yaml
+  - volume-claims.yaml
   - ingress.yaml
   - nginx-cm.yaml
