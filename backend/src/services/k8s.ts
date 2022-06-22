@@ -166,6 +166,10 @@ export const createSandbox = async (
       kind: "Service",
       metadata: {
         name: projectName,
+        annotations: {
+          "cloud.google.com/backend-config":
+            '{"default": "backendconfig-default"}',
+        },
       },
       spec: {
         clusterIP: "None",

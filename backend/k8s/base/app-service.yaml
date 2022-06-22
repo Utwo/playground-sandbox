@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: app-svc
   namespace: default
+  annotations:
+    cloud.google.com/backend-config: '{"default": "backendconfig-default"}'
 spec:
   selector:
     app: playground-sandbox

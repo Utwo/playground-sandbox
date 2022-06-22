@@ -3,6 +3,8 @@ commonLabels:
 resources:
   - ../../base
   - volume.yaml
+  - backendconfig.yaml
+  - backendconfig-health-nginx.yaml
 
 patchesStrategicMerge:
   - app-deployment.yaml
