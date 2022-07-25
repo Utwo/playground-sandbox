@@ -21,4 +21,5 @@ RUN yarn build
 
 FROM nginx:stable-alpine as production
 
+COPY ./deploy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=stage /app/dist/ /usr/share/nginx/html 

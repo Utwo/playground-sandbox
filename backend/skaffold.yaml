@@ -6,14 +6,14 @@ profiles:
       - command: dev
     build:
       artifacts:
-        - image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox
+        - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox
           docker:
             target: development
           sync:
             manual:
               - src: "src/**/*.ts"
                 dest: .
-        - image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox-fr
+        - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox-fr
           context: ./../frontend
           docker:
             target: development
@@ -27,10 +27,11 @@ profiles:
 
 build:
   artifacts:
-    - image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox
+    - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox
       docker:
         target: production
-    - image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox-fr
+    - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox-fr
+      context: ./../frontend
       docker:
         target: production
 deploy:

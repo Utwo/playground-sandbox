@@ -9,8 +9,23 @@ metadata:
     ingress.kubernetes.io/ssl-redirect: "false"
     kubernetes.io/ingress.global-static-ip-name: playgrund-sandbox
 spec:
+  defaultBackend:
+    service:
+      name: playground-sandbox-fr-svc
+      port:
+        name: app-fr
   rules:
-    - host: api.34.149.58.49.nip.io
+    - host: 34.110.187.191.nip.io
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: playground-sandbox-fr-svc
+                port:
+                  name: app-fr
+    - host: api.34.110.187.191.nip.io
       http:
         paths:
           - pathType: Prefix
@@ -20,7 +35,7 @@ spec:
                 name: app-svc
                 port:
                   name: app-port
-    - host: "*.project.34.149.58.49.nip.io"
+    - host: "*.project.34.110.187.191.nip.io"
       http:
         paths:
           - pathType: Prefix
@@ -30,7 +45,7 @@ spec:
                 name: nginx
                 port:
                   name: ng-sandbox-port
-    - host: "*.vscode.34.149.58.49.nip.io"
+    - host: "*.vscode.34.110.187.191.nip.io"
       http:
         paths:
           - pathType: Prefix

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: playground-sandbox-fr
-          image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox-fr
+          image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox-fr
           ports:
             - containerPort: 80
       nodeSelector:

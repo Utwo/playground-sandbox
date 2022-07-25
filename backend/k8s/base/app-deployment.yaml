@@ -22,15 +22,11 @@ spec:
             claimName: projects-pv-claim-default
       containers:
         - name: app
-          image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox
+          image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox
           workingDir: /app
           volumeMounts:
             - mountPath: /app/projects
               name: project-pv-storage
-          resources:
-            limits:
-              memory: 1000Mi
-              cpu: "1000m"
           ports:
             - containerPort: 8888
           env:
