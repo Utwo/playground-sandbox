@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playground-sandbox-fr
+  namespace: default
+  labels:
+    app: playground-sandbox-fr
+spec:
+  selector:
+    matchLabels:
+      app: playground-sandbox-fr
+  template:
+    metadata:
+      labels:
+        app: playground-sandbox-fr
+    spec:
+      containers:
+        - name: playground-sandbox-fr
+          image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox-fr
+          ports:
+            - containerPort: 80
+      nodeSelector:
+        node: default

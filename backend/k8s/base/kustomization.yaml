@@ -7,6 +7,8 @@ resources:
   - public-ns.yaml
   - app-deployment.yaml
   - app-service.yaml
+  - fr-deployment.yaml
+  - fr-service.yaml
   - nginx-deployment.yaml
   - nginx-service.yaml
   - role-binding.yaml

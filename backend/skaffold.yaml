@@ -13,6 +13,14 @@ profiles:
             manual:
               - src: "src/**/*.ts"
                 dest: .
+        - image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox-fr
+          context: ./../frontend
+          docker:
+            target: development
+          sync:
+            manual:
+              - src: "src/**"
+                dest: .
     deploy:
       kustomize:
         paths: ["./k8s/overlays/local"]
@@ -22,7 +30,9 @@ build:
     - image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox
       docker:
         target: production
-
+    - image: europe-docker.pkg.dev/croapp-dev/teleport/playground-sandbox-fr
+      docker:
+        target: production
 deploy:
   kustomize:
     paths: ["./k8s/overlays/production"]
