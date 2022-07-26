@@ -9,3 +9,7 @@ output "k8s_endpoint" {
 output "google_gke_hub_membership_fleet" {
   value = google_gke_hub_membership.cluster_fleet.id
 }
+
+output "filestore_id" {
+  value = google_filestore_instance.sandbox_instance.id
+}

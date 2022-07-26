@@ -9,7 +9,7 @@ spec:
     - ReadWriteMany
   nfs:
     path: /sandbox
-    server: 10.246.82.250
+    server: 10.207.2.170
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -22,4 +22,4 @@ spec:
     - ReadWriteMany
   nfs:
     path: /sandbox
-    server: 10.246.82.250
+    server: 10.207.2.170

@@ -3,6 +3,7 @@ commonLabels:
 resources:
   - ../production-core
   - app-service-us.yaml
+  - volume.yaml
 
 patchesStrategicMerge:
   - app-deployment.yaml

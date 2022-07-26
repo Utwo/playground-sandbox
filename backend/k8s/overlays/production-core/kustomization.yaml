@@ -2,7 +2,6 @@ commonLabels:
   variant: production
 resources:
   - ../../base
-  - volume.yaml
   - backendconfig.yaml
   - backendconfig-health-nginx.yaml
 

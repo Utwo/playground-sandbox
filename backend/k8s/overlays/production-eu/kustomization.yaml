@@ -8,6 +8,7 @@ resources:
   # - public-project-route.yaml
   # - public-vscode-route.yaml
   # - external-http-gateway.yaml
+  - volume.yaml
   - multicluster-service.yaml
   - multicluster-ingress.yaml
   - app-service-eu.yaml
