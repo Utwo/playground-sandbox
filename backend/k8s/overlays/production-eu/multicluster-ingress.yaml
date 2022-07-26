@@ -54,6 +54,18 @@ spec:
               - backend:
                   serviceName: nginx-mcs
                   servicePort: 3000
+        - host: "*.eu.vscode.34.98.91.126.nip.io"
+          http:
+            paths:
+              - backend:
+                  serviceName: nginx-eu-mcs
+                  servicePort: 3773
+        - host: "*.us.vscode.34.98.91.126.nip.io"
+          http:
+            paths:
+              - backend:
+                  serviceName: nginx-us-mcs
+                  servicePort: 3773
         - host: "*.vscode.34.98.91.126.nip.io"
           http:
             paths:
