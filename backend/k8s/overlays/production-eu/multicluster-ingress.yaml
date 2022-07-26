@@ -1,0 +1,62 @@
+apiVersion: networking.gke.io/v1
+kind: MultiClusterIngress
+metadata:
+  name: app-ingress
+  namespace: default
+  annotations:
+    networking.gke.io/static-ip: https://www.googleapis.com/compute/v1/projects/autocode-347209/global/addresses/playgrund-sandbox
+spec:
+  template:
+    spec:
+      backend:
+        serviceName: playground-sandbox-fr-svc-mcs
+        servicePort: 80
+      rules:
+        - host: 34.98.91.126.nip.io
+          http:
+            paths:
+              - backend:
+                  serviceName: playground-sandbox-fr-svc-mcs
+                  servicePort: 80
+        - host: api.us.34.98.91.126.nip.io
+          http:
+            paths:
+              - backend:
+                  serviceName: app-svc-us-mcs
+                  servicePort: 8888
+        - host: api.eu.34.98.91.126.nip.io
+          http:
+            paths:
+              - backend:
+                  serviceName: app-svc-eu-mcs
+                  servicePort: 8888
+        - host: api.34.98.91.126.nip.io
+          http:
+            paths:
+              - backend:
+                  serviceName: app-svc-mcs
+                  servicePort: 8888
+        - host: "*.eu.project.34.98.91.126.nip.io"
+          http:
+            paths:
+              - backend:
+                  serviceName: nginx-eu-mcs
+                  servicePort: 3000
+        - host: "*.us.project.34.98.91.126.nip.io"
+          http:
+            paths:
+              - backend:
+                  serviceName: nginx-us-mcs
+                  servicePort: 3000
+        - host: "*.project.34.98.91.126.nip.io"
+          http:
+            paths:
+              - backend:
+                  serviceName: nginx-mcs
+                  servicePort: 3000
+        - host: "*.vscode.34.98.91.126.nip.io"
+          http:
+            paths:
+              - backend:
+                  serviceName: nginx-mcs
+                  servicePort: 3773

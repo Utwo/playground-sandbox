@@ -25,6 +25,16 @@ data:
         default_type  application/octet-stream;
 
         server {
+            listen 80;
+
+            location / {
+              access_log off;
+              return 200;
+              add_header Content-Type text/plain;
+            }
+        }
+
+        server {
             listen 3000;
             listen 3773;
             server_name ~^(?<subdomain>.*)-(?<port>.+?)\.(?<namespace>.*)\.(?<domain>.+)\.(?<tld>.*)$;
@@ -36,7 +46,7 @@ data:
             }
 
             location / {
-              resolver        10.60.0.10;
+              resolver        10.16.0.10;
               proxy_pass      http://$subdomain.public.svc.cluster.local:$port;
               proxy_redirect off;
               proxy_set_header        Host    $subdomain.$domain.$tld;

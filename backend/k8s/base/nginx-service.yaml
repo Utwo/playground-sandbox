@@ -15,6 +15,10 @@ spec:
       port: 3773
       protocol: TCP
       targetPort: 3773
+    - name: ng-health-port
+      port: 80
+      protocol: TCP
+      targetPort: 80
   selector:
     app: nginx
   sessionAffinity: None

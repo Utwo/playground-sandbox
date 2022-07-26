@@ -25,6 +25,16 @@ data:
         default_type  application/octet-stream;
 
         server {
+            listen 80;
+
+            location / {
+              access_log off;
+              return 200;
+              add_header Content-Type text/plain;
+            }
+        }
+
+        server {
             listen 3000;
             listen 3773;
             server_name ~^(?<subdomain>.*)-(?<port>.+?)\.(?<namespace>.*)\.(?<domain>.+)\.(?<tld>.*)$;

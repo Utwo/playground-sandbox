@@ -1,0 +1,143 @@
+apiVersion: networking.gke.io/v1
+kind: MultiClusterService
+metadata:
+  name: playground-sandbox-fr-svc-mcs
+  namespace: default
+spec:
+  template:
+    spec:
+      selector:
+        app: playground-sandbox-fr
+      ports:
+        - name: app-port
+          protocol: TCP
+          port: 80
+          targetPort: 80
+---
+apiVersion: networking.gke.io/v1
+kind: MultiClusterService
+metadata:
+  name: app-svc-mcs
+  namespace: default
+  annotations:
+    cloud.google.com/backend-config: '{"default": "backendconfig-default"}'
+spec:
+  template:
+    spec:
+      selector:
+        app: playground-sandbox
+      ports:
+        - name: app-port
+          protocol: TCP
+          port: 8888
+          targetPort: 8888
+---
+apiVersion: networking.gke.io/v1
+kind: MultiClusterService
+metadata:
+  name: app-svc-eu-mcs
+  namespace: default
+  annotations:
+    cloud.google.com/backend-config: '{"default": "backendconfig-default"}'
+spec:
+  template:
+    spec:
+      selector:
+        app: playground-sandbox
+      ports:
+        - name: app-port
+          protocol: TCP
+          port: 8888
+          targetPort: 8888
+  clusters:
+    - link: "europe-west1-b/playground-sandbox"
+---
+apiVersion: networking.gke.io/v1
+kind: MultiClusterService
+metadata:
+  name: app-svc-us-mcs
+  namespace: default
+  annotations:
+    cloud.google.com/backend-config: '{"default": "backendconfig-default"}'
+spec:
+  template:
+    spec:
+      selector:
+        app: playground-sandbox
+      ports:
+        - name: app-port
+          protocol: TCP
+          port: 8888
+          targetPort: 8888
+  clusters:
+    - link: "us-central1-b/playground-sandbox-us"
+---
+apiVersion: networking.gke.io/v1
+kind: MultiClusterService
+metadata:
+  name: nginx-mcs
+  namespace: default
+  annotations:
+    cloud.google.com/backend-config: '{"default": "backendconfig-health-nginx"}'
+spec:
+  template:
+    spec:
+      selector:
+        app: nginx
+      ports:
+        - name: ng-sandbox-port
+          protocol: TCP
+          port: 3000
+          targetPort: 3000
+        - name: ng-vscode-port
+          protocol: TCP
+          port: 3773
+          targetPort: 3773
+---
+apiVersion: networking.gke.io/v1
+kind: MultiClusterService
+metadata:
+  name: nginx-eu-mcs
+  namespace: default
+  annotations:
+    cloud.google.com/backend-config: '{"default": "backendconfig-health-nginx"}'
+spec:
+  template:
+    spec:
+      selector:
+        app: nginx
+      ports:
+        - name: ng-sandbox-port
+          protocol: TCP
+          port: 3000
+          targetPort: 3000
+        - name: ng-vscode-port
+          protocol: TCP
+          port: 3773
+          targetPort: 3773
+  clusters:
+    - link: "europe-west1-b/playground-sandbox"
+---
+apiVersion: networking.gke.io/v1
+kind: MultiClusterService
+metadata:
+  name: nginx-us-mcs
+  namespace: default
+  annotations:
+    cloud.google.com/backend-config: '{"default": "backendconfig-health-nginx"}'
+spec:
+  template:
+    spec:
+      selector:
+        app: nginx
+      ports:
+        - name: ng-sandbox-port
+          protocol: TCP
+          port: 3000
+          targetPort: 3000
+        - name: ng-vscode-port
+          protocol: TCP
+          port: 3773
+          targetPort: 3773
+  clusters:
+    - link: "us-central1-b/playground-sandbox-us"

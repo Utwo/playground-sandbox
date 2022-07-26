@@ -3,11 +3,13 @@ commonLabels:
 resources:
   - http://github.com/kubernetes-sigs/gateway-api.git/config/crd?ref=v0.5.0
   - ../production-core
-  - public-frontend-route.yaml
-  - public-api-route.yaml
-  - public-project-route.yaml
-  - public-vscode-route.yaml
-  - external-http-gateway.yaml
+  # - public-frontend-route.yaml
+  # - public-api-route.yaml
+  # - public-project-route.yaml
+  # - public-vscode-route.yaml
+  # - external-http-gateway.yaml
+  - multicluster-service.yaml
+  - multicluster-ingress.yaml
   - app-service-eu.yaml
 
 patchesStrategicMerge:
