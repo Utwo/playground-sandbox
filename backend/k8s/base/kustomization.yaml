@@ -15,5 +15,4 @@ resources:
   - role.yaml
   - service-account.yaml
   - volume-claims.yaml
-  - ingress.yaml
   - nginx-cm.yaml

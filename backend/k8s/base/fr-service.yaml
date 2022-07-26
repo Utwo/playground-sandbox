@@ -10,3 +10,9 @@ spec:
     - port: 80
       targetPort: 80
       name: app-fr
+---
+kind: ServiceExport
+apiVersion: net.gke.io/v1
+metadata:
+  namespace: default
+  name: playground-sandbox-fr-svc

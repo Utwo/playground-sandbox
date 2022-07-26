@@ -18,3 +18,9 @@ spec:
   selector:
     app: nginx
   sessionAffinity: None
+---
+kind: ServiceExport
+apiVersion: net.gke.io/v1
+metadata:
+  namespace: default
+  name: nginx

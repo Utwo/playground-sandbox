@@ -12,3 +12,5 @@ spec:
               value: production
             - name: APP_ENV
               value: production
+            - name: REGION
+              value: US

@@ -1,0 +1,18 @@
+kind: HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1beta1
+metadata:
+  name: public-frontend-route
+  namespace: default
+spec:
+  parentRefs:
+    - kind: Gateway
+      namespace: default
+      name: external-http
+  hostnames:
+    - "34.98.91.126.nip.io"
+  rules:
+    - backendRefs:
+        - name: playground-sandbox-fr-svc
+          group: net.gke.io
+          kind: ServiceImport
+          port: 80

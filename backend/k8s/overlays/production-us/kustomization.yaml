@@ -1,0 +1,9 @@
+commonLabels:
+  variant: production
+resources:
+  - ../production-core
+  - app-service-us.yaml
+
+patchesStrategicMerge:
+  - app-deployment.yaml
+  - nginx-cm.yaml

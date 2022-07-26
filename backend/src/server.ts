@@ -43,7 +43,9 @@ io.of((name, auth, next) => {
 });
 
 app.post("/get-file-content", getFileContentReq);
-app.get("/", (req, res) => res.send("ok"));
+app.get("/eu", (req, res) => res.send(process.env.REGION));
+app.get("/us", (req, res) => res.send(process.env.REGION));
+app.get("/", (req, res) => res.send(`ok ${process.env.REGION}`));
 
 // delete pods that are not in active rooms
 setInterval(async () => {

@@ -25,6 +25,20 @@ profiles:
       kustomize:
         paths: ["./k8s/overlays/local"]
 
+  - name: multicluster-eu
+    activation:
+      - kubeContext: gke_autocode-347209_europe-west1-b_playground-sandbox
+    deploy:
+      kustomize:
+        paths: ["./k8s/overlays/production-eu"]
+
+  - name: multicluster-us
+    activation:
+      - kubeContext: gke_autocode-347209_us-central1-b_playground-sandbox-us
+    deploy:
+      kustomize:
+        paths: ["./k8s/overlays/production-us"]
+
 build:
   artifacts:
     - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox
@@ -34,6 +48,3 @@ build:
       context: ./../frontend
       docker:
         target: production
-deploy:
-  kustomize:
-    paths: ["./k8s/overlays/production"]
