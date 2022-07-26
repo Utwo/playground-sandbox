@@ -43,6 +43,11 @@ const props = defineProps({
     required: true,
     default: "",
   },
+  region: {
+    type: String,
+    required: false,
+    default: "global",
+  },
 });
 
 const terminalRef = ref(null);
@@ -64,7 +69,7 @@ term.value = new Terminal({
   theme: defaultTheme,
 });
 
-terminalWs.value = io(`${wsURL}/${props.projectName}/terminal`, {
+terminalWs.value = io(`${wsURL[props.region]}/${props.projectName}/terminal`, {
   transports: ["websocket"],
   forceNew: true,
 });

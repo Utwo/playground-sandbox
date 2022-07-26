@@ -42,6 +42,7 @@
           :is="currentTab.value"
           :socket="socket"
           :project-name="$route.params.projectName"
+          :region="route.query.region"
           :key="currentTab.label"
         ></component>
       </KeepAlive>
@@ -75,7 +76,7 @@ const query = {
 };
 
 const socket = ref(
-  io(wsURL, {
+  io(wsURL[route.query.region], {
     transports: ["websocket"],
     query,
   })

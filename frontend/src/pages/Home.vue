@@ -13,6 +13,14 @@
             placeholder="pod-example"
           />
         </div>
+        <div class="mb-3">
+          <label for="region" class="form-label">Region</label>
+          <select v-model="region" class="form-select" id="region">
+            <option value="global" selected>global</option>
+            <option value="eu">eu</option>
+            <option value="us">us</option>
+          </select>
+        </div>
         <ul class="nav nav-tabs nav-fill mb-3">
           <li class="nav-item">
             <a
@@ -39,8 +47,8 @@
             <label for="templateType" class="form-label">Template</label>
             <select v-model="template" class="form-select" id="templateType">
               <option value="nextApp" selected>nextjs</option>
-              <option value="nuxtApp" selected>nuxtjs</option>
-              <option value="vueApp" selected>vue</option>
+              <option value="nuxtApp">nuxtjs</option>
+              <option value="vueApp">vue</option>
             </select>
           </div>
         </div>
@@ -131,6 +139,7 @@ import { templateConfig } from "../config";
 
 const isTemplate = ref(true);
 const projectName = ref("pod-example");
+const region = ref("global");
 const template = ref("nextApp");
 const gitUrl = ref("");
 const gitBranch = ref("main");
@@ -141,8 +150,9 @@ const port = ref(3000);
 
 const routeQueryString = computed({
   get() {
+    const queryString = { region: region.value };
     if (isTemplate.value) {
-      return templateConfig[template.value];
+      return { ...templateConfig[template.value], ...queryString };
     }
 
     return {
@@ -151,6 +161,7 @@ const routeQueryString = computed({
       image: image.value,
       command: command.value,
       port: port.value,
+      ...queryString,
     };
   },
 });

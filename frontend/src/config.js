@@ -31,4 +31,11 @@ export const sandboxHost = `project.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`
 export const vsCodeHost = `vscode.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`;
 export const vsCodePort = "3773";
 export const apiURL = `http://api.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`;
-export const wsURL = `ws://api.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`;
+export const apiUrlUS = `http://api.us.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`;
+export const apiUrlEU = `http://api.eu.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`;
+
+export const wsURL = {
+  global: `ws://api.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`,
+  us: `ws://api.us.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`,
+  eu: `ws://api.eu.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`,
+};
