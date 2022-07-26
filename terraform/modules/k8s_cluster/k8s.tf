@@ -1,8 +1,3 @@
-resource "google_service_account" "gke_sa" {
-  account_id   = "gke-sa"
-  display_name = "Service Account for GKE cluster"
-}
-
 resource "google_container_cluster" "gke_cluster" {
   provider = google-beta
   name     = var.k8s_cluster_name
@@ -46,7 +41,7 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     }
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    service_account = google_service_account.gke_sa.email
+    service_account = var.sa_email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
@@ -77,7 +72,7 @@ resource "google_container_node_pool" "sandbox_nodes" {
     }
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    service_account = google_service_account.gke_sa.email
+    service_account = var.sa_email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]

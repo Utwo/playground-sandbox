@@ -17,3 +17,8 @@ variable "zone" {
   description = "Zone where to deploy the infra"
   type        = string
 }
+
+variable "sa_email" {
+  description = "Service account email for k8s node pools"
+  type        = string
+}

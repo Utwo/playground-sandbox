@@ -6,6 +6,6 @@ output "k8s_endpoint" {
   value = google_container_cluster.gke_cluster.endpoint
 }
 
-output "k8s_sa" {
-  value = google_service_account.gke_sa.email
+output "google_gke_hub_membership_fleet" {
+  value = google_gke_hub_membership.cluster_fleet.id
 }

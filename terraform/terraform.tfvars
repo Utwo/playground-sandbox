@@ -1,3 +1,5 @@
 project_id       = "autocode-347209"
+project_number = "491168878032"
 k8s_cluster_name         = "playground-sandbox"
 region      = "europe-west1"
+region_secondary = "us-central1"

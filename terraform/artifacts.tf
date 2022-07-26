@@ -10,5 +10,5 @@ resource "google_artifact_registry_repository_iam_member" "k8s-artifact" {
   location   = google_artifact_registry_repository.sandbox-repo.location
   repository = google_artifact_registry_repository.sandbox-repo.name
   role       = "roles/artifactregistry.writer"
-  member     = "serviceAccount:${module.k8s_cluster.k8s_sa}"
+  member     = "serviceAccount:${google_service_account.gke_sa.email}"
 }
