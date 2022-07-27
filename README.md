@@ -31,9 +31,9 @@ Use an edge serverless function like Deno Deploy, Vercel middlewares, Cloudflare
 | name | region | status |
 |------|--------|--------|
 | abc | eu | active |
-| dev | us | active |
+| def | us | active |
 
-abc.playground-sandbox.com => edge function => query db => region **eu** => rewrite to abc.eu.playground-sandbox.com
+abc.playground-sandbox.com => edge function => query db => region **eu** => rewrite to abc.eu.playground-sandbox.com  
 def.playground-sandbox.com => edge function => query db => region **us** => rewrite to def.us.playground-sandbox.com
 
 More inspiration for this option, here:  
