@@ -34,16 +34,30 @@ $ k3d cluster create playground-sandbox --volume /tmp/k3dvol:/tmp/k3dvol -p "888
 ```
 $ cd frontend && yarn
 $ cd backend && yarn
-$ cd backend && skaffold dev
+$ skaffold dev
 ```
 
-### Deploy
+Visit: http://127.0.0.1.nip.io:8888
 
-~~This will deploy just the backend. For the frontend, just connect it to a Vercel or a Netlify project.~~
+## Deploy infra
+
+~~This will deploy just the backend. For the frontend, just connect it to a Vercel or a Netlify project.~~ Frontend will be deployed on k8s.
+
+#### Terraform option:
+
+```
+$ cd terraform
+$ terraform init
+$ terraform apply
+```
+
+#### Manual option
 
 Make a new K8s cluster on GCP with 2 node-pools. The first one, with label `node:default` will be used to run the backend of the application. For the second one, enable sandbox mode and set the label `node:sandbox`. The taint `NoSchedule: sandbox.gke.io/runtime=gvisor` should be automatically activated. The second node-pool will be used to run user containers.
 
 Then create a new filestore instance and copy the newly created IP. Replace the IP in the k8s/overlays/production/volume.yaml ->nfs->server
+
+### Deploy k8s manifest
 
 For deploing the backend manifests, run:
 
@@ -56,15 +70,19 @@ $ skaffold run
 For opening traefik web UI in the browser:
 
 ```
+
 kubectl port-forward -n kube-system "$(kubectl get pods -n kube-system| grep '^traefik-' | awk '{print $1}')" 9000:9000
+
 ```
 
 If you run this on something else than k3d, then maybe you need to change the k8s internal ip in nginx.
 First get the ip:
 
 ```
+
 $ kubectl apply -f https://k8s.io/examples/admin/dns/dnsutils.yaml
 $ kubectl exec -i -t dnsutils -- nslookup kubernetes.default
+
 ```
 
 Update nginx-cm.yaml with the new ip;
