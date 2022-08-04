@@ -24,6 +24,13 @@ spec:
         - name: app
           image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox
           workingDir: /app
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1000m"
+            requests:
+              memory: "32Mi"
+              cpu: "25m"
           volumeMounts:
             - mountPath: /app/projects
               name: project-pv-storage
