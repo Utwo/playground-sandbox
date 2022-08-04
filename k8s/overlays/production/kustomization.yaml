@@ -9,5 +9,4 @@ resources:
 patchesStrategicMerge:
   - app-deployment.yaml
   - ingress.yaml
-  - nginx-cm.yaml
   - volume-claims.yaml

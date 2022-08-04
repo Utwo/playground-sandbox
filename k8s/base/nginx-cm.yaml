@@ -36,7 +36,7 @@ data:
             }
 
             location / {
-              resolver        10.43.0.10;
+              resolver        kube-dns.kube-system.svc.cluster.local;
               proxy_pass      http://$subdomain.public.svc.cluster.local:$port;
               proxy_redirect off;
               proxy_set_header        Host    $subdomain.$domain.$tld;
