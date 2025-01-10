@@ -1,6 +1,5 @@
 import util from "util";
 import { extract } from "tar";
-import fetch from "node-fetch";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
 import { execFile } from "child_process";

@@ -10,13 +10,12 @@
   "dependencies": {
     "@kubernetes/client-node": "^1.0.0",
     "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "node-fetch": "^3.3.2",
+    "hono": "^4.6.16",
+    "@hono/node-server": "1.13.7",
     "socket.io": "^4.8.1",
     "tar": "7.4.3"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0",
     "@types/node": "^22.10.5",
     "typescript": "^5.7.3"
   },

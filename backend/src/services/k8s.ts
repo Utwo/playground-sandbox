@@ -230,7 +230,10 @@ export const stopSandbox = async (
 
   try {
     if (deleteFiles) {
-      await rm(`${config.volumeRoot}/${projectName}`, { recursive: true });
+      await rm(`${config.volumeRoot}/${projectName}`, {
+        recursive: true,
+        force: true,
+      });
     }
   } catch (err) {
     console.error(err);

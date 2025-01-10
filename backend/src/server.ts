@@ -1,20 +1,31 @@
-import cors from "cors";
-import express from "express";
-import http from "http";
-import { Server } from "socket.io";
+import { serve } from "@hono/node-server";
+import { Hono, type Context } from "hono";
+import { cors } from "hono/cors";
+import { Server as HttpServer } from "http";
+import { Server as IOServer } from "socket.io";
 import { config } from "./config.ts";
 import { getFileContentReq } from "./modules/container-controller.ts";
 import wsController from "./modules/container-ws-controller.ts";
 import { getAllPods, initInformer, stopSandbox } from "./services/k8s.ts";
 import { getActiveRooms } from "./utils.ts";
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server, { transports: ["websocket"] });
-app.locals.io = io;
+const app = new Hono();
+const server = serve(
+  {
+    fetch: app.fetch,
+    port: config.port,
+  },
+  (info) => {
+    console.log(`> Ready on http://${info.address}:${info.port}`);
+  }
+);
+const io = new IOServer(server as HttpServer, { transports: ["websocket"] });
 
 app.use(cors());
-app.use(express.json());
+app.use(async (c: Context, next) => {
+  c.set("io", io);
+  await next();
+});
 
 initInformer(io);
 
@@ -43,8 +54,7 @@ io.of((name, auth, next) => {
 });
 
 app.post("/get-file-content", getFileContentReq);
-// @ts-ignore
-app.get("/", (req, res) => res.send("ok"));
+app.get("/", ({ text }) => text("ok"));
 
 // delete pods that are not in active rooms
 setInterval(async () => {
@@ -63,10 +73,6 @@ setInterval(async () => {
         });
     });
 }, config.removeInactiveSandboxAfter);
-
-server.listen(config.port, () => {
-  console.info(`> Ready on http://localhost:${config.port}`);
-});
 
 // quit properly on docker stop
 process.on("SIGINT", shutdown);
