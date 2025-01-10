@@ -1,9 +1,9 @@
-import util from "util";
-import { extract } from "tar";
+import util from "node:util";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
-import { execFile } from "child_process";
-import { URL } from "url";
+import { execFile } from "node:child_process";
+import { URL } from "node:url";
+import { extract } from "tar";
 import type { GitClone } from "../config.ts";
 
 export type RepoInfo = {

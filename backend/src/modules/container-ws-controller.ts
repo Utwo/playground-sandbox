@@ -1,4 +1,4 @@
-import stream from "stream";
+import stream from "node:stream";
 import { config, type ContainerConfig, type GitClone } from "../config.ts";
 import {
   addFiles,

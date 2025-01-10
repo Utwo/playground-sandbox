@@ -1,5 +1,5 @@
-import { rm } from "fs/promises";
-import stream from "stream";
+import { rm } from "node:fs/promises";
+import stream from "node:stream";
 import { config, type ContainerConfig } from "../config.ts";
 import {
   CoreV1Api,

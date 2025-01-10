@@ -1,24 +1,16 @@
-FROM node:22-alpine AS build
+FROM denoland/deno:alpine-2.1.5 AS build
 
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
 RUN apk add git
 
 EXPOSE 8888
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-
-FROM build AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+COPY package.json deno.lock ./
+RUN deno install --frozen
+COPY . .
 
 FROM build AS development
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-COPY --chown=node . .
-CMD ["pnpm", "run", "dev"]
+CMD ["deno", "task", "dev"]
 
 FROM build AS production
-COPY --from=prod-deps --chown=node /app/node_modules /app/node_modules
-COPY --chown=node . .
-# USER node
-CMD ["node", "--experimental-strip-types", "."]
+RUN deno cache src/server.ts
+CMD ["deno", "run", "--allow-env", "--allow-read", "--allow-sys", "--allow-net", "src/server.ts"]

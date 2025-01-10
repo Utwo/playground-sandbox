@@ -2,7 +2,7 @@ import process from "node:process";
 import { serve } from "@hono/node-server";
 import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
-import { Server as HttpServer } from "http";
+import { Server as HttpServer } from "node:http";
 import { Server as IOServer } from "socket.io";
 import { config } from "./config.ts";
 import { getFileContentReq } from "./modules/container-controller.ts";
@@ -18,7 +18,7 @@ const server = serve(
   },
   (info) => {
     console.log(`> Ready on http://${info.address}:${info.port}`);
-  },
+  }
 );
 const io = new IOServer(server as HttpServer, { transports: ["websocket"] });
 
@@ -90,7 +90,7 @@ function shutdown() {
 
   setTimeout(() => {
     console.error(
-      "Could not close connections in time, forcefully shutting down",
+      "Could not close connections in time, forcefully shutting down"
     );
     process.exit(1);
   }, 10000);

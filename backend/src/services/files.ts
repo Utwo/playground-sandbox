@@ -9,7 +9,7 @@ import {
   rm,
   stat,
   writeFile,
-} from "fs/promises";
+} from "node:fs/promises";
 import { config, type GitClone } from "../config.ts";
 import { cloneFromGithub, cloneFromGitlab } from "./git.ts";
 

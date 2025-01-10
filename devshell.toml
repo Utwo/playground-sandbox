@@ -6,4 +6,5 @@ packages = [
     "kubernetes-helm",
     "skaffold",
     "node",
+    "deno",
 ]

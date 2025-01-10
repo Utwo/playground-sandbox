@@ -40,7 +40,7 @@ $ k3d cluster create playground-sandbox --volume /tmp/k3dvol:/tmp/k3dvol -p "888
 ### Run the backend and the frontend
 
 ```
-$ cd frontend && pnpm install
+$ cd frontend && deno install
 $ cd backend && pnpm install
 $ skaffold dev
 ```
