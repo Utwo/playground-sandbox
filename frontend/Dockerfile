@@ -1,11 +1,13 @@
 FROM node:22-alpine AS build
 
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 WORKDIR /app
 
 # Install app dependencies
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
 EXPOSE 80
 COPY --chown=node . .

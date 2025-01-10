@@ -2,7 +2,7 @@ apiVersion: skaffold/v4beta11
 kind: Config
 build:
   artifacts:
-    - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox
+    - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox-api
       context: ./backend
       docker:
         target: production
@@ -22,7 +22,7 @@ profiles:
       - command: dev
     build:
       artifacts:
-        - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox
+        - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox-api
           context: ./backend
           sync:
             manual:
@@ -38,6 +38,7 @@ profiles:
                 dest: .
           docker:
             target: development
+      local: {}
     manifests:
       kustomize:
         paths:

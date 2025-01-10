@@ -2,11 +2,11 @@ import cors from "cors";
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
-import { config } from "./config.js";
-import { getFileContentReq } from "./modules/container-controller.js";
-import wsController from "./modules/container-ws-controller.js";
-import { getAllPods, initInformer, stopSandbox } from "./services/k8s.js";
-import { getActiveRooms } from "./utils.js";
+import { config } from "./config.ts";
+import { getFileContentReq } from "./modules/container-controller.ts";
+import wsController from "./modules/container-ws-controller.ts";
+import { getAllPods, initInformer, stopSandbox } from "./services/k8s.ts";
+import { getActiveRooms } from "./utils.ts";
 
 const app = express();
 const server = http.createServer(app);

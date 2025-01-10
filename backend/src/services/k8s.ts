@@ -1,6 +1,6 @@
 import { rm } from "fs/promises";
 import stream from "stream";
-import { ContainerConfig, config } from "../config.js";
+import { type ContainerConfig, config } from "../config.ts";
 import {
   CoreV1Api,
   CoreV1Event,

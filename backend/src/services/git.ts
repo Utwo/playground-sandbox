@@ -5,7 +5,7 @@ import { pipeline } from "node:stream";
 import { promisify } from "node:util";
 import { execFile } from "child_process";
 import { URL } from "url";
-import { GitClone } from "../config";
+import type { GitClone } from "../config.ts";
 
 export type RepoInfo = {
   username: string;

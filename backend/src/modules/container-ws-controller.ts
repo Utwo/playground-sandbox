@@ -1,18 +1,18 @@
 import stream from "stream";
-import { config, ContainerConfig, GitClone } from "../config.js";
+import { config, type ContainerConfig, type GitClone } from "../config.ts";
 import {
   addFiles,
   checkIfFileExist,
   deleteFiles,
   getAllFiles,
   initVolume,
-} from "../services/files.js";
+} from "../services/files.ts";
 import {
   createSandbox,
   getPodStatus,
   k8sExec,
   sendLogsFromSandbox,
-} from "../services/k8s.js";
+} from "../services/k8s.ts";
 
 export default function (io) {
   const socketConnected = async function (socket) {

@@ -1,4 +1,4 @@
-import { getFileContent } from "../services/files.js";
+import { getFileContent } from "../services/files.ts";
 
 export const getFileContentReq = async (req, res) => {
   const { projectName, filePath } = req.body;

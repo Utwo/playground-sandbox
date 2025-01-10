@@ -10,8 +10,8 @@ import {
   access,
   stat,
 } from "fs/promises";
-import { config, GitClone } from "../config.js";
-import { cloneFromGithub, cloneFromGitlab } from "./git.js";
+import { config, type GitClone } from "../config.ts";
+import { cloneFromGithub, cloneFromGitlab } from "./git.ts";
 
 type File = {
   name: string;
