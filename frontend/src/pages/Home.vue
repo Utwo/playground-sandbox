@@ -82,7 +82,7 @@
               id="image"
               class="form-control"
               v-model="image"
-              placeholder="node:16-alpine"
+              placeholder="node:22-alpine"
             />
           </div>
           <div class="mb-3">
@@ -125,8 +125,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { computed } from "@vue/reactivity";
+import { ref, computed } from "vue";
 import { templateConfig } from "../config";
 
 const isTemplate = ref(true);
@@ -135,7 +134,7 @@ const template = ref("nextApp");
 const gitUrl = ref("");
 const gitBranch = ref("main");
 const gitPath = ref("/");
-const image = ref("node:17");
+const image = ref("node:22");
 const command = ref("npm run dev");
 const port = ref(3000);
 

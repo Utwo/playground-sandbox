@@ -5,14 +5,14 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { io } from "socket.io-client";
-import { Terminal } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
-import { WebLinksAddon } from "xterm-addon-web-links";
-import { SearchAddon } from "xterm-addon-search";
+import { Terminal } from "@xterm/xterm";
+import { FitAddon } from "@xterm/addon-fit";
+import { WebLinksAddon } from "@xterm/addon-web-links";
+import { SearchAddon } from "@xterm/addon-search";
 // import { AttachAddon } from "xterm-addon-attach";
 import { wsURL } from "../config";
 
-import "xterm/css/xterm.css";
+import "@xterm/xterm/css/xterm.css";
 
 const defaultTheme = {
   foreground: "#ffffff",
