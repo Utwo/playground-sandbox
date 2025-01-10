@@ -1,31 +1,5 @@
-apiVersion: skaffold/v2beta28
+apiVersion: skaffold/v4beta11
 kind: Config
-profiles:
-  - name: dev
-    activation:
-      - command: dev
-    build:
-      artifacts:
-        - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox
-          context: ./backend
-          docker:
-            target: development
-          sync:
-            manual:
-              - src: "src/**/*.ts"
-                dest: .
-        - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox-fr
-          context: ./frontend
-          docker:
-            target: development
-          sync:
-            manual:
-              - src: "src/**"
-                dest: .
-    deploy:
-      kustomize:
-        paths: ["./k8s/overlays/local"]
-
 build:
   artifacts:
     - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox
@@ -36,6 +10,37 @@ build:
       context: ./frontend
       docker:
         target: production
-deploy:
+manifests:
   kustomize:
-    paths: ["./k8s/overlays/production"]
+    paths:
+      - ./k8s/overlays/production
+deploy:
+  kubectl: {}
+profiles:
+  - name: dev
+    activation:
+      - command: dev
+    build:
+      artifacts:
+        - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox
+          context: ./backend
+          sync:
+            manual:
+              - src: src/**/*.ts
+                dest: .
+          docker:
+            target: development
+        - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox-fr
+          context: ./frontend
+          sync:
+            manual:
+              - src: src/**
+                dest: .
+          docker:
+            target: development
+    manifests:
+      kustomize:
+        paths:
+          - ./k8s/overlays/local
+    deploy:
+      kubectl: {}
