@@ -10,6 +10,6 @@ export const getActiveRooms = (io) => {
   return filtered.map((i) => i[0]);
 };
 
-export const stdin = (characters) => {
+export const stdin = (characters: string) => {
   return Buffer.from(`\x00${characters}`, "utf8");
 };

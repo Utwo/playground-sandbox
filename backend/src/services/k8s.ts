@@ -24,15 +24,15 @@ export const initInformer = (io) => {
   const informer = makeInformer(
     kc,
     `/api/v1/namespaces/${config.sandboxNamespace}/pods`,
-    listFn,
+    listFn
   );
 
   informer.on("add", (obj: V1Pod) => {
-    io.to(obj.metadata.name).emit("sandbox:event", obj.status?.phase);
+    io.to(obj?.metadata?.name).emit("sandbox:event", obj.status?.phase);
   });
 
   informer.on("update", (obj: V1Pod) => {
-    io.to(obj.metadata.name).emit("sandbox:event", obj.status?.phase);
+    io.to(obj?.metadata?.name).emit("sandbox:event", obj.status?.phase);
   });
 
   informer.on("error", (err: CoreV1Event) => {
@@ -46,7 +46,7 @@ export const initInformer = (io) => {
   informer.start();
 };
 
-export const getPodStatus = async (projectName) => {
+export const getPodStatus = async (projectName: string) => {
   const resp = await k8sApi.readNamespacedPodStatus({
     name: projectName,
     namespace: config.sandboxNamespace,
@@ -57,7 +57,7 @@ export const getPodStatus = async (projectName) => {
 export const sendLogsFromSandbox = (
   projectName: string,
   io,
-  follow: boolean,
+  follow: boolean
 ) => {
   const logStream = new stream.PassThrough();
   logStream.setEncoding("utf-8");
@@ -76,13 +76,13 @@ export const sendLogsFromSandbox = (
       tailLines: 50,
       pretty: false,
       timestamps: false,
-    },
+    }
   );
 };
 
 export const createSandbox = async (
   projectName: string,
-  containerOptions: ContainerConfig,
+  containerOptions: ContainerConfig
 ) => {
   let tolerations = {};
   if (config.appEnv === "production") {
@@ -211,7 +211,7 @@ export const createSandbox = async (
 
 export const stopSandbox = async (
   projectName: string,
-  deleteFiles: boolean,
+  deleteFiles: boolean
 ) => {
   try {
     await Promise.all([
@@ -246,7 +246,9 @@ export const getAllPods = async () => {
       namespace: config.sandboxNamespace,
     });
     return pods;
-  } catch (err) {
-    console.error(err.message);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message);
+    }
   }
 };

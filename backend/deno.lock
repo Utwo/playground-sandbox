@@ -3,7 +3,6 @@
   "specifiers": {
     "npm:@hono/node-server@1.13.7": "1.13.7_hono@4.6.16",
     "npm:@kubernetes/client-node@1.0.0": "1.0.0_ws@8.18.0",
-    "npm:cors@2.8.5": "2.8.5",
     "npm:hono@4.6.16": "4.6.16",
     "npm:socket.io@4.8.1": "4.8.1",
     "npm:tar@7.4.3": "7.4.3"
@@ -535,7 +534,6 @@
       "dependencies": [
         "npm:@hono/node-server@1.13.7",
         "npm:@kubernetes/client-node@1.0.0",
-        "npm:cors@2.8.5",
         "npm:hono@4.6.16",
         "npm:socket.io@4.8.1",
         "npm:tar@7.4.3"
