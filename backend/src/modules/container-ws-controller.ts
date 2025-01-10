@@ -15,7 +15,7 @@ import {
 } from "../services/k8s.ts";
 
 export default function (io) {
-  const socketConnected = async function (socket) {
+  const socketConnected = function (socket) {
     console.info("New client connected");
     const {
       projectName,
@@ -36,7 +36,7 @@ export default function (io) {
       path: gitPath,
     };
 
-    let containerOptions: ContainerConfig = {
+    const containerOptions: ContainerConfig = {
       command,
       image,
       args,
@@ -51,7 +51,7 @@ export default function (io) {
     socket,
     containerOptions: ContainerConfig,
     firstTry: boolean,
-    gitClone?: GitClone
+    gitClone?: GitClone,
   ) => {
     try {
       await getPodStatus(projectName);
@@ -73,7 +73,7 @@ export default function (io) {
       await initVolume(projectName, gitClone);
       const isPackageLock = await checkIfFileExist(
         projectName,
-        "package-lock.json"
+        "package-lock.json",
       );
       containerOptions.command = isPackageLock
         ? ["sh", "-c", `npm ci && ${containerOptions.command}`]
@@ -91,7 +91,7 @@ export default function (io) {
         socket,
         containerOptions,
         false,
-        gitClone
+        gitClone,
       );
     }
   };
@@ -100,7 +100,7 @@ export default function (io) {
     const { projectName } = socket.data;
     const allFiles = await getAllFiles(
       `${config.volumeRoot}/${projectName}`,
-      {}
+      {},
     );
     socket.emit("sandbox:files:tree", allFiles);
   };
@@ -109,18 +109,18 @@ export default function (io) {
     const projectName = socket.nsp.name.split("/")[1];
 
     const writeLogStream = new stream.Writable({
-      write(chunk, encoding, next) {
+      write(chunk, _encoding, next) {
         socket.emit("sandbox:exec", chunk.toString());
         next();
       },
     });
 
     const readLogStream = new stream.Readable({
-      read(size) {},
+      read(_size) {},
     });
 
     socket.data.readLogStream = readLogStream;
-    socket.on("sandbox:exec", async (command) => {
+    socket.on("sandbox:exec", (command) => {
       readLogStream.push(command);
     });
 
@@ -140,7 +140,7 @@ export default function (io) {
             return;
           }
           console.error(JSON.stringify(status, null, 2));
-        }
+        },
       );
     } catch (err) {
       console.error(err);
@@ -148,39 +148,36 @@ export default function (io) {
     }
   };
 
-  const addFilesWs = async function (req) {
+  const addFilesWs = async (req) => {
     try {
-      const socket = this;
       const { files } = req;
-      const { projectName } = socket.data;
+      const { projectName } = this.data;
       await addFiles(projectName, files);
-      socket.to(projectName).emit("files:add", files);
+      this.to(projectName).emit("files:add", files);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const deleteFilesWs = async function (req) {
+  const deleteFilesWs = async (req) => {
     try {
-      const socket = this;
       const { files } = req;
-      const { projectName } = socket.data;
+      const { projectName } = this.data;
 
       await deleteFiles(projectName, files);
-      socket.to(projectName).emit("files:deleted", { files });
+      this.to(projectName).emit("files:deleted", { files });
     } catch (err) {
       console.error(err);
     }
   };
 
-  const socketDisconnectWs = function () {
+  const socketDisconnectWs = () => {
     console.log("disconnect");
   };
 
-  const socketDisconnectTerminalWs = function () {
-    const socket = this;
+  const socketDisconnectTerminalWs = () => {
     console.log("close terminal");
-    const readLogStream = socket.data.readLogStream;
+    const readLogStream = this.data.readLogStream;
     readLogStream.push("exit\n");
   };
 

@@ -1,3 +1,5 @@
+import { Buffer } from "node:buffer";
+
 export const getActiveRooms = (io) => {
   const arr = Array.from(io.sockets.adapter.rooms);
   // Filter rooms whose name exist in set:

@@ -1,6 +1,6 @@
 import { rm } from "fs/promises";
 import stream from "stream";
-import { type ContainerConfig, config } from "../config.ts";
+import { config, type ContainerConfig } from "../config.ts";
 import {
   CoreV1Api,
   CoreV1Event,
@@ -24,7 +24,7 @@ export const initInformer = (io) => {
   const informer = makeInformer(
     kc,
     `/api/v1/namespaces/${config.sandboxNamespace}/pods`,
-    listFn
+    listFn,
   );
 
   informer.on("add", (obj: V1Pod) => {
@@ -54,10 +54,10 @@ export const getPodStatus = async (projectName) => {
   return resp;
 };
 
-export const sendLogsFromSandbox = async (
+export const sendLogsFromSandbox = (
   projectName: string,
   io,
-  follow: boolean
+  follow: boolean,
 ) => {
   const logStream = new stream.PassThrough();
   logStream.setEncoding("utf-8");
@@ -76,13 +76,13 @@ export const sendLogsFromSandbox = async (
       tailLines: 50,
       pretty: false,
       timestamps: false,
-    }
+    },
   );
 };
 
 export const createSandbox = async (
   projectName: string,
-  containerOptions: ContainerConfig
+  containerOptions: ContainerConfig,
 ) => {
   let tolerations = {};
   if (config.appEnv === "production") {
@@ -211,7 +211,7 @@ export const createSandbox = async (
 
 export const stopSandbox = async (
   projectName: string,
-  deleteFiles: boolean
+  deleteFiles: boolean,
 ) => {
   try {
     await Promise.all([

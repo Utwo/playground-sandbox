@@ -2,13 +2,13 @@ import fs from "node:fs";
 import path from "node:path";
 
 import {
-  writeFile,
-  rm,
+  access,
+  mkdir,
   readdir,
   readFile,
-  mkdir,
-  access,
+  rm,
   stat,
+  writeFile,
 } from "fs/promises";
 import { config, type GitClone } from "../config.ts";
 import { cloneFromGithub, cloneFromGitlab } from "./git.ts";
@@ -24,41 +24,41 @@ type Directory = {
   children?: Array<File | Directory>;
 };
 
-export const addFiles = async (projectName, files: Record<string, string>) => {
+export const addFiles = (projectName, files: Record<string, string>) => {
   return Promise.all(
     Object.entries(files).map(async ([filePath, value]) => {
       const localPath = `${config.volumeRoot}/${projectName}/${filePath}`;
       await mkdir(path.dirname(localPath), { recursive: true });
-      return writeFile(localPath, value as String);
-    })
+      return writeFile(localPath, value as string);
+    }),
   );
 };
 
-export const deleteFiles = async (
+export const deleteFiles = (
   projectName: string,
-  files: Record<string, string>
+  files: Record<string, string>,
 ) => {
   return Promise.all(
     Object.entries(files).map(([path]) =>
       rm(`${config.volumeRoot}/${projectName}/${path}`, { recursive: true })
-    )
+    ),
   );
 };
 
-export const getFileContent = async (projectName: string, filePath: string) => {
+export const getFileContent = (projectName: string, filePath: string) => {
   const localPath = `${config.volumeRoot}/${projectName}/${filePath}`;
   return readFile(localPath, "utf8");
 };
 
 export const checkIfFileExist = async (
   projectName: string,
-  filePath: string
+  filePath: string,
 ) => {
   try {
     const localPath = `${config.volumeRoot}/${projectName}/${filePath}`;
     await access(localPath, fs.constants.F_OK);
     return true;
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 };
@@ -66,7 +66,7 @@ export const checkIfFileExist = async (
 export const getAllFiles = async (
   dirPath,
   objectOfFiles: Record<string, (Directory | File) & { children?: string[] }>,
-  isFirstRun = true
+  isFirstRun = true,
 ) => {
   const filesPromise = (await readdir(dirPath)).map(async (item) => {
     const absolutePath = path.join(dirPath, "/", item);
@@ -89,19 +89,19 @@ export const getAllFiles = async (
     objectOfFiles[filePath] = {
       name: file.name,
       path: filePath,
-      //@ts-ignore
+      //@ts-ignore it is there
       text: file.name,
     };
 
     if (isFirstRun) {
-      //@ts-ignore
+      //@ts-ignore it is there
       objectOfFiles[filePath].isRoot = true;
     }
 
     if (file.isDir) {
       const childrens = await getAllFiles(file.absolutePath, {}, false);
       objectOfFiles[filePath].children = Object.keys(childrens).filter(
-        (children) => path.relative(children, filePath) === ".."
+        (children) => path.relative(children, filePath) === "..",
       );
       objectOfFiles = { ...objectOfFiles, ...childrens };
     }

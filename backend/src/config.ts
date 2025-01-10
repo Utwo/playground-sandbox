@@ -1,3 +1,4 @@
+import process from "node:process";
 import { V1EnvVar } from "@kubernetes/client-node";
 
 export type GitClone = {

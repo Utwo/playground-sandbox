@@ -17,7 +17,7 @@ const streamPipeline = promisify(pipeline);
 
 export const cloneFromGitlab = async (
   projectPath: string,
-  gitOptions: GitClone
+  gitOptions: GitClone,
 ) => {
   const execFilePromise = util.promisify(execFile);
   console.log(`Cloning repository ${gitOptions.url}`);
@@ -37,13 +37,13 @@ export const cloneFromGitlab = async (
 
 export const cloneFromGithub = async (
   projectPath: string,
-  gitOptions: GitClone
+  gitOptions: GitClone,
 ) => {
   const repoUrl = new URL(`${gitOptions.url}/tree/${gitOptions.branch}`);
-  const repoInfo = await getRepoInfo(repoUrl, gitOptions.path);
+  const repoInfo = getRepoInfo(repoUrl, gitOptions.path);
 
   const response = await fetch(
-    `https://codeload.github.com/${repoInfo.username}/${repoInfo.name}/tar.gz/${repoInfo.branch}`
+    `https://codeload.github.com/${repoInfo.username}/${repoInfo.name}/tar.gz/${repoInfo.branch}`,
   );
 
   if (!response.ok) {
@@ -61,15 +61,15 @@ export const cloneFromGithub = async (
         `${repoInfo.name}-${repoInfo.branch}${
           repoInfo.filePath ? `/${repoInfo.filePath}` : ""
         }`,
-      ]
-    )
+      ],
+    ),
   );
 };
 
-export async function getRepoInfo(
+export function getRepoInfo(
   url: URL,
-  examplePath?: string
-): Promise<RepoInfo | undefined> {
+  examplePath?: string,
+): RepoInfo | undefined {
   const [, username, name, _t, _branch, ...file] = url.pathname.split("/");
   const filePath = examplePath
     ? examplePath.replace(/^\//, "")

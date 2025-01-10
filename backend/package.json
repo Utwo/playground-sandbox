@@ -5,7 +5,9 @@
   "main": "src/server.ts",
   "type": "module",
   "scripts": {
-    "dev": "node --watch --experimental-strip-types ."
+    "dev": "node --watch --experimental-strip-types .",
+    "format": "deno fmt",
+    "lint": "deno lint"
   },
   "dependencies": {
     "@kubernetes/client-node": "^1.0.0",

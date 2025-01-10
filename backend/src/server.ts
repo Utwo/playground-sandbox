@@ -1,5 +1,6 @@
+import process from "node:process";
 import { serve } from "@hono/node-server";
-import { Hono, type Context } from "hono";
+import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
 import { Server as HttpServer } from "http";
 import { Server as IOServer } from "socket.io";
@@ -17,7 +18,7 @@ const server = serve(
   },
   (info) => {
     console.log(`> Ready on http://${info.address}:${info.port}`);
-  }
+  },
 );
 const io = new IOServer(server as HttpServer, { transports: ["websocket"] });
 
@@ -46,7 +47,7 @@ io.on("connection", async (socket) => {
 });
 
 // new terminal created
-io.of((name, auth, next) => {
+io.of((_name, _auth, next) => {
   next(null, true);
 }).on("connection", async (socket) => {
   await startNewTerminalWs(socket);
@@ -89,7 +90,7 @@ function shutdown() {
 
   setTimeout(() => {
     console.error(
-      "Could not close connections in time, forcefully shutting down"
+      "Could not close connections in time, forcefully shutting down",
     );
     process.exit(1);
   }, 10000);
