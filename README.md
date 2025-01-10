@@ -6,11 +6,11 @@ https://user-images.githubusercontent.com/282668/160847863-2051d3ee-0d04-4960-91
 
 ## Features
 
-🚀 Clone any public projects from Github  
-🤘 Open the project directly in the browser in VSCode (openvscode)  
-🚢 Terminal support. Run commands in the container  
-👐 Run containers on any port  
-🎶 Get live container events  
+🚀 Clone any public projects from Github
+🤘 Open the project directly in the browser in VSCode (openvscode)
+🚢 Terminal support. Run commands in the container
+👐 Run containers on any port
+🎶 Get live container events
 ✨ Local development with Skaffold
 
 ## Challenges and open questions
@@ -22,6 +22,14 @@ Have a small node server on every sandboxed pod or a single server on core backe
 
 ## How to setup this beauty on local machine
 
+### Install all the dependencies
+
+Nix must be installed before running this command. If you don't want to install nix, take a look at the dependencies from [./devshell.toml](./devshell.toml) and make sure they are available on your host.
+
+```
+$ nix-shell
+```
+
 ### Create a cluster with volume claim
 
 ```
@@ -32,8 +40,8 @@ $ k3d cluster create playground-sandbox --volume /tmp/k3dvol:/tmp/k3dvol -p "888
 ### Run the backend and the frontend
 
 ```
-$ cd frontend && yarn
-$ cd backend && yarn
+$ cd frontend && pnpm install
+$ cd backend && pnpm install
 $ skaffold dev
 ```
 
