@@ -1,14 +1,14 @@
+import type { Context } from "hono";
 import { getFileContent } from "../services/files.ts";
 
-export const getFileContentReq = async (req, res) => {
-  const { projectName, filePath } = req.body;
+export const getFileContentReq = async (c: Context) => {
+  const { projectName, filePath } = await c.req.json();
 
   try {
     const content = await getFileContent(projectName, filePath);
-    res.set("Content-Type", "text/html");
-    return res.send(content);
+    return c.html(content);
   } catch (err) {
     console.error(err);
-    return res.status(500).send({ error: "Something went wrong" });
+    return c.json({ error: "Something went wrong" }, 500);
   }
 };

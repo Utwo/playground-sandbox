@@ -148,24 +148,28 @@ export default function (io) {
     }
   };
 
-  const addFilesWs = async (req) => {
+  const addFilesWs = async function (req) {
     try {
+      // deno-lint-ignore no-this-alias
+      const socket = this;
       const { files } = req;
-      const { projectName } = this.data;
+      const { projectName } = socket.data;
       await addFiles(projectName, files);
-      this.to(projectName).emit("files:add", files);
+      socket.to(projectName).emit("files:add", files);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const deleteFilesWs = async (req) => {
+  const deleteFilesWs = async function (req) {
     try {
+      // deno-lint-ignore no-this-alias
+      const socket = this;
       const { files } = req;
-      const { projectName } = this.data;
+      const { projectName } = socket.data;
 
       await deleteFiles(projectName, files);
-      this.to(projectName).emit("files:deleted", { files });
+      socket.to(projectName).emit("files:deleted", { files });
     } catch (err) {
       console.error(err);
     }
@@ -175,9 +179,11 @@ export default function (io) {
     console.log("disconnect");
   };
 
-  const socketDisconnectTerminalWs = () => {
+  const socketDisconnectTerminalWs = function () {
+    // deno-lint-ignore no-this-alias
+    const socket = this;
     console.log("close terminal");
-    const readLogStream = this.data.readLogStream;
+    const readLogStream = socket.data.readLogStream;
     readLogStream.push("exit\n");
   };
 
