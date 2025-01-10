@@ -23,6 +23,9 @@ importers:
       socket.io:
         specifier: ^4.8.1
         version: 4.8.1
+      tar:
+        specifier: 7.4.3
+        version: 7.4.3
     devDependencies:
       '@types/express':
         specifier: ^5.0.0
