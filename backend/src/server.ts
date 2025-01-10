@@ -43,13 +43,14 @@ io.of((name, auth, next) => {
 });
 
 app.post("/get-file-content", getFileContentReq);
+// @ts-ignore
 app.get("/", (req, res) => res.send("ok"));
 
 // delete pods that are not in active rooms
 setInterval(async () => {
   const pods = await getAllPods();
   const activeRooms = getActiveRooms(io);
-  pods
+  pods.items
     .map((pod) => pod.metadata.name)
     .filter((podName) => !activeRooms.includes(podName))
     .forEach((podName) => {

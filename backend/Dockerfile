@@ -1,24 +1,25 @@
-FROM node:18-alpine AS build
+FROM node:22-alpine AS build
 
+RUN corepack enable
 RUN apk add git
 
 WORKDIR /app
 
 # Install app dependencies
-COPY package.json yarn.lock ./
-RUN yarn install
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install
 
 EXPOSE 8888
 COPY --chown=node . .
 
 FROM build AS development
 
-CMD ["npm", "run", "dev"]
+CMD ["pnpm", "run", "dev"]
 
 
 FROM build AS production
 
-RUN yarn build
+RUN pnpm build
 
 # USER node
 

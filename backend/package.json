@@ -11,16 +11,18 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@kubernetes/client-node": "^0.16.3",
+    "@kubernetes/client-node": "^1.0.0",
     "cors": "^2.8.5",
-    "express": "^4.18.1",
-    "node-fetch": "^3.2.6",
-    "socket.io": "^4.5.1"
+    "express": "^4.21.2",
+    "node-fetch": "^3.3.2",
+    "socket.io": "^4.8.1",
+    "tar": "7.4.3"
   },
   "devDependencies": {
-    "@types/express": "^4.17.13",
-    "@types/node": "^16.0.9",
-    "tsc-watch": "^5.0.3",
-    "typescript": "^4.7.3"
-  }
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "tsc-watch": "^6.2.1",
+    "typescript": "^5.7.3"
+  },
+  "packageManager": "pnpm@9.7.0+sha512.dc09430156b427f5ecfc79888899e1c39d2d690f004be70e05230b72cb173d96839587545d09429b55ac3c429c801b4dc3c0e002f653830a420fa2dd4e3cf9cf"
 }

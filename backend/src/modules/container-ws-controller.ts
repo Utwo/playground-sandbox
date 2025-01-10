@@ -64,7 +64,7 @@ export default function (io) {
         console.error(error.message)
       );
     } catch (e) {
-      if (e.statusCode !== 404 || !firstTry) {
+      if (e.code !== 404 || !firstTry) {
         console.error(e.message);
         return;
       }

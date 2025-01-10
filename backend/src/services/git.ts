@@ -1,5 +1,5 @@
 import util from "util";
-import tar from "tar";
+import { extract } from "tar";
 import fetch from "node-fetch";
 import { pipeline } from "node:stream";
 import { promisify } from "node:util";
@@ -53,7 +53,7 @@ export const cloneFromGithub = async (
 
   await streamPipeline(
     response.body,
-    tar.extract(
+    extract(
       {
         cwd: projectPath,
         strip: repoInfo.filePath ? repoInfo.filePath.split("/").length + 1 : 1,
