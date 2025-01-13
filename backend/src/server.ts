@@ -1,5 +1,4 @@
 import process from "node:process";
-import { serve } from "@hono/node-server";
 import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
 import { Server as HttpServer } from "node:http";
@@ -11,7 +10,7 @@ import { getAllPods, initInformer, stopSandbox } from "./services/k8s.ts";
 import { getActiveRooms } from "./utils.ts";
 
 const app = new Hono();
-const server = serve(
+const server = Deno.serve(
   {
     fetch: app.fetch,
     port: config.port,
