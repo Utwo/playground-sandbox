@@ -19,6 +19,8 @@ jobs:
           cache: "pnpm"
       - name: Install dependencies
         run: pnpm install
+      - name: Install backend dependencies
+        run: pnpm install --filter ./backend
       - name: Check format and lint
         run: pnpm run check
       - name: Check types
