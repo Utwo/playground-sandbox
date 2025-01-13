@@ -1,8 +1,8 @@
-import util from "node:util";
-import { pipeline } from "node:stream";
-import { promisify } from "node:util";
 import { execFile } from "node:child_process";
+import { pipeline } from "node:stream";
 import { URL } from "node:url";
+import util from "node:util";
+import { promisify } from "node:util";
 import { extract } from "tar";
 import type { GitClone } from "../config.ts";
 

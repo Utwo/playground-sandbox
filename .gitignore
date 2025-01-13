@@ -2,3 +2,4 @@ next-app
 vue-app
 cloud-run
 tmp
+node_modules

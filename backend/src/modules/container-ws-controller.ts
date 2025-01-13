@@ -1,5 +1,5 @@
 import stream from "node:stream";
-import { config, type ContainerConfig, type GitClone } from "../config.ts";
+import { type ContainerConfig, type GitClone, config } from "../config.ts";
 import {
   addFiles,
   checkIfFileExist,
@@ -15,7 +15,7 @@ import {
 } from "../services/k8s.ts";
 
 export default function (io) {
-  const socketConnected = function (socket) {
+  const socketConnected = (socket) => {
     console.info("New client connected");
     const {
       projectName,
@@ -57,11 +57,11 @@ export default function (io) {
       await getPodStatus(projectName);
 
       sendFilesFromSandboxWs(socket).catch((error) =>
-        console.error(error.message)
+        console.error(error.message),
       );
 
       sendLogsFromSandbox(projectName as string, io, true).catch((error) =>
-        console.error(error.message)
+        console.error(error.message),
       );
     } catch (e) {
       if (e.code !== 404 || !firstTry) {
@@ -96,7 +96,7 @@ export default function (io) {
     }
   };
 
-  const sendFilesFromSandboxWs = async function (socket) {
+  const sendFilesFromSandboxWs = async (socket) => {
     const { projectName } = socket.data;
     const allFiles = await getAllFiles(
       `${config.volumeRoot}/${projectName}`,
@@ -105,7 +105,7 @@ export default function (io) {
     socket.emit("sandbox:files:tree", allFiles);
   };
 
-  const startNewTerminalWs = async function (socket) {
+  const startNewTerminalWs = async (socket) => {
     const projectName = socket.nsp.name.split("/")[1];
 
     const writeLogStream = new stream.Writable({
@@ -150,12 +150,10 @@ export default function (io) {
 
   const addFilesWs = async function (req) {
     try {
-      // deno-lint-ignore no-this-alias
-      const socket = this;
       const { files } = req;
-      const { projectName } = socket.data;
+      const { projectName } = this.data;
       await addFiles(projectName, files);
-      socket.to(projectName).emit("files:add", files);
+      this.to(projectName).emit("files:add", files);
     } catch (err) {
       console.error(err);
     }
@@ -163,13 +161,11 @@ export default function (io) {
 
   const deleteFilesWs = async function (req) {
     try {
-      // deno-lint-ignore no-this-alias
-      const socket = this;
       const { files } = req;
-      const { projectName } = socket.data;
+      const { projectName } = this.data;
 
       await deleteFiles(projectName, files);
-      socket.to(projectName).emit("files:deleted", { files });
+      this.to(projectName).emit("files:deleted", { files });
     } catch (err) {
       console.error(err);
     }
@@ -180,10 +176,8 @@ export default function (io) {
   };
 
   const socketDisconnectTerminalWs = function () {
-    // deno-lint-ignore no-this-alias
-    const socket = this;
     console.log("close terminal");
-    const readLogStream = socket.data.readLogStream;
+    const readLogStream = this.data.readLogStream;
     readLogStream.push("exit\n");
   };
 

@@ -1,4 +1,4 @@
-import { Server as HttpServer } from "node:http";
+import type { Server as HttpServer } from "node:http";
 import process from "node:process";
 import { serve } from "@hono/node-server";
 import { type Context, Hono } from "hono";
@@ -18,7 +18,7 @@ const server = serve(
   },
   (info) => {
     console.log(`> Ready on http://${info.address}:${info.port}`);
-  }
+  },
 );
 const io = new IOServer(server as HttpServer, { transports: ["websocket"] });
 
@@ -61,18 +61,17 @@ app.get("/", ({ text }) => text("ok"));
 setInterval(async () => {
   const pods = await getAllPods();
   const activeRooms = getActiveRooms(io);
-  pods?.items
-    .map((pod) => pod.metadata?.name)
-    .filter((podName) => !activeRooms.includes(podName))
-    .forEach((podName) => {
-      stopSandbox(podName, true)
-        .then(() => {
-          console.info(`Pod ${podName} was deleted`);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    });
+  for (const pod of pods?.items ?? []) {
+    const podName = pod.metadata?.name;
+    if (!activeRooms.includes(podName)) {
+      try {
+        await stopSandbox(podName, true);
+        console.info(`Pod ${podName} was deleted`);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
 }, config.removeInactiveSandboxAfter);
 
 // quit properly on docker stop
@@ -90,7 +89,7 @@ function shutdown() {
 
   setTimeout(() => {
     console.error(
-      "Could not close connections in time, forcefully shutting down"
+      "Could not close connections in time, forcefully shutting down",
     );
     process.exit(1);
   }, 10000);

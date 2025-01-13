@@ -4,13 +4,13 @@ import path from "node:path";
 import {
   access,
   mkdir,
-  readdir,
   readFile,
+  readdir,
   rm,
   stat,
   writeFile,
 } from "node:fs/promises";
-import { config, type GitClone } from "../config.ts";
+import { type GitClone, config } from "../config.ts";
 import { cloneFromGithub, cloneFromGitlab } from "./git.ts";
 
 type File = {
@@ -26,25 +26,25 @@ type Directory = {
 
 export const addFiles = (
   projectName: string,
-  files: Record<string, string>
+  files: Record<string, string>,
 ) => {
   return Promise.all(
     Object.entries(files).map(async ([filePath, value]) => {
       const localPath = `${config.volumeRoot}/${projectName}/${filePath}`;
       await mkdir(path.dirname(localPath), { recursive: true });
       return writeFile(localPath, value as string);
-    })
+    }),
   );
 };
 
 export const deleteFiles = (
   projectName: string,
-  files: Record<string, string>
+  files: Record<string, string>,
 ) => {
   return Promise.all(
     Object.entries(files).map(([path]) =>
-      rm(`${config.volumeRoot}/${projectName}/${path}`, { recursive: true })
-    )
+      rm(`${config.volumeRoot}/${projectName}/${path}`, { recursive: true }),
+    ),
   );
 };
 
@@ -55,7 +55,7 @@ export const getFileContent = (projectName: string, filePath: string) => {
 
 export const checkIfFileExist = async (
   projectName: string,
-  filePath: string
+  filePath: string,
 ) => {
   try {
     const localPath = `${config.volumeRoot}/${projectName}/${filePath}`;
@@ -69,7 +69,7 @@ export const checkIfFileExist = async (
 export const getAllFiles = async (
   dirPath: string,
   objectOfFiles: Record<string, (Directory | File) & { children?: string[] }>,
-  isFirstRun = true
+  isFirstRun = true,
 ) => {
   const filesPromise = (await readdir(dirPath)).map(async (item) => {
     const absolutePath = path.join(dirPath, "/", item);
@@ -104,8 +104,9 @@ export const getAllFiles = async (
     if (file.isDir) {
       const childrens = await getAllFiles(file.absolutePath, {}, false);
       objectOfFiles[filePath].children = Object.keys(childrens).filter(
-        (children) => path.relative(children, filePath) === ".."
+        (children) => path.relative(children, filePath) === "..",
       );
+      // biome-ignore lint:
       objectOfFiles = { ...objectOfFiles, ...childrens };
     }
   }
