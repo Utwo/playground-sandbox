@@ -50,15 +50,15 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted, computed, shallowRef } from "vue";
 import { io } from "socket.io-client";
-import Log from "../components/Log.vue";
-import Iframe from "../components/Iframe.vue";
-import CodeEditor from "../components/CodeEditor.vue";
-import TreeView from "../components/TreeView.vue";
-import Terminal from "../components/Terminal.vue";
-import { wsURL, vsCodeHost, vsCodePort } from "../config";
+import { computed, onUnmounted, ref, shallowRef } from "vue";
 import { useRoute } from "vue-router";
+import CodeEditor from "../components/CodeEditor.vue";
+import Iframe from "../components/Iframe.vue";
+import Log from "../components/Log.vue";
+import Terminal from "../components/Terminal.vue";
+import TreeView from "../components/TreeView.vue";
+import { vsCodeHost, vsCodePort, wsURL } from "../config";
 
 const route = useRoute();
 const { projectName } = route.params;
@@ -78,7 +78,7 @@ const socket = ref(
   io(wsURL, {
     transports: ["websocket"],
     query,
-  })
+  }),
 );
 const filePath = ref("");
 const tabs = shallowRef([
@@ -105,7 +105,7 @@ const updateTab = (event) => {
     currentTab.value = tabs.value.at(-2);
   } else {
     currentTab.value = tabs.value.find(
-      (tab) => tab.label === event.target.textContent
+      (tab) => tab.label === event.target.textContent,
     );
   }
 };

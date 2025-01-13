@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { watch, ref } from "vue";
+import { ref, watch } from "vue";
 import { PrismEditor } from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css";
 import prism from "prismjs";
@@ -50,7 +50,7 @@ watch(
     }).then(async (res) => {
       editorCode.value = await res.text();
     });
-  }
+  },
 );
 
 const highlighter = (code) => {

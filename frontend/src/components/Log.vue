@@ -3,11 +3,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import { WebLinksAddon } from "@xterm/addon-web-links";
 import { SearchAddon } from "@xterm/addon-search";
+import { WebLinksAddon } from "@xterm/addon-web-links";
+import { Terminal } from "@xterm/xterm";
+import { onMounted, onUnmounted, ref } from "vue";
 import "@xterm/xterm/css/xterm.css";
 import { Socket } from "socket.io-client";
 
@@ -58,7 +58,7 @@ const term = ref(
     cursorStyle: "bar",
     bellStyle: "sound",
     theme: defaultTheme,
-  })
+  }),
 );
 
 term.value.loadAddon(fitAddon.value);

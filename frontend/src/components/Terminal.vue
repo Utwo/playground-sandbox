@@ -3,12 +3,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { io } from "socket.io-client";
-import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import { WebLinksAddon } from "@xterm/addon-web-links";
 import { SearchAddon } from "@xterm/addon-search";
+import { WebLinksAddon } from "@xterm/addon-web-links";
+import { Terminal } from "@xterm/xterm";
+import { io } from "socket.io-client";
+import { onMounted, onUnmounted, ref } from "vue";
 // import { AttachAddon } from "xterm-addon-attach";
 import { wsURL } from "../config";
 
@@ -83,9 +83,7 @@ onMounted(() => {
   fitAddon.value.fit();
 });
 
-term.value.writeln(
-  "Terminal (" + term.value.cols + "x" + term.value.rows + ")\n\r"
-);
+term.value.writeln(`Terminal (${term.value.cols}x${term.value.rows})\n\r`);
 
 term.value.onKey((e) => {
   const ev = e.domEvent;
@@ -102,7 +100,7 @@ terminalWs.value.on("sandbox:exec", (data) => {
 
 terminalWs.value.on("disconnect", () => {
   term.value.write(
-    "\r\n\nconnection has been terminated from the server-side\n"
+    "\r\n\nconnection has been terminated from the server-side\n",
   );
 });
 

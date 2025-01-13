@@ -125,7 +125,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
 import { templateConfig } from "../config";
 
 const isTemplate = ref(true);

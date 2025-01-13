@@ -27,8 +27,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
 import { Socket } from "socket.io-client";
+import { onMounted, onUnmounted, ref } from "vue";
 import { sandboxHost } from "../config";
 
 const props = defineProps({
@@ -50,7 +50,7 @@ const props = defineProps({
 
 const path = ref("/");
 const iframeSrc = ref(
-  `http://${props.projectName}-${props.port}.${sandboxHost}`
+  `http://${props.projectName}-${props.port}.${sandboxHost}`,
 );
 const loading = ref(true);
 const interval = ref(null);

@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import Tree from "vue3-treeview";
 import "vue3-treeview/dist/style.css";
 import { Socket } from "socket.io-client";
@@ -57,13 +57,13 @@ onMounted(() => {
   props.socket.on("sandbox:files:tree", (sockNodes) => {
     nodes.value = sockNodes;
     config.value.roots = Object.keys(sockNodes).filter(
-      (nodeId) => sockNodes[nodeId].isRoot
+      (nodeId) => sockNodes[nodeId].isRoot,
     );
   });
   props.socket.on("files:deleted", ({ files }) => {
-    Object.keys(files).forEach((fileId) => {
+    for (const fileId of Object.keys(files)) {
       delete nodes.value[fileId];
-    });
+    }
   });
   window.addEventListener("keydown", onKeyDown);
 });
