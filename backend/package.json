@@ -5,7 +5,8 @@
   "main": "src/server.ts",
   "type": "module",
   "scripts": {
-    "dev": "node --watch --experimental-strip-types ."
+    "dev": "node --watch --experimental-strip-types .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hono/node-server": "1.13.7",

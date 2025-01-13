@@ -62,7 +62,7 @@ setInterval(async () => {
   const pods = await getAllPods();
   const activeRooms = getActiveRooms(io);
   for (const pod of pods?.items ?? []) {
-    const podName = pod.metadata?.name;
+    const podName = pod.metadata.name;
     if (!activeRooms.includes(podName)) {
       try {
         await stopSandbox(podName, true);
