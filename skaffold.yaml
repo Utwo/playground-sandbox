@@ -2,11 +2,11 @@ apiVersion: skaffold/v4beta11
 kind: Config
 build:
   artifacts:
-    - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox-api
+    - image: ghcr.io/utwo/sandbox-backend
       context: ./backend
       docker:
         target: production
-    - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox-fr
+    - image: ghcr.io/utwo/sandbox-frontend
       context: ./frontend
       docker:
         target: production
@@ -22,7 +22,7 @@ profiles:
       - command: dev
     build:
       artifacts:
-        - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox-api
+        - image: ghcr.io/utwo/sandbox-backend
           context: ./backend
           sync:
             manual:
@@ -30,7 +30,7 @@ profiles:
                 dest: .
           docker:
             target: development
-        - image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox-fr
+        - image: ghcr.io/utwo/sandbox-frontend
           context: ./frontend
           sync:
             manual:

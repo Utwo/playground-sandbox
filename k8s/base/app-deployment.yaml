@@ -22,7 +22,7 @@ spec:
             claimName: projects-pv-claim-default
       containers:
         - name: app
-          image: europe-west1-docker.pkg.dev/autocode-347209/sandbox/playground-sandbox-api
+          image: ghcr.io/utwo/sandbox-backend
           workingDir: /app
           resources:
             limits:

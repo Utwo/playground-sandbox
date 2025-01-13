@@ -79,7 +79,7 @@ jobs:
           images: |
             ghcr.io/utwo/sandbox-frontend
           tags: |
-            type=sha
+            type=sha,prefix=
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

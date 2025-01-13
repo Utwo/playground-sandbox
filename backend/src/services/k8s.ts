@@ -1,4 +1,4 @@
-import { rm } from "node:fs/promises";
+import { rmSync } from "node:fs";
 import stream from "node:stream";
 import {
   CoreV1Api,
@@ -24,7 +24,7 @@ export const initInformer = (io) => {
   const informer = makeInformer(
     kc,
     `/api/v1/namespaces/${config.sandboxNamespace}/pods`,
-    listFn,
+    listFn
   );
 
   informer.on("add", (obj: V1Pod) => {
@@ -57,7 +57,7 @@ export const getPodStatus = async (projectName: string) => {
 export const sendLogsFromSandbox = (
   projectName: string,
   io,
-  follow: boolean,
+  follow: boolean
 ) => {
   const logStream = new stream.PassThrough();
   logStream.setEncoding("utf-8");
@@ -76,13 +76,13 @@ export const sendLogsFromSandbox = (
       tailLines: 50,
       pretty: false,
       timestamps: false,
-    },
+    }
   );
 };
 
 export const createSandbox = async (
   projectName: string,
-  containerOptions: ContainerConfig,
+  containerOptions: ContainerConfig
 ) => {
   let tolerations = {};
   if (config.appEnv === "production") {
@@ -211,7 +211,7 @@ export const createSandbox = async (
 
 export const stopSandbox = async (
   projectName: string,
-  deleteFiles: boolean,
+  deleteFiles: boolean
 ) => {
   try {
     await Promise.all([
@@ -230,7 +230,7 @@ export const stopSandbox = async (
 
   try {
     if (deleteFiles) {
-      await rm(`${config.volumeRoot}/${projectName}`, {
+      await rmSync(`${config.volumeRoot}/${projectName}`, {
         recursive: true,
         force: true,
       });
