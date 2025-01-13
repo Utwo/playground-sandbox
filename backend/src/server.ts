@@ -1,7 +1,8 @@
+import { Server as HttpServer } from "node:http";
 import process from "node:process";
+import { serve } from "@hono/node-server";
 import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
-import { Server as HttpServer } from "node:http";
 import { Server as IOServer } from "socket.io";
 import { config } from "./config.ts";
 import { getFileContentReq } from "./modules/container-controller.ts";
@@ -10,7 +11,7 @@ import { getAllPods, initInformer, stopSandbox } from "./services/k8s.ts";
 import { getActiveRooms } from "./utils.ts";
 
 const app = new Hono();
-const server = Deno.serve(
+const server = serve(
   {
     fetch: app.fetch,
     port: config.port,
@@ -60,8 +61,8 @@ app.get("/", ({ text }) => text("ok"));
 setInterval(async () => {
   const pods = await getAllPods();
   const activeRooms = getActiveRooms(io);
-  pods.items
-    .map((pod) => pod.metadata.name)
+  pods?.items
+    .map((pod) => pod.metadata?.name)
     .filter((podName) => !activeRooms.includes(podName))
     .forEach((podName) => {
       stopSandbox(podName, true)

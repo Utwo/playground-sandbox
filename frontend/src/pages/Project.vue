@@ -22,7 +22,7 @@
     <div class="preview">
       <Iframe
         :socket="socket"
-        :port="route.query.port"
+        :port="Number(route.query.port)"
         :project-name="route.params.projectName"
       />
     </div>
