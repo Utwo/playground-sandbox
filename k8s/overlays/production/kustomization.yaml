@@ -1,5 +1,8 @@
-commonLabels:
-  variant: production
+labels:
+  - pairs:
+      variant: production
+    includeSelectors: true
+
 resources:
   - ../../base
   - volume.yaml

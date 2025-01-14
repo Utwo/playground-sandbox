@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app
-  namespace: default
   labels:
     app: playground-sandbox
 spec:
