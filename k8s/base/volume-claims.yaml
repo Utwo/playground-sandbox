@@ -3,7 +3,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: projects-pv-claim-default
 spec:
-  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
@@ -16,7 +15,6 @@ metadata:
   name: projects-pv-claim-public
   namespace: public
 spec:
-  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:

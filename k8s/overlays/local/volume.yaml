@@ -6,7 +6,6 @@ metadata:
     type: local
 spec:
   persistentVolumeReclaimPolicy: Delete
-  storageClassName: manual
   capacity:
     storage: 1Gi
   accessModes:
@@ -22,7 +21,6 @@ metadata:
     type: local
 spec:
   persistentVolumeReclaimPolicy: Delete
-  storageClassName: manual
   capacity:
     storage: 1Gi
   accessModes:
