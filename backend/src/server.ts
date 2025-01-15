@@ -9,6 +9,8 @@ import { getFileContentReq } from "./modules/container-controller.ts";
 import wsController from "./modules/container-ws-controller.ts";
 import { getAllPods, initInformer, stopSandbox } from "./services/k8s.ts";
 import { getActiveRooms } from "./utils.ts";
+import { rmSync } from "node:fs";
+import { readdir } from "node:fs/promises";
 
 const app = new Hono();
 const server = serve(
@@ -17,7 +19,7 @@ const server = serve(
     port: config.port,
   },
   (info) => {
-    console.log(`> Ready on http://${info.address}:${info.port}`);
+    console.log(`> Ready on http://localhost:${info.port}`);
   },
 );
 const io = new IOServer(server as HttpServer, { transports: ["websocket"] });
@@ -58,19 +60,41 @@ app.post("/get-file-content", getFileContentReq);
 app.get("/", ({ text }) => text("ok"));
 
 // delete pods that are not in active rooms
-setInterval(async () => {
+const cleanupInterval = setInterval(async () => {
   const pods = await getAllPods();
   const activeRooms = getActiveRooms(io);
   for (const pod of pods?.items ?? []) {
     const podName = pod.metadata.name;
     if (!activeRooms.includes(podName)) {
       try {
-        await stopSandbox(podName, true);
+        await stopSandbox(podName, false);
         console.info(`Pod ${podName} was deleted`);
       } catch (err) {
         console.error(err);
       }
     }
+  }
+
+  try {
+    const folders = await readdir(config.volumeRoot, { withFileTypes: true });
+    for (const folder of folders) {
+      if (
+        !pods?.items.some((pod) => pod.metadata.name === folder.name) &&
+        folder.isDirectory()
+      ) {
+        try {
+          await rmSync(`${config.volumeRoot}/${folder.name}`, {
+            recursive: true,
+            force: true,
+          });
+          console.info(`Orphaned folder ${folder.name} was deleted`);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+  } catch (err) {
+    console.error(err);
   }
 }, config.removeInactiveSandboxAfter);
 
@@ -93,6 +117,6 @@ function shutdown() {
     );
     process.exit(1);
   }, 10000);
-
+  clearInterval(cleanupInterval);
   io.disconnectSockets();
 }

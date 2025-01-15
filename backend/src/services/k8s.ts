@@ -212,6 +212,7 @@ export const stopSandbox = async (
 ) => {
   try {
     await Promise.all([
+      // TODO: We should delete with force
       k8sApi.deleteNamespacedPod({
         name: projectName,
         namespace: config.sandboxNamespace,
