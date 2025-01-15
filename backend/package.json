@@ -5,7 +5,7 @@
   "main": "src/server.ts",
   "type": "module",
   "scripts": {
-    "dev": "node --watch --experimental-strip-types .",
+    "dev": "node --watch --experimental-strip-types --env-file-if-exists=.env .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

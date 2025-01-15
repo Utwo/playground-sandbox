@@ -1,0 +1,242 @@
+# Default values for playground-sandbox.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+
+backend:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/utwo/sandbox-backend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  imagePullSecrets: []
+
+  env:
+    - name: SANDBOX_NODE_LABEL
+      value: "default"
+
+  podAnnotations: {}
+  podSecurityContext:
+    {}
+    # fsGroup: 2000
+
+  securityContext:
+    {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  service:
+    port: 8888
+
+  resources:
+    {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+
+  volumes:
+    - name: project-pv-storage
+      persistentVolumeClaim:
+        claimName: projects-pv-claim-default
+  volumeMounts:
+    - mountPath: /app/projects
+      name: project-pv-storage
+  nodeSelector:
+    node: default
+  tolerations: []
+  affinity: {}
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/utwo/sandbox-frontend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podSecurityContext:
+    {}
+    # fsGroup: 2000
+
+  securityContext:
+    {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  service:
+    port: 80
+
+  resources:
+    {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+
+  volumes: []
+  volumeMounts: []
+  nodeSelector:
+    node: default
+  tolerations: []
+  affinity: {}
+
+nginx:
+  replicaCount: 1
+  image:
+    repository: nginx
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  imagePullSecrets: []
+
+  podAnnotations: {}
+  podSecurityContext:
+    {}
+    # fsGroup: 2000
+
+  securityContext:
+    {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  service:
+    sandboxPort: 3000
+    vscodePort: 3773
+
+  resources:
+    {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  livenessProbe:
+
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: ng-sandbox-port
+
+  volumes:
+    - name: nginx-conf
+      configMap:
+        name: nginx-conf # place ConfigMap `nginx-conf` on /etc/nginx
+        items:
+          - key: nginx.conf
+            path: nginx.conf
+  volumeMounts:
+    - mountPath: /etc/nginx # mount nginx-conf volumn to /etc/nginx
+      readOnly: true
+      name: nginx-conf
+  nodeSelector:
+    node: default
+  tolerations: []
+  affinity: {}
+
+serviceAccount:
+  annotations: {}
+  name: "internal-kubectl"
+
+sandboxNamespace: public
+
+volumeClaimDefault:
+  storageClassName: "local-path"
+  accessModes:
+    - ReadWriteOnce
+  storage: 1Gi
+  persistentVolumeReclaimPolicy: Delete
+  backend:
+    hostPath:
+      path: "/tmp/k3dvol"
+
+volumeClaimPublic:
+  storageClassName: "local-path"
+  accessModes:
+    - ReadWriteOnce
+  storage: 1Gi
+  persistentVolumeReclaimPolicy: Delete
+  backend:
+    hostPath:
+      path: "/tmp/k3dvol"
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  defaultBackend:
+    service:
+      name: frontend
+      portName: http
+  hosts:
+    - host: 127.0.0.1.nip.io
+      paths:
+        - pathType: Prefix
+          path: "/"
+          service: frontend
+          portName: http
+    - host: api.127.0.0.1.nip.io
+      paths:
+        - pathType: Prefix
+          path: "/"
+          service: backend
+          portName: http
+    - host: "*.project.127.0.0.1.nip.io"
+      paths:
+        - pathType: Prefix
+          path: "/"
+          service: nginx
+          portName: ng-sandbox-port
+
+    - host: "*.vscode.127.0.0.1.nip.io"
+      paths:
+        - pathType: Prefix
+          path: "/"
+          service: nginx
+          portName: ng-vscode-port
+
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local

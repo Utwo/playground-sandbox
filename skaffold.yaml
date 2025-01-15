@@ -10,12 +10,6 @@ build:
       context: ./frontend
       docker:
         target: production
-manifests:
-  kustomize:
-    paths:
-      - ./k8s/overlays/production
-deploy:
-  kubectl: {}
 profiles:
   - name: dev
     activation:
@@ -40,8 +34,13 @@ profiles:
             target: development
       local: {}
     manifests:
-      kustomize:
-        paths:
-          - ./k8s/overlays/local
+      helm:
+        releases:
+          - name: playground-sandbox
+            chartPath: ./k8s/playground-sandbox
+            namespace: default
+            setValueTemplates:
+              backend.image.tag: "{{.IMAGE_TAG_ghcr_io_utwo_sandbox_backend}}@{{.IMAGE_DIGEST_ghcr_io_utwo_sandbox_backend}}"
+              frontend.image.tag: "{{.IMAGE_TAG_ghcr_io_utwo_sandbox_frontend}}@{{.IMAGE_DIGEST_ghcr_io_utwo_sandbox_frontend}}"
     deploy:
       kubectl: {}

@@ -84,19 +84,16 @@ export const createSandbox = async (
   projectName: string,
   containerOptions: ContainerConfig,
 ) => {
-  let tolerations = {};
-  if (config.appEnv === "production") {
-    tolerations = {
-      nodeSelector: { node: "sandbox" },
-      tolerations: [
-        {
-          key: "sandbox.gke.io/runtime",
-          value: "gvisor",
-          effect: "NoSchedule",
-        },
-      ],
-    };
-  }
+  const tolerations = {
+    nodeSelector: { node: config.sandboxNodeLabel },
+    tolerations: [
+      {
+        key: "sandbox.gke.io/runtime",
+        value: "gvisor",
+        effect: "NoSchedule",
+      },
+    ],
+  };
 
   const [pod, service] = await Promise.all([
     k8sApi.createNamespacedPod({

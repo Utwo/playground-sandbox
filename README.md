@@ -33,8 +33,7 @@ $ nix-shell
 ### Create a cluster with volume claim
 
 ```
-$ mkdir -p /tmp/k3dvol
-$ k3d cluster create playground-sandbox --volume /tmp/k3dvol:/tmp/k3dvol -p "8888:80@loadbalancer" --k3s-node-label "node=default@server:0"
+$ k3d cluster create playground-sandbox --volume $(pwd)/tmp:/tmp/k3dvol -p"80:80@loadbalancer" -p "443:443@loadbalancer" --k3s-node-label "node=default@server:0"
 ```
 
 ### Run the backend and the frontend
@@ -45,7 +44,7 @@ $ cd backend && pnpm install
 $ skaffold dev
 ```
 
-Visit: http://127.0.0.1.nip.io:8888
+Visit: http://127.0.0.1.nip.io
 
 ## Deploy infra
 
@@ -82,15 +81,3 @@ For opening traefik web UI in the browser:
 kubectl port-forward -n kube-system "$(kubectl get pods -n kube-system| grep '^traefik-' | awk '{print $1}')" 9000:9000
 
 ```
-
-If you run this on something else than k3d, then maybe you need to change the k8s internal ip in nginx.
-First get the ip:
-
-```
-
-$ kubectl apply -f https://k8s.io/examples/admin/dns/dnsutils.yaml
-$ kubectl exec -i -t dnsutils -- nslookup kubernetes.default
-
-```
-
-Update nginx-cm.yaml with the new ip;

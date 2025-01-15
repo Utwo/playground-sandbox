@@ -1,0 +1,22 @@
+backend:
+  env:
+    - name: SANDBOX_NODE_LABEL
+      value: "sandbox"
+
+volumeClaimDefault:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteMany
+  backend:
+    nfs:
+      path: /sandbox
+      server: 10.246.82.250
+
+volumeClaimPublic:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteMany
+  backend:
+    nfs:
+      path: /sandbox
+      server: 10.246.82.250

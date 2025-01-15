@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    {{- include "playground-sandbox.labels" . | nindent 4 }}
+    app: nginx
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.nginx.service.sandboxPort }}
+      targetPort: {{ .Values.nginx.service.sandboxPort }}
+      protocol: TCP
+      name: ng-sandbox-port
+    - port: {{ .Values.nginx.service.vscodePort }}
+      targetPort: {{ .Values.nginx.service.vscodePort }}
+      protocol: TCP
+      name: ng-vscode-port
+  selector:
+    {{- include "playground-sandbox.selectorLabels" . | nindent 4 }}
+    app: nginx

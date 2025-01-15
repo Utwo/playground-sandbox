@@ -2,11 +2,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: modify-pods-to-sa
-  namespace: public
+  namespace: {{ .Values.sandboxNamespace }}
 subjects:
   - kind: ServiceAccount
-    name: internal-kubectl
-    namespace: default
+    name: {{ .Values.serviceAccount.name }}
+    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
   name: modify-pods

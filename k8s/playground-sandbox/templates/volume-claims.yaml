@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: projects-pv-claim-default
+spec:
+  storageClassName: {{ .Values.volumeClaimDefault.storageClassName }}
+  {{- with .Values.volumeClaimDefault.accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.volumeClaimDefault.storage }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: projects-pv-claim-public
+  namespace: {{ .Values.sandboxNamespace }}
+spec:
+  storageClassName: {{ .Values.volumeClaimPublic.storageClassName }}
+  {{- with .Values.volumeClaimPublic.accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.volumeClaimPublic.storage }}
