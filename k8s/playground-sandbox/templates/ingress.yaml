@@ -25,24 +25,48 @@ spec:
   {{- end }}
   defaultBackend:
     service:
-      name: {{ .Values.ingress.defaultBackend.service.name }}
+      name: frontend
       port:
-        name: {{ .Values.ingress.defaultBackend.service.portName }}
+        name: http
   rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    - host: {{ .Values.ingress.domain }}
       http:
         paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            {{- with .pathType }}
-            pathType: {{ . }}
-            {{- end }}
+          - pathType: Prefix
+            path: "/"
             backend:
               service:
-                name: {{ .service }}
+                name: frontend
                 port:
-                  name: {{ .portName }}
-          {{- end }}
-    {{- end }}
+                  name: http
+    - host: {{ .Values.ingress.apiSubdomain }}.{{ .Values.ingress.domain }}
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: backend
+                port:
+                  name: http
+    - host: "*.{{ .Values.ingress.projectSubdomain }}.{{ .Values.ingress.domain }}"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: nginx
+                port:
+                  name: ng-sandbox-port
+    - host: "*.{{ .Values.ingress.vscodeSubdomain }}.{{ .Values.ingress.domain }}"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: nginx
+                port:
+                  name: ng-vscode-port
 {{- end }}

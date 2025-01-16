@@ -205,36 +205,10 @@ ingress:
     {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  defaultBackend:
-    service:
-      name: frontend
-      portName: http
-  hosts:
-    - host: 127.0.0.1.nip.io
-      paths:
-        - pathType: Prefix
-          path: "/"
-          service: frontend
-          portName: http
-    - host: api.127.0.0.1.nip.io
-      paths:
-        - pathType: Prefix
-          path: "/"
-          service: backend
-          portName: http
-    - host: "*.project.127.0.0.1.nip.io"
-      paths:
-        - pathType: Prefix
-          path: "/"
-          service: nginx
-          portName: ng-sandbox-port
-
-    - host: "*.vscode.127.0.0.1.nip.io"
-      paths:
-        - pathType: Prefix
-          path: "/"
-          service: nginx
-          portName: ng-vscode-port
+  domain: "127.0.0.1.nip.io"
+  apiSubdomain: api
+  projectSubdomain: project
+  vscodeSubdomain: vscode
 
   tls: []
   #  - secretName: chart-example-tls
