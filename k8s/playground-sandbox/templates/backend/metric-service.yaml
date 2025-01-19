@@ -1,0 +1,19 @@
+{{- if .Values.backend.serviceMonitor.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-metrics
+  labels:
+    {{- include "playground-sandbox.labels" . | nindent 4 }}
+    app: backend
+spec:
+  type: ClusterIP
+  ports:
+    - name: metrics
+      port: 9464
+      protocol: TCP
+      targetPort: metrics
+  selector:
+    {{- include "playground-sandbox.selectorLabels" . | nindent 4 }}
+    app: backend
+{{- end }}

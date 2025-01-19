@@ -64,6 +64,25 @@ backend:
   tolerations: []
   affinity: {}
 
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}
+    # -- Annotations to be added to the ServiceMonitor.
+    annotations: {}
+    ## The label to use to retrieve the job name from.
+    ## jobLabel: "app.kubernetes.io/name"
+    namespace: ""
+    namespaceSelector: {}
+    ## Default: scrape .Release.Namespace or namespaceOverride only
+    ## To scrape all, use the following:
+    ## namespaceSelector:
+    ##   any: true
+    scrapeInterval: 30s
+    # honorLabels: true
+    targetLabels: []
+    relabelings: []
+    metricRelabelings: []
+
 frontend:
   replicaCount: 1
   image:

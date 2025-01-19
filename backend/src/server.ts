@@ -3,6 +3,7 @@ import { readdir } from "node:fs/promises";
 import type { Server as HttpServer } from "node:http";
 import process from "node:process";
 import { serve } from "@hono/node-server";
+import { metrics } from "@opentelemetry/api";
 import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
 import { Server as IOServer } from "socket.io";
@@ -29,6 +30,9 @@ app.use(async (c: Context, next) => {
   c.set("io", io);
   await next();
 });
+
+const meter = metrics.getMeter("sandbox-backend");
+const counter = meter.createUpDownCounter("events.running-pods");
 
 initInformer(io);
 
@@ -69,6 +73,7 @@ const cleanupInterval = setInterval(async () => {
       try {
         await stopSandbox(podName, false);
         console.info(`Pod ${podName} was deleted`);
+        counter.add(-1);
       } catch (err) {
         console.error(err);
       }

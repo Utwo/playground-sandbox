@@ -1,0 +1,45 @@
+{{- if .Values.backend.serviceMonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: backend
+  labels:
+    {{- include "playground-sandbox.labels" . | nindent 4 }}
+    app: backend
+    {{- if .Values.backend.serviceMonitor.additionalLabels }}
+    {{- toYaml .Values.backend.serviceMonitor.additionalLabels | nindent 4 }}
+    {{- end }}
+  {{- if .Values.backend.serviceMonitor.annotations }}
+  annotations: {{ toYaml .Values.backend.serviceMonitor.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.backend.serviceMonitor.namespaceSelector }}
+  namespaceSelector: {{ toYaml .Values.backend.serviceMonitor.namespaceSelector | nindent 4 }}
+  {{- else }}
+  namespaceSelector:
+    matchNames:
+    - {{ include "playground-sandbox.namespace" . }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "playground-sandbox.selectorLabels" . | nindent 6 }}
+      app: backend
+  endpoints:
+  - port: metrics
+    interval: {{ .Values.backend.serviceMonitor.scrapeInterval }}
+    {{- if .Values.backend.serviceMonitor.honorLabels }}
+    honorLabels: true
+    {{- end }}
+    {{- if .Values.backend.serviceMonitor.relabelings }}
+    relabelings: {{ toYaml .Values.backend.serviceMonitor.relabelings | nindent 4 }}
+    {{- end }}
+    {{- if .Values.backend.serviceMonitor.metricRelabelings }}
+    metricRelabelings: {{ toYaml .Values.backend.serviceMonitor.metricRelabelings | nindent 4 }}
+    {{- end }}
+  {{- if .Values.backend.serviceMonitor.jobLabel }}
+  jobLabel: {{ .Values.backend.serviceMonitor.jobLabel | quote }}
+  {{- end }}
+  {{- if .Values.backend.serviceMonitor.targetLabels }}
+  targetLabels: {{ toYaml .Values.backend.serviceMonitor.targetLabels | nindent 2 }}
+  {{- end }}
+{{- end }}

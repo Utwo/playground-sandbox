@@ -10,6 +10,18 @@ build:
       context: ./frontend
       docker:
         target: production
+manifests:
+  helm:
+    releases:
+      - name: playground-sandbox
+        chartPath: ./k8s/playground-sandbox
+        namespace: default
+        setValueTemplates:
+          backend.image.tag: "{{.IMAGE_TAG_ghcr_io_utwo_sandbox_backend}}@{{.IMAGE_DIGEST_ghcr_io_utwo_sandbox_backend}}"
+          frontend.image.tag: "{{.IMAGE_TAG_ghcr_io_utwo_sandbox_frontend}}@{{.IMAGE_DIGEST_ghcr_io_utwo_sandbox_frontend}}"
+        valuesFiles:
+          - ./k8s/playground-sandbox/values-prod.yaml
+
 profiles:
   - name: dev
     activation:

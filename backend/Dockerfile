@@ -16,4 +16,4 @@ CMD ["pnpm", "run", "dev"]
 
 FROM build AS production
 # USER node
-CMD ["node", "--experimental-strip-types", "."]
+CMD ["node", "--enable-source-maps", "--import=./src/instrumentation.ts", "--experimental-strip-types", "."]

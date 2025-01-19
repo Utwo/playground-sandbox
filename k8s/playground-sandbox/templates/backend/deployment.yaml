@@ -41,6 +41,11 @@ spec:
             - name: http
               containerPort: {{ .Values.backend.service.port }}
               protocol: TCP
+          {{- if .Values.backend.serviceMonitor.enabled }}
+            - name: metrics
+              containerPort: 9464
+              protocol: TCP
+          {{- end }}
           livenessProbe:
             {{- toYaml .Values.backend.livenessProbe | nindent 12 }}
           readinessProbe:

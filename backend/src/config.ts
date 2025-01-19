@@ -16,6 +16,7 @@ export type ContainerConfig = {
 };
 
 export const config: {
+  serviceVersion: string;
   sandboxNodeLabel: string;
   sandboxNamespace: string;
   sandboxContainerName: string;
@@ -25,6 +26,7 @@ export const config: {
   volumeRoot: string;
   removeInactiveSandboxAfter: number;
 } = {
+  serviceVersion: process.env.SERVICE_VERSION || "0.1.0",
   sandboxNodeLabel: process.env.SANDBOX_NODE_LABEL || "sandbox",
   sandboxNamespace: process.env.SANDBOX_NAMESPACE || "public",
   sandboxContainerName: "node-app",

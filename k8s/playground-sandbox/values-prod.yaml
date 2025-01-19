@@ -1,4 +1,6 @@
 backend:
+  serviceMonitor:
+    enabled: "true"
   env:
     - name: SANDBOX_NODE_LABEL
       value: "sandbox"

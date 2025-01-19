@@ -1,4 +1,5 @@
 import stream from "node:stream";
+import { metrics } from "@opentelemetry/api";
 import { type ContainerConfig, type GitClone, config } from "../config.ts";
 import {
   addFiles,
@@ -13,6 +14,9 @@ import {
   k8sExec,
   sendLogsFromSandbox,
 } from "../services/k8s.ts";
+
+const meter = metrics.getMeter("sandbox-backend");
+const counter = meter.createUpDownCounter("events.running-pods");
 
 export default function (io) {
   const socketConnected = (socket) => {
@@ -80,6 +84,7 @@ export default function (io) {
         : ["sh", "-c", `yarn && ${containerOptions.command}`];
       try {
         await createSandbox(projectName, containerOptions);
+        counter.add(1);
       } catch (e) {
         console.error(e.message);
       }
