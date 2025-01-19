@@ -27,8 +27,8 @@ export const templateConfig = {
 
 const VITE_API_BACKEND = import.meta.env.VITE_API_BACKEND;
 const VITE_API_PORT = import.meta.env.VITE_API_PORT;
-export const sandboxHost = `project.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`;
-export const vsCodeHost = `vscode.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`;
+export const sandboxHost = `project.${VITE_API_BACKEND}:${VITE_API_PORT}`;
+export const vsCodeHost = `vscode.${VITE_API_BACKEND}:${VITE_API_PORT}`;
 export const vsCodePort = "3773";
-export const apiURL = `http://api.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`;
-export const wsURL = `ws://api.${VITE_API_BACKEND}.nip.io:${VITE_API_PORT}`;
+export const apiURL = `http://api.${VITE_API_BACKEND}:${VITE_API_PORT}`;
+export const wsURL = `ws://api.${VITE_API_BACKEND}:${VITE_API_PORT}`;

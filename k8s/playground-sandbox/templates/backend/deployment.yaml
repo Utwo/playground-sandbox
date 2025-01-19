@@ -37,6 +37,8 @@ spec:
           workingDir: /app
           env:
             {{- toYaml .Values.backend.env | nindent 12 }}
+            - name: SANDBOX_NAMESPACE
+              value: {{ .Values.sandboxNamespace }}
           ports:
             - name: http
               containerPort: {{ .Values.backend.service.port }}

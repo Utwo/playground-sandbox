@@ -118,3 +118,4 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: ${{ github.event_name == 'pull_request' && format('VITE_API_BACKEND_ARG={0}-{1}.127.0.0.1.nip.io', github.head_ref, github.event.pull_request.number) || 'VITE_API_BACKEND_ARG=127.0.0.1.nip.io' }}

@@ -5,6 +5,9 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 WORKDIR /app
 
+ARG VITE_API_BACKEND_ARG=127.0.0.1.nip.io
+ENV VITE_API_BACKEND=$VITE_API_BACKEND_ARG
+
 # Install app dependencies
 COPY package.json pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
