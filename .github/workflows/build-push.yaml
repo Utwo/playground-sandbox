@@ -58,6 +58,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
             type=ref,event=branch,suffix=-{{sha}}
             type=sha,prefix=
+            type=ref,event=pr,suffix=-${{ github.event.pull_request.head.sha }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -99,6 +100,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
             type=ref,event=branch,suffix=-{{sha}}
             type=sha,prefix=
+            type=ref,event=pr,suffix=-${{ github.event.pull_request.head.sha }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
