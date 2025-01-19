@@ -56,7 +56,7 @@ jobs:
             ghcr.io/utwo/sandbox-backend
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=ref,event=branch,suffix=-{{sha}},enable={{is_default_branch}}
+            type=ref,event=branch,suffix=-{{sha}}
             type=sha,prefix=
 
       - name: Set up QEMU
@@ -97,7 +97,7 @@ jobs:
             ghcr.io/utwo/sandbox-frontend
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=ref,event=branch,suffix=-{{sha}},enable={{is_default_branch}}
+            type=ref,event=branch,suffix=-{{sha}}
             type=sha,prefix=
 
       - name: Set up QEMU
