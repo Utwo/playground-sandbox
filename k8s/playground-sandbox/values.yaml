@@ -198,7 +198,6 @@ serviceAccount:
 sandboxNamespace: public
 
 volumeClaimDefault:
-  createVolume: true
   storageClassName: "local-path"
   accessModes:
     - ReadWriteOnce
@@ -209,7 +208,6 @@ volumeClaimDefault:
       path: "/tmp/k3dvol"
 
 volumeClaimPublic:
-  createVolume: true
   storageClassName: "local-path"
   accessModes:
     - ReadWriteOnce
