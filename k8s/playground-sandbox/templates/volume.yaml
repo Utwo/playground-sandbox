@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{- include "playground-sandbox.fullname" . }}-fileserver
+  name: "{{- include "playground-sandbox.fullname" . }}-fileserver"
 spec:
   persistentVolumeReclaimPolicy: {{ .Values.volumeClaimDefault.persistentVolumeReclaimPolicy }}
   storageClassName: {{ .Values.volumeClaimDefault.storageClassName }}
@@ -20,7 +20,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{- include "playground-sandbox.fullname" . }}-fileserver-public
+  name: "{{- include "playground-sandbox.fullname" . }}-fileserver-public"
 spec:
   persistentVolumeReclaimPolicy: {{ .Values.volumeClaimPublic.persistentVolumeReclaimPolicy }}
   storageClassName: {{ .Values.volumeClaimPublic.storageClassName }}

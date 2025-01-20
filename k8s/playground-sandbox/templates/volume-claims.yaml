@@ -4,7 +4,7 @@ metadata:
   name: projects-pv-claim-default
 spec:
   storageClassName: {{ .Values.volumeClaimDefault.storageClassName }}
-  volumeName: {{- include "playground-sandbox.fullname" . }}-fileserver
+  volumeName: "{{- include "playground-sandbox.fullname" . }}-fileserver"
   {{- with .Values.volumeClaimDefault.accessModes }}
   accessModes:
     {{- toYaml . | nindent 4 }}
@@ -20,7 +20,7 @@ metadata:
   namespace: {{ .Values.sandboxNamespace }}
 spec:
   storageClassName: {{ .Values.volumeClaimPublic.storageClassName }}
-  volumeName: {{- include "playground-sandbox.fullname" . }}-fileserver-public
+  volumeName: "{{- include "playground-sandbox.fullname" . }}-fileserver-public"
   {{- with .Values.volumeClaimPublic.accessModes }}
   accessModes:
     {{- toYaml . | nindent 4 }}
