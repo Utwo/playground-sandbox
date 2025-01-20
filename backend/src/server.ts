@@ -20,7 +20,7 @@ const server = serve(
     port: config.port,
   },
   (info) => {
-    console.log(`Ready on http://localhost:${info.port}`);
+    console.log(`>  Ready on http://localhost:${info.port}`);
   },
 );
 const io = new IOServer(server as HttpServer, { transports: ["websocket"] });
