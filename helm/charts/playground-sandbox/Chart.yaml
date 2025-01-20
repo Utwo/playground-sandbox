@@ -1,6 +1,11 @@
 apiVersion: v2
 name: playground-sandbox
-description: A Helm chart for Kubernetes
+description: A PoC that allows to run user-provided code in a safe environment in the cloud using ephemeral containers with Kubernetes and gVisor
+
+maintainers:
+  - name: Utwo
+    email: mihai.legat@gmail.com
+    url: https://github.com/Utwo
 
 # A chart can be either an 'application' or a 'library' chart.
 #

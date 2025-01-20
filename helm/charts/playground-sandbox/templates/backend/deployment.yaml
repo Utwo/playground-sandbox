@@ -49,19 +49,22 @@ spec:
               protocol: TCP
           {{- end }}
           livenessProbe:
-            {{- toYaml .Values.backend.livenessProbe | nindent 12 }}
+            httpGet:
+              path: /
+              port: http
           readinessProbe:
-            {{- toYaml .Values.backend.readinessProbe | nindent 12 }}
+            httpGet:
+              path: /
+              port: http
           resources:
             {{- toYaml .Values.backend.resources | nindent 12 }}
-          {{- with .Values.backend.volumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.backend.volumes }}
+            - mountPath: /app/projects
+              name: project-pv-storage
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        - name: project-pv-storage
+          persistentVolumeClaim:
+            claimName: projects-pv-claim-default
       {{- with .Values.backend.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

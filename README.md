@@ -1,6 +1,6 @@
 # Playground Sandbox
 
-A PoC allowing to run user provided code in a safe environment in cloud using ephemeral containers with Kubernetes and gVisor. Run any node project (vue, nextjs, nuxtjs, node, etc) in a sandbox and edit the code dorectly in the browser.
+A PoC that allows to run user-provided code in a safe environment in the cloud using ephemeral containers with Kubernetes and gVisor. Run any node project (vue, nextjs, nuxtjs, node, etc) in a sandbox and edit the code dorectly in the browser.
 
 https://user-images.githubusercontent.com/282668/160847863-2051d3ee-0d04-4960-91b3-65371f7ca874.mp4
 
