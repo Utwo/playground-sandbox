@@ -11,7 +11,7 @@ on:
     paths:
       - backend/**
       - frontend/**
-      - k8s/**
+      - helm/**
       - .github/workflows/**
 
 jobs:

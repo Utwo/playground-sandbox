@@ -6,12 +6,12 @@ https://user-images.githubusercontent.com/282668/160847863-2051d3ee-0d04-4960-91
 
 ## Features
 
-🚀 Clone any public projects from Github  
-🤘 Open the project directly in the browser in VSCode (openvscode)  
-🚢 Terminal support. Run commands in the container  
-👐 Run containers on any port  
-🎶 Get live container events  
-✨ Local development with Skaffold  
+🚀 Clone any public projects from Github
+🤘 Open the project directly in the browser in VSCode (openvscode)
+🚢 Terminal support. Run commands in the container
+👐 Run containers on any port
+🎶 Get live container events
+✨ Local development with Skaffold
 
 ## Challenges and open questions
 
@@ -62,7 +62,7 @@ $ terraform apply
 
 Make a new K8s cluster on GCP with 2 node-pools. The first one, with label `node:default` will be used to run the backend of the application. For the second one, enable sandbox mode and set the label `node:sandbox`. The taint `NoSchedule: sandbox.gke.io/runtime=gvisor` should be automatically activated. The second node-pool will be used to run user containers.
 
-Then create a new filestore instance and copy the newly created IP. Replace the IP in the k8s/overlays/production/volume.yaml ->nfs->server
+Then create a new filestore instance and copy the newly created IP. Replace the IP in the helm/charts/playground-sandbox/values-prod.yaml ->nfs->server
 
 ### Deploy k8s manifest
 

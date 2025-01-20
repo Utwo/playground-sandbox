@@ -205,7 +205,7 @@ volumeClaimDefault:
   persistentVolumeReclaimPolicy: Delete
   backend:
     hostPath:
-      path: "/tmp/k3dvol"
+      path: "/tmp/k3dvol/public"
 
 volumeClaimPublic:
   storageClassName: "local-path"
@@ -215,7 +215,7 @@ volumeClaimPublic:
   persistentVolumeReclaimPolicy: Delete
   backend:
     hostPath:
-      path: "/tmp/k3dvol"
+      path: "/tmp/k3dvol/public"
 
 ingress:
   enabled: true

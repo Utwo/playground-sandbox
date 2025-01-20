@@ -14,13 +14,13 @@ manifests:
   helm:
     releases:
       - name: playground-sandbox
-        chartPath: ./k8s/playground-sandbox
+        chartPath: ./helm/charts/playground-sandbox
         namespace: default
         setValueTemplates:
           backend.image.tag: "{{.IMAGE_TAG_ghcr_io_utwo_sandbox_backend}}@{{.IMAGE_DIGEST_ghcr_io_utwo_sandbox_backend}}"
           frontend.image.tag: "{{.IMAGE_TAG_ghcr_io_utwo_sandbox_frontend}}@{{.IMAGE_DIGEST_ghcr_io_utwo_sandbox_frontend}}"
         valuesFiles:
-          - ./k8s/playground-sandbox/values-prod.yaml
+          - ./helm/charts/playground-sandbox/values-prod.yaml
 
 profiles:
   - name: dev
@@ -49,7 +49,7 @@ profiles:
       helm:
         releases:
           - name: playground-sandbox
-            chartPath: ./k8s/playground-sandbox
+            chartPath: ./helm/charts/playground-sandbox
             namespace: default
             setValueTemplates:
               backend.image.tag: "{{.IMAGE_TAG_ghcr_io_utwo_sandbox_backend}}@{{.IMAGE_DIGEST_ghcr_io_utwo_sandbox_backend}}"
