@@ -33,7 +33,7 @@ export const config: {
   vscodeContainerName: "vscode-app",
   vscodeContainerPort: 3773,
   port: +process.env.PORT || 8888,
-  volumeRoot: "projects",
+  volumeRoot: `${process.env.SANDBOX_NAMESPACE || "public"}/projects`,
   removeInactiveSandboxAfter:
     +process.env.REMOVE_INACTIVE_SANDBOX_AFTER || 60 * 1000,
 };
