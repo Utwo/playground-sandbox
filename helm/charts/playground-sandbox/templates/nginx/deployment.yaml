@@ -13,8 +13,9 @@ spec:
       app: nginx
   template:
     metadata:
-      {{- with .Values.nginx.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/nginx/confgmap.yaml") . | sha256sum }}
+      {{- with .Values.nginx.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
