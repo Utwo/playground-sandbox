@@ -43,22 +43,6 @@ backend:
     #   cpu: 100m
     #   memory: 128Mi
 
-  livenessProbe:
-    httpGet:
-      path: /
-      port: http
-  readinessProbe:
-    httpGet:
-      path: /
-      port: http
-
-  volumes:
-    - name: project-pv-storage
-      persistentVolumeClaim:
-        claimName: projects-pv-claim-default
-  volumeMounts:
-    - mountPath: /app/projects
-      name: project-pv-storage
   nodeSelector:
     node: default
   tolerations: []
@@ -117,15 +101,6 @@ frontend:
     #   cpu: 100m
     #   memory: 128Mi
 
-  livenessProbe:
-    httpGet:
-      path: /
-      port: http
-  readinessProbe:
-    httpGet:
-      path: /
-      port: http
-
   volumes: []
   volumeMounts: []
   nodeSelector:
@@ -168,24 +143,6 @@ nginx:
     #   cpu: 100m
     #   memory: 128Mi
 
-  livenessProbe:
-
-  readinessProbe:
-    httpGet:
-      path: /health
-      port: ng-sandbox-port
-
-  volumes:
-    - name: nginx-conf
-      configMap:
-        name: nginx-conf # place ConfigMap `nginx-conf` on /etc/nginx
-        items:
-          - key: nginx.conf
-            path: nginx.conf
-  volumeMounts:
-    - mountPath: /etc/nginx # mount nginx-conf volumn to /etc/nginx
-      readOnly: true
-      name: nginx-conf
   nodeSelector:
     node: default
   tolerations: []
@@ -195,6 +152,7 @@ serviceAccount:
   annotations: {}
   name: "internal-kubectl"
 
+# namespace where the backend will create the sandboxes projects
 sandboxNamespace: public
 
 volumeClaimDefault:

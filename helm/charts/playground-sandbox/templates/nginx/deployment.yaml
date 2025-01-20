@@ -41,20 +41,23 @@ spec:
             - name: ng-vscode-port
               containerPort: {{ .Values.nginx.service.vscodePort }}
               protocol: TCP
-          livenessProbe:
-            {{- toYaml .Values.nginx.livenessProbe | nindent 12 }}
           readinessProbe:
-            {{- toYaml .Values.nginx.readinessProbe | nindent 12 }}
+            httpGet:
+              path: /health
+              port: ng-sandbox-port
           resources:
             {{- toYaml .Values.nginx.resources | nindent 12 }}
-          {{- with .Values.nginx.volumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.nginx.volumes }}
+            - mountPath: /etc/nginx  # mount nginx-conf volumn to /etc/nginx
+              readOnly: true
+              name: nginx-conf
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf  # place ConfigMap `nginx-conf` on /etc/nginx
+            items:
+              - key: nginx.conf
+                path: nginx.conf
       {{- with .Values.nginx.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
