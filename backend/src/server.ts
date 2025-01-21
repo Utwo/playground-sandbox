@@ -61,7 +61,7 @@ io.of((_name, _auth, next) => {
 });
 
 app.post("/get-file-content", getFileContentReq);
-app.get("/", ({ text }) => text(`ok, ${config.serviceVersion}`));
+app.get("/", ({ text }) => text("ok"));
 
 // delete pods that are not in active rooms
 const cleanupInterval = setInterval(async () => {
