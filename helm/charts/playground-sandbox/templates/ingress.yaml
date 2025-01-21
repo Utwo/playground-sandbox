@@ -48,7 +48,7 @@ spec:
               service:
                 name: {{ .Values.ingress.backendService.name }}
                 port:
-                  name: {{ .Values.ingress.backendService.port }}
+                  name: {{ .Values.ingress.backendService.portName }}
     - host: "*.{{ .Values.ingress.projectSubdomain }}.{{ .Values.ingress.domain }}"
       http:
         paths:
