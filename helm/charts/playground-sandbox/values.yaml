@@ -186,6 +186,9 @@ ingress:
   apiSubdomain: api
   projectSubdomain: project
   vscodeSubdomain: vscode
+  backendService:
+    name: backend
+    portName: http
 
   tls: []
   #  - secretName: chart-example-tls

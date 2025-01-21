@@ -46,9 +46,9 @@ spec:
             path: "/"
             backend:
               service:
-                name: backend
+                name: {{ .Values.ingress.backendService.name }}
                 port:
-                  name: http
+                  name: {{ .Values.ingress.backendService.portName }}
     - host: "*.{{ .Values.ingress.projectSubdomain }}.{{ .Values.ingress.domain }}"
       http:
         paths:
