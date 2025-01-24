@@ -39,6 +39,8 @@ spec:
             {{- toYaml .Values.backend.env | nindent 12 }}
             - name: SANDBOX_NAMESPACE
               value: {{ .Values.sandboxNamespace }}
+            - name: SERVICE_VERSION
+              value: {{ .Values.backend.image.tag | default .Chart.AppVersion }}
           ports:
             - name: http
               containerPort: {{ .Values.backend.service.port }}
