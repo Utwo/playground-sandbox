@@ -5,6 +5,8 @@ metadata:
   labels:
     {{- include "playground-sandbox.labels" . | nindent 4 }}
     app: frontend
+  annotations:
+    {{- toYaml .Values.frontend.annotations | nindent 4 }}
 spec:
   replicas: {{ .Values.frontend.replicaCount }}
   selector:

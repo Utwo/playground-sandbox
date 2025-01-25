@@ -75,6 +75,7 @@ frontend:
     tag: "latest"
   imagePullSecrets: []
 
+  annotations: {}
   podAnnotations: {}
   podSecurityContext:
     {}
