@@ -1,6 +1,6 @@
 # Playground Sandbox
 
-A PoC that allows to run user-provided code in a safe environment in the cloud using ephemeral containers with Kubernetes and gVisor. Run any node project (vue, nextjs, nuxtjs, node, etc) in a sandbox and edit the code dorectly in the browser.
+A PoC that allows to run user-provided code in a safe environment in the cloud using ephemeral containers with Kubernetes and gVisor. Run any node project (vue, nextjs, nuxtjs, node, etc) in a sandbox and edit the code directly in the browser.
 
 https://user-images.githubusercontent.com/282668/160847863-2051d3ee-0d04-4960-91b3-65371f7ca874.mp4
 
@@ -17,17 +17,17 @@ https://user-images.githubusercontent.com/282668/160847863-2051d3ee-0d04-4960-91
 
 Have a small node server on every sandboxed pod or a single server on core backend?
 
-- Single server on the backend means that we should have a shared volume between all the pods and the backend server in order to read/write files. So all requests will go through the backend server and after authentication/authorization, it will write to the volume. From there the pods will pick up the files in order to run the sandboxed projects. This is what we have right now. Not good if many containers will write to the same volume I guess.
-- Small server on every pod means that we will start a new server for every sandboxed project that will comunicate with our main backend for CRUD file operations. We can also expose logs and start new terminals directly from the sandboxed project. Don't know if I need to expose this sandboxed server to the frontend and if yes how to handle auth and authz?
+- A single server on the backend means that we should have a shared volume between all the pods and the backend server in order to read/write files. So all requests will go through the backend server, and after authentication/authorization, it will write to the volume. From there, the pods will pick up the files in order to run the sandboxed projects. This is what we have right now. Not good if many containers will write to the same volume, I guess.
+- Small server on every pod means that we will start a new server for every sandboxed project that will comunicate with our main backend for CRUD file operations. We can also expose logs and start new terminals directly from the sandboxed project. Don't know if I need to expose this sandboxed server to the frontend and, if yes, how to handle auth and authz?
 
-## How to setup this beauty on local machine
+## How to setup this beauty on the local machine
 
 ### Install all the dependencies
 
-Nix must be installed before running this command. If you don't want to install nix, take a look at the dependencies from [./devshell.toml](./devshell.toml) and make sure they are available on your host.
+Nix and devbox must be installed before running this command. If you don't want to install nix, check the dependencies from [./devbox.json](./devbox.json) and make sure they are available on your host.
 
-```
-$ nix-shell
+```sh
+$ devbox shell
 ```
 
 ### Create a cluster with volume claim
@@ -74,7 +74,7 @@ $ skaffold run
 
 ### Others
 
-For opening traefik web UI in the browser:
+For opening the traefik web UI in the browser:
 
 ```
 
