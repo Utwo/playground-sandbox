@@ -1,9 +1,0 @@
-[devshell]
-packages = [
-    "k3d",
-    "kubectl",
-    "kustomize",
-    "kubernetes-helm",
-    "skaffold",
-    "nodejs_22",
-]

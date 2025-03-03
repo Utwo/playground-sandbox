@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.0/.schema/devbox.schema.json",
+  "packages": [
+    "k3d",
+    "kubectl",
+    "kustomize",
+    "kubernetes-helm",
+    "skaffold",
+    "nodejs@22"
+  ],
+  "env": {
+    "DEVBOX_COREPACK_ENABLED": "true"
+  },
+  "shell": {}
+}
